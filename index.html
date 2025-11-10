@@ -3566,7 +3566,7 @@ User's request: ${msg}`;
         }
 
         function createWorkoutFromAI(aiWorkout) {
-            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || '{}');
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
             let workoutName = aiWorkout.title || (aiWorkout.workoutType === 'hiit' ? 'AI HIIT Workout' : 'AI Strength Workout');
             let counter = 1;
             const originalName = workoutName;
@@ -3576,7 +3576,7 @@ User's request: ${msg}`;
             }
 
             if (aiWorkout.workoutType === 'hiit') {
-                savedCustomWorkouts[workoutName] = {
+                saved[workoutName] = {
                     workoutType: 'hiit',
                     workTime: aiWorkout.workTime || 30,
                     restTime: aiWorkout.restTime || 15,
