@@ -3384,6 +3384,40 @@ User's request: ${msg}`;
         // ===================================================================
         // END: AI COACH FUNCTIONS (RESTORED FROM WORKING FILE)
         // ===================================================================
+       // ==================== RECOMMENDATION ENGINE ====================
+        function loadRecommendation() {
+            const container = document.getElementById('recommendationContainer');
+            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+            let recommendationHtml = '';
+
+            // Simple logic: if no workouts, recommend a full body workout.
+            if (history.length === 0) {
+                recommendationHtml = `
+                    <div class="recommendation-card">
+                        <h3>Welcome! Let's Get Started.</h3>
+                        <p>Since you're new here, a great place to start is with a full body workout to engage all your major muscle groups.</p>
+                        <button class="btn" onclick="document.querySelector('.nav-btn[onclick*=\'workout\']').click(); document.getElementById('workoutType').value='fullbody'; loadWorkout();">
+                            Load Full Body Workout
+                        </button>
+                    </div>
+                `;
+            } else {
+                // More advanced logic could go here, e.g., suggesting a workout based on the last one.
+                const lastWorkoutType = history[0].workoutName;
+                recommendationHtml = `
+                    <div class="recommendation-card">
+                        <h3>Keep Up the Great Work!</h3>
+                        <p>Your last workout was <strong>${lastWorkoutType}</strong>. Consider trying a different muscle group today to ensure balanced training and proper recovery.</p>
+                        <p>Maybe it's a good day for a cardio session or an ab workout!</p>
+                         <button class="btn" onclick="showSection('workout');">
+                            Go to Workout Section
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = recommendationHtml;
+        }
        // ==================== PROGRESS TRACKING ====================
         function updateProgress() {
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
