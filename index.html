@@ -3014,8 +3014,8 @@
             };
 
             const mappedName = exerciseImageMapping[exerciseName];
-            const imageUrl = mappedName ? `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${mappedName}/images/0.jpg` : '';
-
+            const imageUrl = mappedName ? `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${mappedName}/0.jpg` : '';
+            
             // --- YouTube Link Logic ---
             const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
             let youtubeLink = customYouTubeLinks[exerciseName] || youtubeVideoLinks[exerciseName];
