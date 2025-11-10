@@ -3344,7 +3344,7 @@
         // ===================================================================
 
          function saveCustomExerciseToDB(name, data) {
-            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || '{}');
+            const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
             customExercises[name] = data;
             localStorage.setItem('customExercises', JSON.stringify(customExercises));
             
