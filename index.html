@@ -1621,49 +1621,6 @@
     </div>
 
    <script>
-        // ==================== GLOBAL VARIABLES & DATABASES (CORRECTED) ====================
-        let audioCtx; // For HIIT sounds
-        
-        // This is a snapshot of original exercises, taken BEFORE custom ones are loaded. Crucial for logic.
-        const builtInExerciseNames = Object.keys(exerciseDatabase); 
-        
-        // This holds AI-generated or custom instructions. It MUST be declared here at the top.
-        let exerciseDescriptions = JSON.parse(localStorage.getItem('exerciseDescriptions')) || {};
-
-        // App State
-        let currentWorkout = [];
-        let workoutHistory = JSON.parse(localStorage.getItem('workoutHistory')) || [];
-        let timerInterval = null;
-        let timerSeconds = 0;
-        let timerRunning = false;
-
-        // Guided Workout State
-        let guidedMode = false;
-        let workoutStyle = 'traditional';
-        let currentExerciseIndex = 0;
-        let currentSetNumber = 1;
-        let currentRound = 1;
-        let completedSets = [];
-        let restInterval = null;
-        let restTimeRemaining = 0;
-
-        // HIIT State
-        let hiitTimerInterval = null;
-        let hiitTimeRemaining = 0;
-        let hiitCurrentMode = 'work';
-        let hiitCurrentRound = 1;
-        let hiitCurrentExerciseIndex = 0;
-        let hiitIsPaused = false;
-        let hiitWorkoutParams = {
-            workTime: 30,
-            restTime: 15,
-            totalRounds: 4
-        };
-        
-        // Calendar & Body Stats State
-        let currentCalendarDate = new Date();
-        let currentCalendarView = 'month';
-
         // ==================== EXERCISE DATABASE ====================
         const exerciseDatabase = {
             // Leg exercises
@@ -1723,6 +1680,50 @@
             "Box Jumps": { equipment: "Box/Bench", instructions: "Stand facing box. Jump up onto box, landing softly with knees bent. Step down. Repeat. Start with lower height if needed.", image: "box jump", defaultWeight: 0, defaultSets: 3, defaultReps: 10 }
         };
 
+        // ==================== GLOBAL VARIABLES & DATABASES (CORRECTED) ====================
+        let audioCtx; // For HIIT sounds
+        
+        // This is a snapshot of original exercises, taken BEFORE custom ones are loaded. Crucial for logic.
+        const builtInExerciseNames = Object.keys(exerciseDatabase); 
+        
+        // This holds AI-generated or custom instructions. It MUST be declared here at the top.
+        let exerciseDescriptions = JSON.parse(localStorage.getItem('exerciseDescriptions')) || {};
+
+        // App State
+        let currentWorkout = [];
+        let workoutHistory = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let timerRunning = false;
+
+        // Guided Workout State
+        let guidedMode = false;
+        let workoutStyle = 'traditional';
+        let currentExerciseIndex = 0;
+        let currentSetNumber = 1;
+        let currentRound = 1;
+        let completedSets = [];
+        let restInterval = null;
+        let restTimeRemaining = 0;
+
+        // HIIT State
+        let hiitTimerInterval = null;
+        let hiitTimeRemaining = 0;
+        let hiitCurrentMode = 'work';
+        let hiitCurrentRound = 1;
+        let hiitCurrentExerciseIndex = 0;
+        let hiitIsPaused = false;
+        let hiitWorkoutParams = {
+            workTime: 30,
+            restTime: 15,
+            totalRounds: 4
+        };
+        
+        // Calendar & Body Stats State
+        let currentCalendarDate = new Date();
+        let currentCalendarView = 'month';
+
+       
         // ==================== WORKOUT PROGRAMS ====================
         const workoutPrograms = {
             leg: [
