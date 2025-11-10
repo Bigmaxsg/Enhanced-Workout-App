@@ -1621,30 +1621,46 @@
     </div>
 
    <script>
-        // ==================== GLOBAL VARIABLES ====================
+        // ==================== GLOBAL VARIABLES & DATABASES (CORRECTED) ====================
+        let audioCtx; // For HIIT sounds
+        
+        // This is a snapshot of original exercises, taken BEFORE custom ones are loaded. Crucial for logic.
+        const builtInExerciseNames = Object.keys(exerciseDatabase); 
+        
+        // This holds AI-generated or custom instructions. It MUST be declared here at the top.
+        let exerciseDescriptions = JSON.parse(localStorage.getItem('exerciseDescriptions')) || {};
+
+        // App State
+        let currentWorkout = [];
+        let workoutHistory = JSON.parse(localStorage.getItem('workoutHistory')) || [];
         let timerInterval = null;
         let timerSeconds = 0;
         let timerRunning = false;
 
-        let currentWorkout = [];
+        // Guided Workout State
+        let guidedMode = false;
+        let workoutStyle = 'traditional';
         let currentExerciseIndex = 0;
-        let currentSet = 1;
-        let workoutMode = '';
-        let restTimerInterval = null;
-        let workoutStartTime = null;
+        let currentSetNumber = 1;
+        let currentRound = 1;
+        let completedSets = [];
+        let restInterval = null;
+        let restTimeRemaining = 0;
 
-        let hiitInterval = null;
-        let hiitCountdown = 5;
-        let hiitCurrentExerciseIndex = 0;
+        // HIIT State
+        let hiitTimerInterval = null;
+        let hiitTimeRemaining = 0;
+        let hiitCurrentMode = 'work';
         let hiitCurrentRound = 1;
-        let hiitIsWorkPhase = true;
-        let hiitTimeRemaining = 30;
-        let hiitWorkTime = 30;
-        let hiitRestTime = 15;
-        let hiitTotalRounds = 4;
+        let hiitCurrentExerciseIndex = 0;
         let hiitIsPaused = false;
-        let audioContext = null;
-
+        let hiitWorkoutParams = {
+            workTime: 30,
+            restTime: 15,
+            totalRounds: 4
+        };
+        
+        // Calendar & Body Stats State
         let currentCalendarDate = new Date();
         let currentCalendarView = 'month';
 
@@ -1769,19 +1785,6 @@
                 { name: "Dumbbell Bicep Curls", weight: 25, sets: 3, reps: 12 }
             ]
         };
-
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            checkApiKey();
-            loadRecommendation();
-            renderExerciseList();
-            updateProgress();
-            loadHistory();
-            populateShareWorkoutSelect();
-            checkForSharedWorkout();
-            renderCalendar();
-            loadBodyStats();
-        });
 
         // ==================== NAVIGATION ====================
         function showSection(sectionId) {
@@ -4243,6 +4246,19 @@ User's request: ${msg}`;
             reader.readAsText(file);
             event.target.value = '';
         }
+       
+        // ==================== INITIALIZATION (MOVED TO THE END) ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            checkApiKey();
+            loadRecommendation(); // Now this function exists and can be called
+            renderExerciseList();
+            updateProgress();
+            loadHistory();
+            populateShareWorkoutSelect();
+            checkForSharedWorkout();
+            renderCalendar();
+            loadBodyStats();
+        });
     </script>
 </body>
 </html>
