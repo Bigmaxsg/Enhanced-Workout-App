@@ -3545,7 +3545,7 @@ User's request: ${msg}`;
             }
 
             const { description, equipment } = details;
-            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || '{}');
+            const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
             const existingExercise = customExercises[exerciseName] || exerciseDatabase[exerciseName] || {};
             const updatedExerciseData = {
                 ...existingExercise,
