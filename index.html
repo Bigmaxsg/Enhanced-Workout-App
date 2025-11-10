@@ -3565,57 +3565,6 @@
             modal.classList.add('active');
         }
        
-        const folderName = exerciseMapping[exerciseName];
-
-        // If the exercise isn't in our mapping, show a fallback.
-        if (!folderName) {
-            const exercise = exerciseDatabase[exerciseName] || { image: "Custom Exercise" };
-            return `
-                <div class="exercise-image">
-                    <div class="exercise-image-fallback">
-                        ${exercise.image}
-                        <br><small>(No preview available)</small>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Construct the final, correct URL.
-        const imageUrl = `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${folderName}/images/0.jpg`;
-        const uniqueId = `image-${exerciseName.replace(/[^a-zA-Z0-9]/g, '-')}`;
-
-        // Return the complete HTML block with the loading script.
-        return `
-            <div class="exercise-image" id="${uniqueId}">
-                <div class="image-loading">Loading image...</div>
-            </div>
-            <script>
-                (function() {
-                    const container = document.getElementById('${uniqueId}');
-                    if (!container) return; // Prevent errors if modal closes quickly
-                    const img = new Image();
-                    img.onload = function() {
-                        if (container) container.innerHTML = '';
-                        if (container) container.appendChild(img);
-                    };
-                    img.onerror = function() {
-                        // A secondary fallback if the specific image path fails
-                        const fallbackUrl = \`https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${folderName}/0.jpg\`;
-                        const fallbackImg = new Image();
-                        fallbackImg.onload = function() {
-                            if (container) container.innerHTML = '';
-                            if (container) container.appendChild(fallbackImg);
-                        };
-                        fallbackImg.onerror = function() {
-                            if (container) container.innerHTML = '<div class="exercise-image-fallback">Image not available</div>';
-                        };
-                        fallbackImg.src = fallbackUrl;
-                    };
-                    img.src = '${imageUrl}';
-                })();
-            <\/script>
-        `;
-    }
         function closeModal() {
             document.getElementById('exerciseModal').classList.remove('active');
         }
