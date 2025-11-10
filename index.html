@@ -1684,7 +1684,94 @@
         let audioCtx; // For HIIT sounds
         
         // This is a snapshot of original exercises, taken BEFORE custom ones are loaded. Crucial for logic.
-        const builtInExerciseNames = Object.keys(exerciseDatabase); 
+        const builtInExerciseNames = Object.keys(exerciseDatabase);
+
+        // YouTube Shorts/Videos mapping for exercises
+        const youtubeVideoLinks = {
+            'Dumbbell Goblet Squat': 'https://www.youtube.com/results?search_query=goblet+squat+tutorial',
+            'Dumbbell Romanian Deadlift': 'https://www.youtube.com/results?search_query=romanian+deadlift+tutorial',
+            'Dumbbell Lunges': 'https://www.youtube.com/results?search_query=dumbbell+lunges+tutorial',
+            'Dumbbell Calf Raises': 'https://www.youtube.com/results?search_query=dumbbell+calf+raises+tutorial',
+            'Bodyweight Squats': 'https://www.youtube.com/results?search_query=proper+squat+form+tutorial',
+            'Bulgarian Split Squats': 'https://www.youtube.com/results?search_query=bulgarian+split+squat+tutorial',
+            'Walking Lunges': 'https://www.youtube.com/results?search_query=walking+lunges+tutorial',
+            'Step-Ups': 'https://www.youtube.com/results?search_query=step+ups+exercise+tutorial',
+            'Goblet Squats': 'https://www.youtube.com/results?search_query=goblet+squat+tutorial',
+            'Wall Sits': 'https://www.youtube.com/results?search_query=wall+sit+tutorial',
+            'Jump Squats': 'https://www.youtube.com/results?search_query=jump+squats+tutorial',
+            'Incline Dumbbell Press': 'https://www.youtube.com/results?search_query=incline+dumbbell+press+tutorial',
+            'Flat Dumbbell Press': 'https://www.youtube.com/results?search_query=dumbbell+bench+press+tutorial',
+            'Decline Dumbbell Press': 'https://www.youtube.com/results?search_query=decline+dumbbell+press+tutorial',
+            'Barbell Bench Press': 'https://www.youtube.com/results?search_query=barbell+bench+press+tutorial',
+            'Incline Barbell Bench Press': 'https://www.youtube.com/results?search_query=incline+barbell+press+tutorial',
+            'Decline Barbell Bench Press': 'https://www.youtube.com/results?search_query=decline+barbell+press+tutorial',
+            'Incline Dumbbell Flyes': 'https://www.youtube.com/results?search_query=incline+dumbbell+fly+tutorial',
+            'Flat Dumbbell Flyes': 'https://www.youtube.com/results?search_query=dumbbell+fly+tutorial',
+            'Decline Dumbbell Flyes': 'https://www.youtube.com/results?search_query=decline+dumbbell+fly+tutorial',
+            'Dumbbell Pullover': 'https://www.youtube.com/results?search_query=dumbbell+pullover+tutorial',
+            'Diamond Push-Ups': 'https://www.youtube.com/results?search_query=diamond+push+ups+tutorial',
+            'Wide Push-Ups': 'https://www.youtube.com/results?search_query=wide+grip+push+ups+tutorial',
+            'Decline Push-Ups': 'https://www.youtube.com/results?search_query=decline+push+ups+tutorial',
+            'Incline Push-Ups': 'https://www.youtube.com/results?search_query=incline+push+ups+tutorial',
+            'Push-Up': 'https://www.youtube.com/results?search_query=proper+push+up+form+tutorial',
+            'Chest Dips': 'https://www.youtube.com/results?search_query=chest+dips+tutorial',
+            'Cable Crossover': 'https://www.youtube.com/results?search_query=cable+crossover+tutorial',
+            'Dumbbell Bent-Over Row': 'https://www.youtube.com/results?search_query=dumbbell+bent+over+row+tutorial',
+            'Single-Arm Dumbbell Row': 'https://www.youtube.com/results?search_query=single+arm+dumbbell+row+tutorial',
+            'Pull-Ups': 'https://www.youtube.com/results?search_query=proper+pull+up+form+tutorial',
+            'Chin-Ups': 'https://www.youtube.com/results?search_query=chin+up+tutorial',
+            'Assisted Pull-Ups': 'https://www.youtube.com/results?search_query=assisted+pull+ups+tutorial',
+            'Negative Pull-Ups': 'https://www.youtube.com/results?search_query=negative+pull+ups+tutorial',
+            'Wide-Grip Pull-Ups': 'https://www.youtube.com/results?search_query=wide+grip+pull+ups+tutorial',
+            'Barbell Bent-Over Row': 'https://www.youtube.com/results?search_query=barbell+bent+over+row+tutorial',
+            'Pendlay Row': 'https://www.youtube.com/results?search_query=pendlay+row+tutorial',
+            'T-Bar Row': 'https://www.youtube.com/results?search_query=t+bar+row+tutorial',
+            'Inverted Row': 'https://www.youtube.com/results?search_query=inverted+row+tutorial',
+            'Lat Pulldown': 'https://www.youtube.com/results?search_query=lat+pulldown+tutorial',
+            'Close-Grip Lat Pulldown': 'https://www.youtube.com/results?search_query=close+grip+lat+pulldown+tutorial',
+            'Straight-Arm Pulldown': 'https://www.youtube.com/results?search_query=straight+arm+pulldown+tutorial',
+            'Face Pulls': 'https://www.youtube.com/results?search_query=face+pulls+tutorial',
+            'Seated Cable Row': 'https://www.youtube.com/results?search_query=seated+cable+row+tutorial',
+            'Dumbbell Bicep Curls': 'https://www.youtube.com/results?search_query=dumbbell+bicep+curls+tutorial',
+            'Barbell Bicep Curls': 'https://www.youtube.com/results?search_query=barbell+bicep+curls+tutorial',
+            'Hammer Curls': 'https://www.youtube.com/results?search_query=hammer+curls+tutorial',
+            'EZ-Bar Curls': 'https://www.youtube.com/results?search_query=ez+bar+curls+tutorial',
+            'Preacher Curls': 'https://www.youtube.com/results?search_query=preacher+curls+tutorial',
+            'Concentration Curls': 'https://www.youtube.com/results?search_query=concentration+curls+tutorial',
+            'Cable Bicep Curls': 'https://www.youtube.com/results?search_query=cable+bicep+curls+tutorial',
+            'Zottman Curls': 'https://www.youtube.com/results?search_query=zottman+curls+tutorial',
+            'Incline Dumbbell Curls': 'https://www.youtube.com/results?search_query=incline+dumbbell+curls+tutorial',
+            'Dumbbell Shrugs': 'https://www.youtube.com/results?search_query=dumbbell+shrugs+tutorial',
+            'Barbell Shrugs': 'https://www.youtube.com/results?search_query=barbell+shrugs+tutorial',
+            'Meadows Row': 'https://www.youtube.com/results?search_query=meadows+row+tutorial',
+            'Dumbbell Shoulder Press': 'https://www.youtube.com/results?search_query=dumbbell+shoulder+press+tutorial',
+            'Dumbbell Lateral Raises': 'https://www.youtube.com/results?search_query=dumbbell+lateral+raises+tutorial',
+            'Dumbbell Front Raises': 'https://www.youtube.com/results?search_query=dumbbell+front+raises+tutorial',
+            'Bent-Over Rear Delt Raises': 'https://www.youtube.com/results?search_query=rear+delt+raises+tutorial',
+            'Overhead Tricep Extension': 'https://www.youtube.com/results?search_query=overhead+tricep+extension+tutorial',
+            'Dumbbell Tricep Kickbacks': 'https://www.youtube.com/results?search_query=tricep+kickbacks+tutorial',
+            'Close-Grip Bench Press': 'https://www.youtube.com/results?search_query=close+grip+bench+press+tutorial',
+            'Skull Crushers': 'https://www.youtube.com/results?search_query=skull+crushers+tutorial',
+            'Tricep Dips': 'https://www.youtube.com/results?search_query=tricep+dips+tutorial',
+            'Cable Tricep Pushdown': 'https://www.youtube.com/results?search_query=tricep+pushdown+tutorial',
+            'Overhead Cable Extension': 'https://www.youtube.com/results?search_query=overhead+cable+extension+tutorial',
+            'Bench Dips': 'https://www.youtube.com/results?search_query=bench+dips+tutorial',
+            'Dumbbell Russian Twists': 'https://www.youtube.com/results?search_query=russian+twists+tutorial',
+            'Dumbbell Side Bends': 'https://www.youtube.com/results?search_query=side+bends+tutorial',
+            'Plank': 'https://www.youtube.com/results?search_query=proper+plank+form+tutorial',
+            'Mountain Climbers': 'https://www.youtube.com/results?search_query=mountain+climbers+tutorial',
+            'Bicycle Crunches': 'https://www.youtube.com/results?search_query=bicycle+crunches+tutorial',
+            'Kettlebell Swings': 'https://www.youtube.com/results?search_query=kettlebell+swings+tutorial',
+            'Kettlebell Goblet Squat': 'https://www.youtube.com/results?search_query=kettlebell+goblet+squat+tutorial',
+            'Kettlebell Turkish Get-Up': 'https://www.youtube.com/results?search_query=kettlebell+turkish+get+up+tutorial',
+            'Kettlebell Halos': 'https://www.youtube.com/results?search_query=kettlebell+halos+tutorial',
+            'Kettlebell Single-Arm Row': 'https://www.youtube.com/results?search_query=kettlebell+single+arm+row+tutorial',
+            'Kettlebell Overhead Press': 'https://www.youtube.com/results?search_query=kettlebell+overhead+press+tutorial',
+            'Recumbent Bike': 'https://www.youtube.com/results?search_query=recumbent+bike+cardio+tutorial',
+            'Rowing Machine': 'https://www.youtube.com/results?search_query=rowing+machine+tutorial',
+            'Interval Sprints - Bike': 'https://www.youtube.com/results?search_query=hiit+interval+sprints+bike',
+            'Interval Sprints - Rowing': 'https://www.youtube.com/results?search_query=hiit+rowing+machine+intervals'
+        };
         
         // This holds AI-generated or custom instructions. It MUST be declared here at the top.
         let exerciseDescriptions = JSON.parse(localStorage.getItem('exerciseDescriptions')) || {};
@@ -2821,41 +2908,55 @@
             container.innerHTML = html || '<p style="text-align: center; color: #6c757d;">No exercises found</p>';
         }
 
-        function showExerciseInfo(exerciseName) {
-            const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
-            const exercise = exerciseDatabase[exerciseName] || customExercises[exerciseName];
+       function showExerciseInfo(exerciseName) {
+    const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
+    const exercise = exerciseDatabase[exerciseName] || customExercises[exerciseName];
 
-            if (!exercise) {
-                alert('Exercise not found!');
-                return;
-            }
+    if (!exercise) {
+        alert('Exercise not found!');
+        return;
+    }
 
-            document.getElementById('modalExerciseName').textContent = exerciseName;
+    document.getElementById('modalExerciseName').textContent = exerciseName;
 
-            let content = `
-                <p><strong>Equipment:</strong> ${exercise.equipment}</p>
-                <p><strong>Instructions:</strong></p>
-                <p style="line-height: 1.6; margin-bottom: 15px;">${exercise.instructions}</p>
-            `;
+    // --- START OF NEW LOGIC ---
+    const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
+    
+    // 1. First, try to get a user-saved custom link.
+    let youtubeLink = customYouTubeLinks[exerciseName];
+    
+    // 2. If no custom link, try our new predefined database.
+    if (!youtubeLink) {
+        youtubeLink = youtubeVideoLinks[exerciseName];
+    }
+    
+    // 3. If still no link, create a generic search URL as a fallback.
+    if (!youtubeLink) {
+        youtubeLink = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(exerciseName + " tutorial");
+    }
+    // --- END OF NEW LOGIC ---
 
-            const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
-            const youtubeLink = customYouTubeLinks[exerciseName];
+    let content = `
+        <p><strong>Equipment:</strong> ${exercise.equipment}</p>
+        <p><strong>Instructions:</strong></p>
+        <p style="line-height: 1.6; margin-bottom: 15px;">${exercise.instructions}</p>
+    `;
 
-            if (youtubeLink) {
-                content += `
-                    <p><strong>Video Tutorial:</strong></p>
-                    <a href="${youtubeLink}" target="_blank" class="btn btn-secondary" style="margin-top: 10px;">
-                        📺 Watch on YouTube
-                    </a>
-                `;
-            }
+    if (youtubeLink) {
+        content += `
+            <p><strong>Video Tutorial:</strong></p>
+            <a href="${youtubeLink}" target="_blank" class="btn btn-secondary" style="margin-top: 10px;">
+                Watch on YouTube
+            </a>
+        `;
+    }
 
-            const imageElement = getExerciseImageElement(exerciseName);
-            content += imageElement;
+    const imageElement = getExerciseImageElement(exerciseName);
+    content += imageElement;
 
-            document.getElementById('modalExerciseContent').innerHTML = content;
-            document.getElementById('exerciseModal').classList.add('active');
-        }
+    document.getElementById('modalExerciseContent').innerHTML = content;
+    document.getElementById('exerciseModal').classList.add('active');
+}
 
         function getExerciseImageElement(exerciseName) {
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
