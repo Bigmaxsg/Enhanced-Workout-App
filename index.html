@@ -3191,6 +3191,15 @@
         // START: AI COACH FUNCTIONS (RESTORED FROM WORKING FILE)
         // ===================================================================
 
+         function saveCustomExerciseToDB(name, data) {
+            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || {};
+            customExercises[name] = data;
+            localStorage.setItem('customExercises', JSON.stringify(customExercises));
+            
+            // Also update the runtime database so it's immediately available
+            exerciseDatabase[name] = data;
+        }
+        
         function saveApiKey() {
             const key = document.getElementById('apiKey').value.trim();
             if (!key) {
@@ -3405,56 +3414,62 @@ User's request: ${msg}`;
         }
 
         function createWorkoutFromAI(aiWorkout) {
-            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
-            let workoutName = aiWorkout.title || (aiWorkout.workoutType === 'hiit' ? 'AI HIIT Workout' : 'AI Strength Workout');
-            let counter = 1;
-            const originalName = workoutName;
-            while (savedCustomWorkouts[workoutName]) {
-                workoutName = `${originalName} (${counter})`;
-                counter++;
-            }
+    const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+    let workoutName = aiWorkout.title || (aiWorkout.workoutType === 'hiit' ? 'AI HIIT Workout' : 'AI Strength Workout');
+    let counter = 1;
+    const originalName = workoutName;
+    while (savedCustomWorkouts[workoutName]) {
+        workoutName = `${originalName} (${counter})`;
+        counter++;
+    }
 
-            if (aiWorkout.workoutType === 'hiit') {
-                savedCustomWorkouts[workoutName] = {
-                    workoutType: 'hiit',
-                    workTime: aiWorkout.workTime || 30,
-                    restTime: aiWorkout.restTime || 15,
-                    rounds: aiWorkout.rounds || 4,
-                    exercises: aiWorkout.exercises.map(ex => ({ name: ex.name }))
-                };
-            } else {
-                savedCustomWorkouts[workoutName] = aiWorkout.exercises.map(ex => ({
-                    name: ex.name,
-                    sets: parseInt(ex.sets) || 3,
-                    reps: parseInt(ex.reps) || 10,
-                    weight: parseInt(ex.weight) || 0
-                }));
-            }
+    if (aiWorkout.workoutType === 'hiit') {
+        savedCustomWorkouts[workoutName] = {
+            workoutType: 'hiit',
+            workTime: aiWorkout.workTime || 30,
+            restTime: aiWorkout.restTime || 15,
+            rounds: aiWorkout.rounds || 4,
+            exercises: aiWorkout.exercises.map(ex => ({ name: ex.name }))
+        };
+    } else {
+        savedCustomWorkouts[workoutName] = aiWorkout.exercises.map(ex => ({
+            name: ex.name,
+            sets: parseInt(ex.sets) || 3,
+            reps: parseInt(ex.reps) || 10,
+            weight: parseInt(ex.weight) || 0
+        }));
+    }
 
-            aiWorkout.exercises.forEach(ex => {
-                if (!exerciseDatabase[ex.name]) {
-                    const newExerciseData = {
-                        equipment: ex.equipment || 'Bodyweight',
-                        instructions: ex.description || 'No specific instructions provided by AI.',
-                        sets: parseInt(ex.sets) || 3,
-                        reps: parseInt(ex.reps) || 10,
-                        weight: parseInt(ex.weight) || 0,
-                        image: 'AI Generated Exercise'
-                    };
-                    saveCustomExerciseToDB(ex.name, newExerciseData);
-                }
-                if (ex.description) {
-                    exerciseDescriptions[ex.name] = ex.description;
-                }
-            });
-            localStorage.setItem('exerciseDescriptions', JSON.stringify(exerciseDescriptions));
-
-            localStorage.setItem('customWorkouts', JSON.stringify(savedCustomWorkouts));
-            addMsg(`✅ Workout saved! You can now find "${workoutName}" in the "Workout" tab.`, 'bot');
-
-            loadCustomWorkoutsIntoDropdown();
-            renderExerciseList();
+    aiWorkout.exercises.forEach(ex => {
+        if (!exerciseDatabase[ex.name]) {
+            const newExerciseData = {
+                equipment: ex.equipment || 'Bodyweight',
+                instructions: ex.description || 'No specific instructions provided by AI.',
+                sets: parseInt(ex.sets) || 3,
+                reps: parseInt(ex.reps) || 10,
+                weight: parseInt(ex.weight) || 0,
+                image: 'AI Generated Exercise'
+            };
+            // This now calls the function you added in Step 1
+            saveCustomExerciseToDB(ex.name, newExerciseData);
         }
+        if (ex.description) {
+            exerciseDescriptions[ex.name] = ex.description;
+        }
+    });
+    localStorage.setItem('exerciseDescriptions', JSON.stringify(exerciseDescriptions));
+
+    localStorage.setItem('customWorkouts', JSON.stringify(savedCustomWorkouts));
+    addMsg(`✅ Workout saved! You can now find "${workoutName}" in the "Workout" tab.`, 'bot');
+
+    // --- THIS IS THE CORRECTED PART ---
+    // Instead of calling the old function, we call the two new ones.
+    populateLoadCustomWorkoutSelect();
+    populateLoadCustomHiitWorkoutSelect();
+    // --- END OF CORRECTION ---
+    
+    renderExerciseList();
+}
 
         async function generateExerciseDetailsWithAI() {
             const exerciseName = document.getElementById('newExerciseName').value.trim();
