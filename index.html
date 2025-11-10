@@ -2919,36 +2919,45 @@
 
             document.getElementById('modalExerciseName').textContent = exerciseName;
 
-            // --- Logic to find the correct YouTube link (this part is correct) ---
+            // --- THIS IS THE COMPLETE LOGIC TO FIND A YOUTUBE LINK ---
             const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
-            let youtubeLink = customYouTubeLinks[exerciseName] || youtubeVideoLinks[exerciseName];
+            
+            // Step 1: Check for a user-saved custom link.
+            let youtubeLink = customYouTubeLinks[exerciseName];
+            
+            // Step 2: If no custom link, check the big predefined 'youtubeVideoLinks' database.
+            if (!youtubeLink) {
+                youtubeLink = youtubeVideoLinks[exerciseName];
+            }
+            
+            // Step 3: If still no link, create a generic search URL as a fallback.
             if (!youtubeLink) {
                 youtubeLink = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(exerciseName + " tutorial");
             }
+            // --- END OF LINK FINDING LOGIC ---
+
+            // --- BUILD THE HTML CONTENT IN THE CORRECT ORDER ---
             
-            // --- Build the HTML content in the correct order ---
-            
-            // Start with the basic info and instructions
+            // Start with the basic text info.
             let content = `
                 <p><strong>Equipment:</strong> ${exercise.equipment}</p>
                 <p><strong>Instructions:</strong></p>
                 <p style="line-height: 1.6; margin-bottom: 15px;">${exercise.instructions}</p>
             `;
 
-            // Add the image container to the content string first
+            // Add the image container to the content string.
             const imageElement = getExerciseImageElement(exerciseName);
             content += imageElement;
             
-            // **THE FIX:** The missing 'if' block is now restored here, AFTER the image.
-            if (youtubeLink) {
-                content += `
-                    <div style="margin-top: 15px;">
-                         <a href="${youtubeLink}" target="_blank" class="btn btn-secondary" style="width: 100%; text-align: center; margin-top: 0;">
-                            Watch on YouTube
-                        </a>
-                    </div>
-                `;
-            }
+            // Now, add the YouTube button AFTER the image.
+            // Because of our fallback logic, 'youtubeLink' will always have a value.
+            content += `
+                <div style="margin-top: 15px;">
+                     <a href="${youtubeLink}" target="_blank" class="btn btn-secondary" style="width: 100%; text-align: center; margin-top: 0;">
+                        Watch on YouTube
+                    </a>
+                </div>
+            `;
 
             document.getElementById('modalExerciseContent').innerHTML = content;
             document.getElementById('exerciseModal').classList.add('active');
