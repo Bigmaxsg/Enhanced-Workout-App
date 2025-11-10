@@ -2909,54 +2909,50 @@
         }
 
        function showExerciseInfo(exerciseName) {
-    const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
-    const exercise = exerciseDatabase[exerciseName] || customExercises[exerciseName];
+            const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
+            const exercise = exerciseDatabase[exerciseName] || customExercises[exerciseName];
 
-    if (!exercise) {
-        alert('Exercise not found!');
-        return;
-    }
+            if (!exercise) {
+                alert('Exercise not found!');
+                return;
+            }
 
-    document.getElementById('modalExerciseName').textContent = exerciseName;
+            document.getElementById('modalExerciseName').textContent = exerciseName;
 
-    // --- START OF NEW LOGIC ---
-    const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
-    
-    // 1. First, try to get a user-saved custom link.
-    let youtubeLink = customYouTubeLinks[exerciseName];
-    
-    // 2. If no custom link, try our new predefined database.
-    if (!youtubeLink) {
-        youtubeLink = youtubeVideoLinks[exerciseName];
-    }
-    
-    // 3. If still no link, create a generic search URL as a fallback.
-    if (!youtubeLink) {
-        youtubeLink = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(exerciseName + " tutorial");
-    }
-    // --- END OF NEW LOGIC ---
+            // --- LOGIC TO FIND THE CORRECT YOUTUBE LINK ---
+            const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
+            let youtubeLink = customYouTubeLinks[exerciseName] || youtubeVideoLinks[exerciseName];
+            if (!youtubeLink) {
+                youtubeLink = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(exerciseName + " tutorial");
+            }
+            
+            // --- BUILD THE HTML CONTENT IN THE CORRECT ORDER ---
+            
+            // Start with the basic info
+            let content = `
+                <p><strong>Equipment:</strong> ${exercise.equipment}</p>
+                <p><strong>Instructions:</strong></p>
+                <p style="line-height: 1.6; margin-bottom: 15px;">${exercise.instructions}</p>
+            `;
 
-    let content = `
-        <p><strong>Equipment:</strong> ${exercise.equipment}</p>
-        <p><strong>Instructions:</strong></p>
-        <p style="line-height: 1.6; margin-bottom: 15px;">${exercise.instructions}</p>
-    `;
+            // **FIX:** Add the image container to the content string FIRST
+            const imageElement = getExerciseImageElement(exerciseName);
+            content += imageElement;
+            
+            // **FIX:** Now, add the YouTube button AFTER the image
+            if (youtubeLink) {
+                content += `
+                    <div style="margin-top: 15px;">
+                        <a href="${youtubeLink}" target="_blank" class="btn btn-secondary" style="width: 100%; text-align: center; margin-top: 0;">
+                            Watch on YouTube
+                        </a>
+                    </div>
+                `;
+            }
 
-    if (youtubeLink) {
-        content += `
-            <p><strong>Video Tutorial:</strong></p>
-            <a href="${youtubeLink}" target="_blank" class="btn btn-secondary" style="margin-top: 10px;">
-                Watch on YouTube
-            </a>
-        `;
-    }
-
-    const imageElement = getExerciseImageElement(exerciseName);
-    content += imageElement;
-
-    document.getElementById('modalExerciseContent').innerHTML = content;
-    document.getElementById('exerciseModal').classList.add('active');
-}
+            document.getElementById('modalExerciseContent').innerHTML = content;
+            document.getElementById('exerciseModal').classList.add('active');
+        }
 
         function getExerciseImageElement(exerciseName) {
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
