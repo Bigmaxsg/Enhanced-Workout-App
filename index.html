@@ -1941,7 +1941,7 @@
         function loadWorkout() {
             const workoutType = document.getElementById('workoutType').value;
             const container = document.getElementById('workoutContainer');
-            
+
             if (!workoutType) {
                 container.innerHTML = '';
                 document.getElementById('workoutModeSelection').style.display = 'none';
@@ -1958,26 +1958,48 @@
                 return;
             }
 
-            const workout = workoutPrograms[workoutType];
-            currentWorkout = JSON.parse(JSON.stringify(workout));
-            
-            const preferences = JSON.parse(localStorage.getItem('workoutPreferences') || '{}');
-            const workoutKey = workoutType;
-            
-            if (preferences[workoutKey]) {
-                currentWorkout.forEach(exercise => {
-                    const key = exercise.name;
-                    if (preferences[workoutKey][key]) {
-                        exercise.weight = preferences[workoutKey][key].weight || exercise.weight;
-                        exercise.sets = preferences[workoutKey][key].sets || exercise.sets;
-                        exercise.reps = preferences[workoutKey][key].reps || exercise.reps;
-                    }
-                });
+            let workoutData; // This will hold the correct workout data
+
+            if (workoutType.startsWith('saved_')) {
+                // --- THIS IS THE FIX FOR CUSTOM WORKOUTS ---
+                const workoutName = workoutType.substring(6);
+                const savedWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
+                workoutData = savedWorkouts[workoutName]; // Get data from the CORRECT source
+
+            } else {
+                // --- THIS IS THE FIX FOR BUILT-IN WORKOUTS ---
+                const program = workoutPrograms[workoutType];
+                // We need to construct the full exercise objects from the names list
+                workoutData = program.exercises.map(name => ({ name, ...exerciseDatabase[name] }));
             }
 
+            if (!workoutData) {
+                alert('Error: Could not find the selected workout data.');
+                return;
+            }
+
+            // Now, we can safely create a copy and set it as the current workout
+            currentWorkout = JSON.parse(JSON.stringify(workoutData));
+
+            // Apply saved preferences ONLY to pre-built workouts
+            if (!workoutType.startsWith('saved_')) {
+                const preferences = JSON.parse(localStorage.getItem('workoutPreferences') || '{}');
+                const workoutKey = workoutType;
+                if (preferences[workoutKey]) {
+                    currentWorkout.forEach(exercise => {
+                        const savedPrefs = preferences[workoutKey][exercise.name];
+                        if (savedPrefs) {
+                            exercise.weight = savedPrefs.weight ?? exercise.weight;
+                            exercise.sets = savedPrefs.sets ?? exercise.sets;
+                            exercise.reps = savedPrefs.reps ?? exercise.reps;
+                        }
+                    });
+                }
+            }
+
+            // Finally, call the function to display the workout on the screen
             displayWorkout();
         }
-
         function displayWorkout() {
             const container = document.getElementById('workoutContainer');
             let html = '<h3>Today\'s Workout</h3>';
