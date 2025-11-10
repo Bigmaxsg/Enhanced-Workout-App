@@ -3560,110 +3560,145 @@
         }
 
            // Helper function to get free exercise image URL
-        function getExerciseImageElement(exerciseName) {
-            // Map specific exercise names to their correct repository paths
-            const exerciseMapping = {
-                'Dumbbell Goblet Squat': 'Dumbbell_Goblet_Squat',
-                'Dumbbell Romanian Deadlift': 'Romanian_Deadlift',
-                'Dumbbell Lunges': 'Dumbbell_Lunge',
-                'Dumbbell Calf Raises': 'Standing_Calf_Raise',
-                'Bodyweight Squats': 'Bodyweight_Squat',
-                'Bulgarian Split Squats': 'Bulgarian_Split_Squat',
-                'Walking Lunges': 'Walking_Lunge',
-                'Step-Ups': 'Step_Up',
-                'Goblet Squats': 'Goblet_Squat',
-                'Wall Sits': 'Wall_Sit',
-                'Jump Squats': 'Jump_Squat',
-                'Incline Dumbbell Press': 'Incline_Dumbbell_Press',
-                'Flat Dumbbell Press': 'Dumbbell_Bench_Press',
-                'Decline Dumbbell Press': 'Decline_Dumbbell_Bench_Press',
-                'Barbell Bench Press': 'Barbell_Bench_Press_-_Medium_Grip',
-                'Incline Barbell Bench Press': 'Barbell_Incline_Bench_Press_-_Medium_Grip',
-                'Decline Barbell Bench Press': 'Decline_Barbell_Bench_Press',
-                'Incline Dumbbell Flyes': 'Incline_Dumbbell_Fly',
-                'Flat Dumbbell Flyes': 'Dumbbell_Flyes',
-                'Decline Dumbbell Flyes': 'Decline_Dumbbell_Fly',
-                'Dumbbell Pullover': 'Dumbbell_Pullover',
-                'Diamond Push-Ups': 'Close-Grip_Push-Up',
-                'Wide Push-Ups': 'Wide-Grip_Push-Up',
-                'Decline Push-Ups': 'Decline_Push-Up',
-                'Incline Push-Ups': 'Incline_Push-Up',
-                'Push-Up': 'Push-Ups',
-                'Chest Dips': 'Chest_Dip',
-                'Cable Crossover': 'Cable_Crossover',
-                'Dumbbell Bent-Over Row': 'Bent_Over_Barbell_Row',
-                'Single-Arm Dumbbell Row': 'One_Arm_Dumbbell_Row',
-                'Pull-Ups': 'Pullups',
-                'Chin-Ups': 'Chin_Up',
-                'Assisted Pull-Ups': 'Assisted_Pull-Up',
-                'Negative Pull-Ups': 'Pullups',
-                'Wide-Grip Pull-Ups': 'Pullups',
-                'Barbell Bent-Over Row': 'Bent_Over_Barbell_Row',
-                'Pendlay Row': 'Pendlay_Row',
-                'T-Bar Row': 'T-Bar_Row',
-                'Inverted Row': 'Inverted_Row',
-                'Lat Pulldown': 'Wide_Grip_Lat_Pulldown',
-                'Close-Grip Lat Pulldown': 'Close_Grip_Front_Lat_Pulldown',
-                'Straight-Arm Pulldown': 'Straight-Arm_Pulldown',
-                'Face Pulls': 'Face_Pull',
-                'Seated Cable Row': 'Seated_Cable_Row',
-                'Meadows Row': 'Meadows_Row',
-                'Dumbbell Bicep Curls': 'Dumbbell_Bicep_Curl',
-                'Barbell Bicep Curls': 'Barbell_Curl',
-                'Hammer Curls': 'Hammer_Curls',
-                'EZ-Bar Curls': 'EZ-Bar_Curl',
-                'Preacher Curls': 'Preacher_Curl',
-                'Concentration Curls': 'Concentration_Curls',
-                'Cable Bicep Curls': 'Cable_Curl',
-                'Zottman Curls': 'Zottman_Curl',
-                'Incline Dumbbell Curls': 'Alternate_Incline_Dumbbell_Curl',
-                'Dumbbell Shrugs': 'Dumbbell_Shrug',
-                'Barbell Shrugs': 'Barbell_Shrug',
-                'Dumbbell Shoulder Press': 'Dumbbell_Shoulder_Press',
-                'Dumbbell Lateral Raises': 'Dumbbell_Lateral_Raise',
-                'Dumbbell Front Raises': 'Dumbbell_Front_Raise',
-                'Bent-Over Rear Delt Raises': 'Bent_Over_Dumbbell_Rear_Delt_Raise',
-                'Overhead Tricep Extension': 'Overhead_Triceps_Extension',
-                'Dumbbell Tricep Kickbacks': 'Tricep_Kickback',
-                'Close-Grip Bench Press': 'Close-Grip_Bench_Press',
-                'Skull Crushers': 'Lying_Triceps_Extension',
-                'Tricep Dips': 'Dips_-_Triceps_Version',
-                'Cable Tricep Pushdown': 'Triceps_Pushdown',
-                'Overhead Cable Extension': 'Overhead_Cable_Extension',
-                'Bench Dips': 'Bench_Dip',
-                'Dumbbell Russian Twists': 'Russian_Twist',
-                'Dumbbell Side Bends': 'Side_Bend',
-                'Plank': 'Plank',
-                'Mountain Climbers': 'Mountain_Climber',
-                'Bicycle Crunches': 'Bicycle_Crunch',
-                'Kettlebell Swings': 'Kettlebell_Swing',
-                'Kettlebell Goblet Squat': 'Kettlebell_Goblet_Squat',
-                'Kettlebell Turkish Get-Up': 'Turkish_Get-Up',
-                'Kettlebell Halos': 'Kettlebell_Halo',
-                'Kettlebell Single-Arm Row': 'Kettlebell_One_Arm_Row',
-                'Kettlebell Overhead Press': 'Kettlebell_Overhead_Press',
-                'Recumbent Bike': 'Air_Bike',
-                'Rowing Machine': 'Seated_Cable_Row',
-                'Interval Sprints - Bike': 'Air_Bike',
-                'Interval Sprints - Rowing': 'Seated_Cable_Row'
-            };
+      function getExerciseImageElement(exerciseName) {
+        // Use the reliable mapping object to get the folder name.
+        const exerciseMapping = {
+            'Dumbbell Goblet Squat': 'Dumbbell_Goblet_Squat',
+            'Dumbbell Romanian Deadlift': 'Romanian_Deadlift',
+            'Dumbbell Lunges': 'Dumbbell_Lunge',
+            'Dumbbell Calf Raises': 'Standing_Calf_Raise',
+            'Bodyweight Squats': 'Bodyweight_Squat',
+            'Bulgarian Split Squats': 'Bulgarian_Split_Squat',
+            'Walking Lunges': 'Walking_Lunge',
+            'Step-Ups': 'Step_Up',
+            'Goblet Squats': 'Goblet_Squat',
+            'Wall Sits': 'Wall_Sit',
+            'Jump Squats': 'Jump_Squat',
+            'Incline Dumbbell Press': 'Incline_Dumbbell_Press',
+            'Flat Dumbbell Press': 'Dumbbell_Bench_Press',
+            'Decline Dumbbell Press': 'Decline_Dumbbell_Bench_Press',
+            'Barbell Bench Press': 'Barbell_Bench_Press_-_Medium_Grip',
+            'Incline Barbell Bench Press': 'Barbell_Incline_Bench_Press_-_Medium_Grip',
+            'Decline Barbell Bench Press': 'Decline_Barbell_Bench_Press',
+            'Incline Dumbbell Flyes': 'Incline_Dumbbell_Fly',
+            'Flat Dumbbell Flyes': 'Dumbbell_Flyes',
+            'Decline Dumbbell Flyes': 'Decline_Dumbbell_Fly',
+            'Dumbbell Pullover': 'Dumbbell_Pullover',
+            'Diamond Push-Ups': 'Close-Grip_Push-Up',
+            'Wide Push-Ups': 'Wide-Grip_Push-Up',
+            'Decline Push-Ups': 'Decline_Push-Up',
+            'Incline Push-Ups': 'Incline_Push-Up',
+            'Push-Up': 'Push-Ups',
+            'Chest Dips': 'Chest_Dip',
+            'Cable Crossover': 'Cable_Crossover',
+            'Dumbbell Bent-Over Row': 'Bent_Over_Barbell_Row',
+            'Single-Arm Dumbbell Row': 'One_Arm_Dumbbell_Row',
+            'Pull-Ups': 'Pullups',
+            'Chin-Ups': 'Chin_Up',
+            'Assisted Pull-Ups': 'Assisted_Pull-Up',
+            'Negative Pull-Ups': 'Pullups',
+            'Wide-Grip Pull-Ups': 'Pullups',
+            'Barbell Bent-Over Row': 'Bent_Over_Barbell_Row',
+            'Pendlay Row': 'Pendlay_Row',
+            'T-Bar Row': 'T-Bar_Row',
+            'Inverted Row': 'Inverted_Row',
+            'Lat Pulldown': 'Wide_Grip_Lat_Pulldown',
+            'Close-Grip Lat Pulldown': 'Close_Grip_Front_Lat_Pulldown',
+            'Straight-Arm Pulldown': 'Straight-Arm_Pulldown',
+            'Face Pulls': 'Face_Pull',
+            'Seated Cable Row': 'Seated_Cable_Row',
+            'Meadows Row': 'Meadows_Row',
+            'Dumbbell Bicep Curls': 'Dumbbell_Bicep_Curl',
+            'Barbell Bicep Curls': 'Barbell_Curl',
+            'Hammer Curls': 'Hammer_Curls',
+            'EZ-Bar Curls': 'EZ-Bar_Curl',
+            'Preacher Curls': 'Preacher_Curl',
+            'Concentration Curls': 'Concentration_Curls',
+            'Cable Bicep Curls': 'Cable_Curl',
+            'Zottman Curls': 'Zottman_Curl',
+            'Incline Dumbbell Curls': 'Alternate_Incline_Dumbbell_Curl',
+            'Dumbbell Shrugs': 'Dumbbell_Shrug',
+            'Barbell Shrugs': 'Barbell_Shrug',
+            'Dumbbell Shoulder Press': 'Dumbbell_Shoulder_Press',
+            'Dumbbell Lateral Raises': 'Dumbbell_Lateral_Raise',
+            'Dumbbell Front Raises': 'Dumbbell_Front_Raise',
+            'Bent-Over Rear Delt Raises': 'Bent_Over_Dumbbell_Rear_Delt_Raise',
+            'Overhead Tricep Extension': 'Overhead_Triceps_Extension',
+            'Dumbbell Tricep Kickbacks': 'Tricep_Kickback',
+            'Close-Grip Bench Press': 'Close-Grip_Bench_Press',
+            'Skull Crushers': 'Lying_Triceps_Extension',
+            'Tricep Dips': 'Dips_-_Triceps_Version',
+            'Cable Tricep Pushdown': 'Triceps_Pushdown',
+            'Overhead Cable Extension': 'Overhead_Cable_Extension',
+            'Bench Dips': 'Bench_Dip',
+            'Dumbbell Russian Twists': 'Russian_Twist',
+            'Dumbbell Side Bends': 'Side_Bend',
+            'Plank': 'Plank',
+            'Mountain Climbers': 'Mountain_Climber',
+            'Bicycle Crunches': 'Bicycle_Crunch',
+            'Kettlebell Swings': 'Kettlebell_Swing',
+            'Kettlebell Goblet Squat': 'Kettlebell_Goblet_Squat',
+            'Kettlebell Turkish Get-Up': 'Turkish_Get-Up',
+            'Kettlebell Halos': 'Kettlebell_Halo',
+            'Kettlebell Single-Arm Row': 'Kettlebell_One_Arm_Row',
+            'Kettlebell Overhead Press': 'Kettlebell_Overhead_Press',
+            'Recumbent Bike': 'Air_Bike',
+            'Rowing Machine': 'Seated_Cable_Row',
+            'Interval Sprints - Bike': 'Air_Bike',
+            'Interval Sprints - Rowing': 'Seated_Cable_Row'
+        };
+        
+        const folderName = exerciseMapping[exerciseName];
 
-            const mappedName = exerciseMapping[exerciseName] || exerciseName.replace(/ /g, '_');
-            return `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${mappedName}/0.jpg`;
-        }
-
-        function escapeHTML(str) {
-            const p = document.createElement("p");
-            p.textContent = str;
-            return p.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-        }
-
-                        tryLoadImage();
-                    )();
-                <\\/script>
+        // If the exercise isn't in our mapping, show a fallback.
+        if (!folderName) {
+            const exercise = exerciseDatabase[exerciseName] || { image: "Custom Exercise" };
+            return `
+                <div class="exercise-image">
+                    <div class="exercise-image-fallback">
+                        ${exercise.image}
+                        <br><small>(No preview available)</small>
+                    </div>
+                </div>
             `;
         }
+        
+        // Construct the final, correct URL.
+        const imageUrl = `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${folderName}/images/0.jpg`;
+        const uniqueId = `image-${exerciseName.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
+        // Return the complete HTML block with the loading script.
+        return `
+            <div class="exercise-image" id="${uniqueId}">
+                <div class="image-loading">Loading image...</div>
+            </div>
+            <script>
+                (function() {
+                    const container = document.getElementById('${uniqueId}');
+                    if (!container) return; // Prevent errors if modal closes quickly
+                    const img = new Image();
+                    img.onload = function() {
+                        if (container) container.innerHTML = '';
+                        if (container) container.appendChild(img);
+                    };
+                    img.onerror = function() {
+                        // A secondary fallback if the specific image path fails
+                        const fallbackUrl = \`https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${folderName}/0.jpg\`;
+                        const fallbackImg = new Image();
+                        fallbackImg.onload = function() {
+                            if (container) container.innerHTML = '';
+                            if (container) container.appendChild(fallbackImg);
+                        };
+                        fallbackImg.onerror = function() {
+                            if (container) container.innerHTML = '<div class="exercise-image-fallback">Image not available</div>';
+                        };
+                        fallbackImg.src = fallbackUrl;
+                    };
+                    img.src = '${imageUrl}';
+                })();
+            <\/script>
+        `;
+    }
         function closeModal() {
             document.getElementById('exerciseModal').classList.remove('active');
         }
