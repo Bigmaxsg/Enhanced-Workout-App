@@ -1619,7 +1619,7 @@
         </div>
     </div>
 
-    <script>
+   <script>
         // ==================== GLOBAL VARIABLES ====================
         let timerInterval = null;
         let timerSeconds = 0;
@@ -2304,7 +2304,7 @@
             
             document.getElementById('customHiitWorkoutName').value = workoutName;
         }
-        // ==================== GUIDED WORKOUT MODE ====================
+       // ==================== GUIDED WORKOUT MODE ====================
         function startGuidedWorkout(mode) {
             if (currentWorkout.length === 0 || !currentWorkout[0].name) {
                 alert('Please select or create a workout first!');
@@ -2902,7 +2902,7 @@
 
                         function tryLoadImage() {
                             if (currentIndex >= urls.length) {
-                                container.innerHTML = '<div class="exercise-image-fallback">Image not available</div>';
+                                container.innerHTML = '<div class="exercise-image-fallback">Image not available<\\/div>';
                                 return;
                             }
 
@@ -2920,7 +2920,7 @@
 
                         tryLoadImage();
                     })();
-                </script>
+                <\\/script>
             `;
         }
 
@@ -3284,7 +3284,7 @@ Target: [muscles targeted]`
                 console.error('Error:', error);
             }
         }
-    // ==================== PROGRESS TRACKING ====================
+       // ==================== PROGRESS TRACKING ====================
         function updateProgress() {
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             
