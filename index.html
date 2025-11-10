@@ -3057,15 +3057,29 @@
             }
         }
 
+        // ===================================================================
+        // START: AI COACH FUNCTIONS (RESTORED FROM WORKING FILE)
+        // ===================================================================
+
         function saveApiKey() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                alert('Please enter your API key');
+            const key = document.getElementById('apiKey').value.trim();
+            if (!key) {
+                alert('Please paste your API key');
                 return;
             }
-            localStorage.setItem('geminiKey', apiKey);
-            checkApiKey();
-            alert('API Key saved successfully! You can now use the AI Coach.');
+            localStorage.setItem('geminiKey', key);
+            initAI();
+        }
+
+        function initAI() {
+            const key = localStorage.getItem('geminiKey');
+            if (key) {
+                document.getElementById('api-setup').style.display = 'none';
+                document.getElementById('chat-box').style.display = 'block';
+                if (document.getElementById('messages').children.length === 0) {
+                    addMsg('Hi! I am your AI Workout Coach. How can I help you train today?', 'bot');
+                }
+            }
         }
 
         function resetApiKey() {
@@ -3073,217 +3087,298 @@
                 localStorage.removeItem('geminiKey');
                 document.getElementById('api-setup').style.display = 'block';
                 document.getElementById('chat-box').style.display = 'none';
-                document.getElementById('messages').innerHTML = '';
+                document.getElementById('messages').innerHTML = ''; // Clear chat history on key change
             }
         }
 
-        async function sendMessage() {
-            const userMessage = document.getElementById('userMessage').value.trim();
-            if (!userMessage) return;
+        function addMsg(text, role) {
+            const msg = document.createElement('div');
+            msg.style.padding = '10px';
+            msg.style.borderRadius = '8px';
+            msg.style.maxWidth = '80%';
+            if (role === 'user') {
+                msg.style.background = '#003d5c';
+                msg.style.color = '#f5f5dc';
+                msg.style.alignSelf = 'flex-end';
+            } else {
+                msg.style.background = '#d4af37';
+                msg.style.color = '#001f3f';
+                msg.style.alignSelf = 'flex-start';
+            }
+            msg.textContent = text;
+            document.getElementById('messages').appendChild(msg);
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        }
 
-            const apiKey = localStorage.getItem('geminiKey');
-            if (!apiKey) {
-                alert('Please set up your API key first');
+        async function sendMessage() {
+            const msg = document.getElementById('userMessage').value.trim();
+            if (!msg) return;
+
+            addMsg(msg, 'user');
+            document.getElementById('userMessage').value = '';
+
+            const key = localStorage.getItem('geminiKey');
+            if (!key) {
+                alert('API key not set');
                 return;
             }
 
-            addMessage(userMessage, 'user');
-            document.getElementById('userMessage').value = '';
+            // THIS IS THE WORKING, DETAILED PROMPT
+            const instruction_prompt = `You are a helpful AI fitness coach integrated into a workout app. Your primary goal is to assist the user. Analyze the user's request and respond in one of four ways:
+
+1. If the user wants to create a standard strength workout (e.g., "give me a leg workout", "create a 30 minute dumbbell routine"):
+Respond with a JSON object for the workout plan. The JSON must have this EXACT structure:
+{"title": "Workout Name", "exercises": [{"name": "Exercise Name", "sets": number, "reps": number, "weight": number, "equipment": "e.g., Dumbbells", "description": "Detailed 2-3 sentence description of proper form"}]}
+
+2. If the user wants to create a High-Intensity Interval Training (HIIT) workout (e.g., "give me a 20 minute HIIT workout", "bodyweight HIIT routine"):
+Respond with a JSON object specifically for a HIIT workout. The JSON must have this EXACT structure:
+{"title": "Workout Name", "workoutType": "hiit", "workTime": number, "restTime": number, "rounds": number, "exercises": [{"name": "Exercise Name", "description": "How to do the exercise. Assume bodyweight unless specified."}]}
+
+3. If the user wants to add, fix, or update the details for a SINGLE exercise (e.g., "add instructions for farmers walk", "what's the equipment for a dumbbell squat?"):
+Respond with a JSON object to update the app's database. The JSON must have this EXACT structure:
+{"action": "update_exercise", "exerciseName": "Name Of The Exercise", "details": {"description": "Detailed instructions on how to perform the exercise.", "equipment": "The equipment needed."}}
+
+4. If the user asks a general fitness question or wants advice (e.g., "what's the best way to warm up?", "should I do cardio before or after weights?", "how many rest days should I take?", "what's better for fat loss?"):
+Respond conversationally with helpful, accurate fitness advice. Do NOT use JSON format for these responses - just respond naturally as a knowledgeable fitness coach.
+
+For workout/HIIT creation or exercise updates (options 1-3), respond ONLY with the appropriate JSON format. For general questions and advice (option 4), respond conversationally without JSON.
+
+User's request: ${msg}`;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
+                // THIS IS THE WORKING API ENDPOINT
+                const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent?key=' + key, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `You are a personal fitness coach. The user has access to: dumbbells (various weights), an incline bench, a 30-pound kettlebell, a recumbent bike, and a rowing machine. ${userMessage}`
+                                text: instruction_prompt
                             }]
                         }]
                     })
                 });
 
                 const data = await response.json();
-                const aiMessage = data.candidates[0].content.parts[0].text;
-                addMessage(aiMessage, 'ai');
 
-                const workoutPattern = /\*\*(.+?)\*\*[\s\S]*?Weight:\s*(\d+)[\s\S]*?Sets:\s*(\d+)[\s\S]*?Reps:\s*(\d+)/gi;
-                let match;
-                const detectedExercises = [];
-
-                while ((match = workoutPattern.exec(aiMessage)) !== null) {
-                    detectedExercises.push({
-                        name: match[1].trim(),
-                        weight: parseInt(match[2]),
-                        sets: parseInt(match[3]),
-                        reps: parseInt(match[4])
-                    });
+                if (!response.ok) {
+                    console.error('API Error Response:', data);
+                    addMsg(`API Error: ${data.error?.message || response.statusText}. Please check your API key and its permissions.`, 'bot');
+                    return;
                 }
 
-                if (detectedExercises.length > 0) {
-                    setTimeout(() => {
-                        if (confirm('Would you like to load this AI-generated workout?')) {
-                            currentWorkout = detectedExercises;
-                            document.getElementById('workoutType').value = 'custom';
-                            displayWorkout();
-                            showSection('workout');
-                        }
-                    }, 500);
+                let resultText = 'Error getting response';
+                if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+                    resultText = data.candidates[0].content.parts[0].text;
+                } else if (data.error) {
+                    console.error('API Error Response:', data);
+                    resultText = `API Error: ${data.error.message}. Please check your key.`;
+                    addMsg(resultText, 'bot');
+                    return;
                 }
 
-            } catch (error) {
-                addMessage('Sorry, there was an error processing your request. Please check your API key and try again.', 'ai');
-                console.error('Error:', error);
+                // THIS IS THE WORKING PARSING LOGIC
+                try {
+                    const aiResponse = JSON.parse(resultText.match(/\{[\s\S]*\}/)[0]);
+
+                    if (aiResponse.action === 'update_exercise') {
+                        updateExerciseFromAI(aiResponse);
+                    } else if (aiResponse.title && aiResponse.exercises) {
+                        handleWorkoutCreation(aiResponse);
+                    } else {
+                        addMsg(resultText, 'bot');
+                    }
+                } catch (e) {
+                    console.error('Failed to parse AI response as JSON:', e);
+                    addMsg(resultText, 'bot');
+                }
+
+            } catch (e) {
+                console.error('Network or other error:', e);
+                addMsg(`Error: ${e.message}. Make sure you are connected to the internet.`, 'bot');
             }
         }
 
-        function addMessage(text, sender) {
-            const messagesDiv = document.getElementById('messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.style.cssText = sender === 'user' 
-                ? 'background: #003d5c; color: #d4af37; padding: 12px; border-radius: 10px; margin-bottom: 10px; text-align: right;'
-                : 'background: white; color: #333; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 2px solid #8b7355;';
-            messageDiv.innerHTML = `<strong>${sender === 'user' ? 'You' : '🤖 AI Coach'}:</strong><br>${text.replace(/\n/g, '<br>')}`;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        function handleWorkoutCreation(aiWorkout) {
+            let workoutDetails;
+            if (aiWorkout.workoutType === 'hiit') {
+                workoutDetails = `Work: ${aiWorkout.workTime}s, Rest: ${aiWorkout.restTime}s, Rounds: ${aiWorkout.rounds}\n` +
+                    aiWorkout.exercises.map(ex => `- ${ex.name}`).join('\n');
+            } else {
+                workoutDetails = aiWorkout.exercises.map(ex => `- ${ex.name}: ${ex.sets}x${ex.reps} @ ${ex.weight} lbs`).join('\n');
+            }
+
+            addMsg('Here is the workout I generated for you:', 'bot');
+            addMsg(workoutDetails, 'bot');
+            addMsg('Would you like me to save this workout in your app?', 'bot');
+
+            const msgContainer = document.getElementById('messages');
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '10px';
+            buttonContainer.style.marginTop = '10px';
+            buttonContainer.style.justifyContent = 'center';
+
+            const createBtn = document.createElement('button');
+            createBtn.textContent = '💾 Save Workout';
+            createBtn.className = 'btn btn-success';
+            createBtn.style.width = 'auto';
+            createBtn.style.padding = '10px 20px';
+            createBtn.style.marginTop = '0';
+            createBtn.onclick = () => {
+                createWorkoutFromAI(aiWorkout);
+                buttonContainer.remove();
+            };
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '❌ No Thanks';
+            cancelBtn.className = 'btn btn-secondary';
+            cancelBtn.style.width = 'auto';
+            cancelBtn.style.padding = '10px 20px';
+            cancelBtn.style.marginTop = '0';
+            cancelBtn.onclick = () => buttonContainer.remove();
+
+            buttonContainer.appendChild(createBtn);
+            buttonContainer.appendChild(cancelBtn);
+            msgContainer.appendChild(buttonContainer);
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+        }
+
+        function updateExerciseFromAI(data) {
+            const { exerciseName, details } = data;
+            if (!exerciseName || !details) {
+                addMsg("I couldn't understand which exercise to update. Please try again.", 'bot');
+                return;
+            }
+
+            const { description, equipment } = details;
+            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || {};
+            const existingExercise = customExercises[exerciseName] || exerciseDatabase[exerciseName] || {};
+            const updatedExerciseData = {
+                ...existingExercise,
+                equipment: equipment || existingExercise.equipment || 'Various',
+                instructions: description || existingExercise.instructions || 'No instructions provided.',
+                image: existingExercise.image || 'AI Generated Exercise'
+            };
+
+            saveCustomExerciseToDB(exerciseName, updatedExerciseData);
+
+            if (description) {
+                exerciseDescriptions[exerciseName] = description;
+                localStorage.setItem('exerciseDescriptions', JSON.stringify(exerciseDescriptions));
+            }
+
+            addMsg(`✅ I've updated the details for "${exerciseName}" in the app's database.`, 'bot');
+            renderExerciseList();
+        }
+
+        function createWorkoutFromAI(aiWorkout) {
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            let workoutName = aiWorkout.title || (aiWorkout.workoutType === 'hiit' ? 'AI HIIT Workout' : 'AI Strength Workout');
+            let counter = 1;
+            const originalName = workoutName;
+            while (savedCustomWorkouts[workoutName]) {
+                workoutName = `${originalName} (${counter})`;
+                counter++;
+            }
+
+            if (aiWorkout.workoutType === 'hiit') {
+                savedCustomWorkouts[workoutName] = {
+                    workoutType: 'hiit',
+                    workTime: aiWorkout.workTime || 30,
+                    restTime: aiWorkout.restTime || 15,
+                    rounds: aiWorkout.rounds || 4,
+                    exercises: aiWorkout.exercises.map(ex => ({ name: ex.name }))
+                };
+            } else {
+                savedCustomWorkouts[workoutName] = aiWorkout.exercises.map(ex => ({
+                    name: ex.name,
+                    sets: parseInt(ex.sets) || 3,
+                    reps: parseInt(ex.reps) || 10,
+                    weight: parseInt(ex.weight) || 0
+                }));
+            }
+
+            aiWorkout.exercises.forEach(ex => {
+                if (!exerciseDatabase[ex.name]) {
+                    const newExerciseData = {
+                        equipment: ex.equipment || 'Bodyweight',
+                        instructions: ex.description || 'No specific instructions provided by AI.',
+                        sets: parseInt(ex.sets) || 3,
+                        reps: parseInt(ex.reps) || 10,
+                        weight: parseInt(ex.weight) || 0,
+                        image: 'AI Generated Exercise'
+                    };
+                    saveCustomExerciseToDB(ex.name, newExerciseData);
+                }
+                if (ex.description) {
+                    exerciseDescriptions[ex.name] = ex.description;
+                }
+            });
+            localStorage.setItem('exerciseDescriptions', JSON.stringify(exerciseDescriptions));
+
+            localStorage.setItem('customWorkouts', JSON.stringify(savedCustomWorkouts));
+            addMsg(`✅ Workout saved! You can now find "${workoutName}" in the "Workout" tab.`, 'bot');
+
+            loadCustomWorkoutsIntoDropdown();
+            renderExerciseList();
         }
 
         async function generateExerciseDetailsWithAI() {
             const exerciseName = document.getElementById('newExerciseName').value.trim();
             if (!exerciseName) {
-                alert('Please enter an exercise name first!');
+                alert('Please enter an exercise name first.');
                 return;
             }
 
-            const apiKey = localStorage.getItem('geminiKey');
-            if (!apiKey) {
-                alert('Please set up your API key in the AI Coach tab first');
+            const key = localStorage.getItem('geminiKey');
+            if (!key) {
+                alert('Please set up your API key in the AI Coach tab first.');
                 return;
             }
 
             const btn = document.getElementById('aiGenerateBtn');
+            btn.textContent = '🤖 Generating...';
             btn.disabled = true;
-            btn.textContent = '⏳ Generating...';
+
+            const prompt = `Provide a detailed description and the typical equipment for the exercise: "${exerciseName}". Respond ONLY with a JSON object in this exact format: {"description": "...", "equipment": "..."}`;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent?key=${key}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Provide details for the exercise "${exerciseName}". Format your response EXACTLY as follows:
-Equipment: [list equipment needed]
-Instructions: [detailed step-by-step instructions]
-Target: [muscles targeted]`
-                            }]
-                        }]
+                        contents: [{ parts: [{ text: prompt }] }]
                     })
                 });
 
+                if (!response.ok) throw new Error('API request failed');
+                
                 const data = await response.json();
-                const aiResponse = data.candidates[0].content.parts[0].text;
+                const resultText = data.candidates[0].content.parts[0].text;
+                const jsonResponse = JSON.parse(resultText.match(/\{[\s\S]*\}/)[0]);
 
-                const equipmentMatch = aiResponse.match(/Equipment:\s*(.+)/i);
-                const instructionsMatch = aiResponse.match(/Instructions:\s*(.+?)(?=Target:|$)/is);
-                const targetMatch = aiResponse.match(/Target:\s*(.+)/i);
-
-                if (equipmentMatch) {
-                    document.getElementById('newExerciseEquipment').value = equipmentMatch[1].trim();
+                if (jsonResponse.description && jsonResponse.equipment) {
+                    document.getElementById('newExerciseInstructions').value = jsonResponse.description;
+                    document.getElementById('newExerciseEquipment').value = jsonResponse.equipment;
+                } else {
+                    alert('AI could not generate details in the correct format. Please try again.');
                 }
-                if (instructionsMatch) {
-                    document.getElementById('newExerciseInstructions').value = instructionsMatch[1].trim();
-                }
-                if (targetMatch) {
-                    document.getElementById('newExerciseImage').value = targetMatch[1].trim();
-                }
-
-                alert('Exercise details generated! Review and edit as needed before saving.');
 
             } catch (error) {
-                alert('Error generating exercise details. Please try again.');
-                console.error('Error:', error);
+                console.error("AI Generation Error:", error);
+                alert('An error occurred while generating details with AI. Please check the console.');
             } finally {
-                btn.disabled = false;
                 btn.textContent = '🤖 Generate with AI';
+                btn.disabled = false;
             }
         }
-
-        function loadRecommendation() {
-            const today = new Date().toDateString();
-            const lastDate = localStorage.getItem('lastRecommendationDate');
-            
-            if (lastDate === today) {
-                const savedRec = localStorage.getItem('todayRecommendation');
-                if (savedRec) {
-                    document.getElementById('recommendationContainer').innerHTML = savedRec;
-                    return;
-                }
-            }
-
-            const apiKey = localStorage.getItem('geminiKey');
-            if (!apiKey) {
-                document.getElementById('recommendationContainer').innerHTML = `
-                    <div class="info-box">
-                        <p>Set up your AI Coach API key to get personalized daily workout recommendations!</p>
-                        <button class="btn" onclick="showSection('ai-coach'); document.querySelector('.nav-btn').click();">
-                            Go to AI Coach Setup
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            generateDailyRecommendation(apiKey);
-        }
-
-        async function generateDailyRecommendation(apiKey) {
-            const container = document.getElementById('recommendationContainer');
-            container.innerHTML = '<div class="recommendation-card"><h3>Generating your personalized recommendation...</h3></div>';
-
-            try {
-                const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-                const recentWorkouts = history.slice(0, 5).map(w => w.workoutName).join(', ');
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `As a fitness coach, provide a brief daily workout recommendation (2-3 sentences). Recent workouts: ${recentWorkouts || 'None yet'}. Available equipment: dumbbells, incline bench, 30lb kettlebell, recumbent bike, rowing machine.`
-                            }]
-                        }]
-                    })
-                });
-
-                const data = await response.json();
-                const recommendation = data.candidates[0].content.parts[0].text;
-
-                const html = `
-                    <div class="recommendation-card">
-                        <h3>💡 Today's Recommendation</h3>
-                        <p>${recommendation}</p>
-                        <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
-                            Generated: ${new Date().toLocaleString()}
-                        </p>
-                    </div>
-                `;
-
-                container.innerHTML = html;
-                localStorage.setItem('todayRecommendation', html);
-                localStorage.setItem('lastRecommendationDate', new Date().toDateString());
-
-            } catch (error) {
-                container.innerHTML = `
-                    <div class="info-box">
-                        <p>Unable to generate recommendation. Please check your API key and internet connection.</p>
-                        <button class="btn" onclick="loadRecommendation()">🔄 Try Again</button>
-                    </div>
-                `;
-                console.error('Error:', error);
-            }
-        }
+        
+        // ===================================================================
+        // END: AI COACH FUNCTIONS (RESTORED FROM WORKING FILE)
+        // ===================================================================
        // ==================== PROGRESS TRACKING ====================
         function updateProgress() {
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
