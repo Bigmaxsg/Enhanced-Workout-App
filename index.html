@@ -1620,7 +1620,7 @@
         </div>
     </div>
 
-
+  
     <script>
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
         const exerciseDatabase = {
@@ -1938,6 +1938,103 @@
         }
 
         // ==================== WORKOUT LOADING ====================
+        
+        function loadSavedCustomWorkoutFromMain(workoutName) {
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            const savedWorkout = savedCustomWorkouts[workoutName];
+
+            if (!savedWorkout) {
+                alert('Workout not found!');
+                return;
+            }
+
+            const container = document.getElementById('workoutContainer');
+
+            // Check if it's a HIIT workout object
+            if (typeof savedWorkout === 'object' && !Array.isArray(savedWorkout) && savedWorkout.workoutType === 'hiit') {
+                currentWorkout = savedWorkout.exercises.map(ex => ({
+                    name: ex.name,
+                    ...(exerciseDatabase[ex.name] || {})
+                }));
+                hiitWorkoutParams = {
+                    workTime: savedWorkout.workTime,
+                    restTime: savedWorkout.restTime,
+                    totalRounds: savedWorkout.rounds,
+                };
+
+                // Update pre-workout display values
+                document.getElementById('hiitPreWorkWorkDisplay').textContent = hiitWorkoutParams.workTime;
+                document.getElementById('hiitPreWorkRestDisplay').textContent = hiitWorkoutParams.restTime;
+                document.getElementById('hiitPreWorkRoundsDisplay').textContent = hiitWorkoutParams.totalRounds;
+
+                container.innerHTML = `
+                    <div class="info-box">
+                        <p><strong>${workoutName} (HIIT)</strong></p>
+                        <p>Work: ${hiitWorkoutParams.workTime}s | Rest: ${hiitWorkoutParams.restTime}s | Rounds: ${hiitWorkoutParams.totalRounds}</p>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        ${currentWorkout.map(ex => `
+                          <div class="exercise-card">
+                            <div class="exercise-name">${ex.name}</div>
+                            <div style="font-size: 12px; color: #6c757d; margin: 5px 0;">${ex.equipment || 'Bodyweight'}</div>
+                             <button class="btn btn-secondary" onclick="showExerciseInfo('${ex.name.replace(/'/g, "\\'")}')" style="margin-top: 12px; padding: 8px; font-size: 14px;">
+                                View Instructions
+                             </button>
+                          </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                document.getElementById('hiitPreWorkoutAdjustments').style.display = 'block';
+                document.getElementById('workoutModeSelection').style.display = 'block';
+                return;
+            }
+            
+            // If it's not a HIIT workout, it must be a strength workout (array)
+            document.getElementById('hiitPreWorkoutAdjustments').style.display = 'none';
+
+            currentWorkout = savedWorkout.map(ex => {
+                const dbExercise = exerciseDatabase[ex.name] || JSON.parse(localStorage.getItem('customExercises') || '{}')[ex.name];
+                return {
+                    ...(dbExercise || {}),
+                    name: ex.name,
+                    weight: ex.weight,
+                    sets: ex.sets,
+                    reps: ex.reps,
+                };
+            });
+
+            container.innerHTML = `
+                <div class="info-box">
+                    <p><strong>${workoutName}</strong></p>
+                    <p>Your saved custom workout. Adjust as needed!</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    ${currentWorkout.map((ex, idx) => `
+                        <div class="exercise-card">
+                            <div class="exercise-name">${ex.name}</div>
+                            <div class="exercise-details">
+                                <div class="detail-input">
+                                    <label>Weight (lbs)</label>
+                                    <input type="number" value="${ex.weight}" onchange="updateExerciseValue(${index}, 'weight', this.value)">
+                                </div>
+                                <div class="detail-input">
+                                    <label>Sets</label>
+                                    <input type="number" value="${ex.sets}" onchange="updateExerciseValue(${index}, 'sets', this.value)">
+                                </div>
+                                <div class="detail-input">
+                                    <label>Reps</label>
+                                    <input type="number" value="${ex.reps}" onchange="updateExerciseValue(${index}, 'reps', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('workoutModeSelection').style.display = 'block';
+        }
+        
         function loadWorkout() {
             const workoutType = document.getElementById('workoutType').value;
             const container = document.getElementById('workoutContainer');
@@ -1958,91 +2055,83 @@
                 return;
             }
 
-            let workoutData; // This will hold the correct workout data
-
+            // If it's a saved workout, call the new master function and stop.
             if (workoutType.startsWith('saved_')) {
-                // --- THIS IS THE FIX FOR CUSTOM WORKOUTS ---
                 const workoutName = workoutType.substring(6);
-                const savedWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
-                workoutData = savedWorkouts[workoutName]; // Get data from the CORRECT source
-
-            } else {
-                // --- THIS IS THE FIX FOR BUILT-IN WORKOUTS ---
-                const program = workoutPrograms[workoutType];
-                // We need to construct the full exercise objects from the names list
-                workoutData = program.exercises.map(name => ({ name, ...exerciseDatabase[name] }));
-            }
-
-            if (!workoutData) {
-                alert('Error: Could not find the selected workout data.');
+                loadSavedCustomWorkoutFromMain(workoutName);
                 return;
             }
+            
+            // This part now only runs for BUILT-IN workouts
+            const program = workoutPrograms[workoutType];
+            currentWorkout = program.exercises.map(name => ({ name, ...exerciseDatabase[name] }));
 
-            // Now, we can safely create a copy and set it as the current workout
-            currentWorkout = JSON.parse(JSON.stringify(workoutData));
-
-            // Apply saved preferences ONLY to pre-built workouts
-            if (!workoutType.startsWith('saved_')) {
-                const preferences = JSON.parse(localStorage.getItem('workoutPreferences') || '{}');
-                const workoutKey = workoutType;
-                if (preferences[workoutKey]) {
-                    currentWorkout.forEach(exercise => {
-                        const savedPrefs = preferences[workoutKey][exercise.name];
-                        if (savedPrefs) {
-                            exercise.weight = savedPrefs.weight ?? exercise.weight;
-                            exercise.sets = savedPrefs.sets ?? exercise.sets;
-                            exercise.reps = savedPrefs.reps ?? exercise.reps;
-                        }
-                    });
-                }
+            const preferences = JSON.parse(localStorage.getItem('workoutPreferences') || '{}');
+            const workoutKey = workoutType;
+            if (preferences[workoutKey]) {
+                currentWorkout.forEach(exercise => {
+                    const savedPrefs = preferences[workoutKey][exercise.name];
+                    if (savedPrefs) {
+                        exercise.weight = savedPrefs.weight ?? exercise.weight;
+                        exercise.sets = savedPrefs.sets ?? exercise.sets;
+                        exercise.reps = savedPrefs.reps ?? exercise.reps;
+                    }
+                });
             }
 
-            // Finally, call the function to display the workout on the screen
             displayWorkout();
         }
-        function displayWorkout() {
+
+        function displayWorkout(isHiit = false) {
             const container = document.getElementById('workoutContainer');
             let html = '<h3>Today\'s Workout</h3>';
-            
-            currentWorkout.forEach((exercise, index) => {
-                html += `
-                    <div class="exercise-card">
-                        <div class="exercise-header">
+
+            // If it's a HIIT workout, display it differently
+            if (isHiit) {
+                html += `<div class="info-box"><p><strong>HIIT Workout:</strong> ${hiitWorkoutParams.workTime}s Work / ${hiitWorkoutParams.restTime}s Rest / ${hiitWorkoutParams.totalRounds} Rounds</p></div>`;
+                currentWorkout.forEach(exercise => {
+                    html += `
+                        <div class="exercise-card">
                             <div class="exercise-name">${exercise.name}</div>
                         </div>
-                        <div class="exercise-details">
-                            <div class="detail-input">
-                                <label>Weight (lbs)</label>
-                                <input type="number" value="${exercise.weight}" 
-                                    onchange="updateExerciseValue(${index}, 'weight', this.value)">
+                    `;
+                });
+                // Show the HIIT adjustment controls
+                document.getElementById('hiitPreWorkoutAdjustments').style.display = 'block';
+            } else {
+                // This is the original logic for STRENGTH workouts
+                currentWorkout.forEach((exercise, index) => {
+                    html += `
+                        <div class="exercise-card">
+                            <div class="exercise-header">
+                                <div class="exercise-name">${exercise.name}</div>
                             </div>
-                            <div class="detail-input">
-                                <label>Sets</label>
-                                <input type="number" value="${exercise.sets}" 
-                                    onchange="updateExerciseValue(${index}, 'sets', this.value)">
-                            </div>
-                            <div class="detail-input">
-                                <label>Reps</label>
-                                <input type="number" value="${exercise.reps}" 
-                                    onchange="updateExerciseValue(${index}, 'reps', this.value)">
+                            <div class="exercise-details">
+                                <div class="detail-input">
+                                    <label>Weight (lbs)</label>
+                                    <input type="number" value="${exercise.weight || 0}" 
+                                        onchange="updateExerciseValue(${index}, 'weight', this.value)">
+                                </div>
+                                <div class="detail-input">
+                                    <label>Sets</label>
+                                    <input type="number" value="${exercise.sets || 3}" 
+                                        onchange="updateExerciseValue(${index}, 'sets', this.value)">
+                                </div>
+                                <div class="detail-input">
+                                    <label>Reps</label>
+                                    <input type="number" value="${exercise.reps || 12}" 
+                                        onchange="updateExerciseValue(${index}, 'reps', this.value)">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+                // Hide the HIIT adjustment controls for strength workouts
+                document.getElementById('hiitPreWorkoutAdjustments').style.display = 'none';
+            }
             
             container.innerHTML = html;
             document.getElementById('workoutModeSelection').style.display = 'block';
-            
-            const isHiitWorkout = currentWorkout.every(ex => 
-                exerciseDatabase[ex.name] && 
-                (exerciseDatabase[ex.name].equipment === "Bodyweight" || 
-                 ex.name.includes("Jumping") || ex.name.includes("Burpees") || 
-                 ex.name.includes("High Knees") || ex.name.includes("Mountain"))
-            );
-            
-            document.getElementById('hiitPreWorkoutAdjustments').style.display = 
-                isHiitWorkout ? 'block' : 'none';
         }
 
         function updateExerciseValue(index, field, value) {
@@ -3255,7 +3344,7 @@
         // ===================================================================
 
          function saveCustomExerciseToDB(name, data) {
-            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || '{}';
+            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || '{}');
             customExercises[name] = data;
             localStorage.setItem('customExercises', JSON.stringify(customExercises));
             
@@ -3456,7 +3545,7 @@ User's request: ${msg}`;
             }
 
             const { description, equipment } = details;
-            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || {};
+            const customExercises = JSON.parse(localStorage.getItem('customExercises')) || '{}');
             const existingExercise = customExercises[exerciseName] || exerciseDatabase[exerciseName] || {};
             const updatedExerciseData = {
                 ...existingExercise,
@@ -3477,7 +3566,7 @@ User's request: ${msg}`;
         }
 
         function createWorkoutFromAI(aiWorkout) {
-            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || '{}');
             let workoutName = aiWorkout.title || (aiWorkout.workoutType === 'hiit' ? 'AI HIIT Workout' : 'AI Strength Workout');
             let counter = 1;
             const originalName = workoutName;
