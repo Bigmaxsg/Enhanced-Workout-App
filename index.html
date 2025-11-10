@@ -1620,686 +1620,93 @@
         </div>
     </div>
 
-   <script>
-        // ==================== EXERCISE DATABASE ====================
-         const exerciseDatabase = {
+    <script>
+        // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
+        const exerciseDatabase = {
             // Leg Exercises
-            'Dumbbell Goblet Squat': {
-                equipment: 'Dumbbell',
-                instructions: 'Hold a dumbbell vertically at chest level. Stand with feet shoulder-width apart. Lower into a squat keeping chest up and knees tracking over toes. Push through heels to return.',
-                sets: 3,
-                reps: 12,
-                weight: 25,
-                image: ' Targets: Quads, Glutes, Core'
-            },
-            'Dumbbell Romanian Deadlift': {
-                equipment: 'Dumbbells',
-                instructions: 'Hold dumbbells in front of thighs. Hinge at hips, keeping back straight and slight bend in knees. Lower weights along legs until you feel hamstring stretch. Return to standing.',
-                sets: 3,
-                reps: 10,
-                weight: 30,
-                image: ' Targets: Hamstrings, Glutes, Lower Back'
-            },
-            'Dumbbell Lunges': {
-                equipment: 'Dumbbells',
-                instructions: 'Hold dumbbells at sides. Step forward into a lunge, lowering back knee toward ground. Front knee should stay behind toes. Push back to starting position. Alternate legs.',
-                sets: 3,
-                reps: 10,
-                weight: 20,
-                image: ' Targets: Quads, Glutes, Balance'
-            },
-            'Dumbbell Calf Raises': {
-                equipment: 'Dumbbells',
-                instructions: 'Hold dumbbells at sides. Stand on edge of a step or platform with heels hanging off. Rise up on toes as high as possible, then lower heels below step level.',
-                sets: 3,
-                reps: 15,
-                weight: 25,
-                image: ' Targets: Calves'
-            },
-            'Bodyweight Squats': {
-                equipment: 'Bodyweight',
-                instructions: 'Stand with feet shoulder-width apart, toes slightly pointed out. Keep chest up and core tight. Lower down by bending knees and pushing hips back as if sitting in a chair. Go as low as comfortable, ideally until thighs are parallel to ground. Push through heels to return to standing.',
-                sets: 3,
-                reps: 20,
-                weight: 0,
-                image: ' Targets: Quads, Glutes, Core'
-            },
-            'Bulgarian Split Squats': {
-                equipment: 'Dumbbells, Bench',
-                instructions: 'Place rear foot elevated on bench behind you. Hold dumbbells at sides. Lower front leg until thigh is parallel to ground, back knee drops toward floor. Push through front heel to return. Complete all reps then switch legs.',
-                sets: 3,
-                reps: 10,
-                weight: 20,
-                image: ' Targets: Quads, Glutes, Balance'
-            },
-            'Walking Lunges': {
-                equipment: 'Dumbbells',
-                instructions: 'Hold dumbbells at sides. Step forward into lunge with both knees at 90 degrees. Push off front foot and bring back leg forward into next lunge. Continue walking forward alternating legs each step.',
-                sets: 3,
-                reps: 20,
-                weight: 20,
-                image: ' Targets: Quads, Glutes, Coordination'
-            },
-            'Step-Ups': {
-                equipment: 'Dumbbells, Box/Bench',
-                instructions: 'Hold dumbbells at sides, stand facing box or bench. Step up with one foot, drive through heel to lift body onto box. Step down with control. Alternate legs or complete all reps on one side first.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Quads, Glutes, Functional Strength'
-            },
-            'Goblet Squats': {
-                equipment: 'Dumbbell',
-                instructions: 'Hold one dumbbell vertically at chest with both hands (like holding a goblet). Feet shoulder-width. Squat down keeping chest up, elbows track inside knees. Excellent for learning squat form.',
-                sets: 3,
-                reps: 15,
-                weight: 30,
-                image: ' Targets: Quads, Glutes, Core'
-            },
-            'Wall Sits': {
-                equipment: 'Bodyweight',
-                instructions: 'Lean back against wall. Slide down until thighs are parallel to floor, knees at 90 degrees. Hold position. Great for building quad endurance.',
-                sets: 3,
-                reps: 45,
-                weight: 0,
-                image: ' Targets: Quads, Endurance (time in seconds)'
-            },
-            'Jump Squats': {
-                equipment: 'Bodyweight',
-                instructions: 'Start in squat position. Explode up jumping as high as possible. Land softly and immediately descend into next squat. Builds explosive power.',
-                sets: 3,
-                reps: 12,
-                weight: 0,
-                image: ' Targets: Quads, Glutes, Power, Plyometrics'
-            },
-
-            // Chest Exercises
-            'Incline Dumbbell Press': {
-                equipment: 'Dumbbells, Incline Bench',
-                instructions: 'Set bench to 30-45 degrees. Lie back with dumbbells at shoulder level. Press weights up and together, fully extending arms. Lower with control to chest level.',
-                sets: 4,
-                reps: 10,
-                weight: 35,
-                image: ' Targets: Upper Chest, Shoulders, Triceps'
-            },
-            'Flat Dumbbell Press': {
-                equipment: 'Dumbbells, Bench',
-                instructions: 'Lie on flat bench with dumbbells at chest level. Press weights straight up, bringing them together at top. Lower with control until elbows are at 90 degrees.',
-                sets: 3,
-                reps: 10,
-                weight: 40,
-                image: ' Targets: Middle Chest, Triceps'
-            },
-            'Incline Dumbbell Flyes': {
-                equipment: 'Dumbbells, Incline Bench',
-                instructions: 'Set bench to 30 degrees. Start with arms extended above chest, slight elbow bend. Lower weights out to sides in arc motion. Squeeze chest to bring weights back together.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Chest, Shoulders (stretch focused)'
-            },
-            'Dumbbell Pullover': {
-                equipment: 'Dumbbell, Bench',
-                instructions: 'Lie perpendicular on bench (upper back only). Hold one dumbbell with both hands above chest. Lower weight behind head in arc, feel chest and lat stretch. Pull back to start.',
-                sets: 3,
-                reps: 12,
-                weight: 25,
-                image: ' Targets: Chest, Lats, Serratus'
-            },
-            'Barbell Bench Press': {
-                equipment: 'Barbell, Bench',
-                instructions: 'Lie on flat bench, grip barbell slightly wider than shoulders. Lower bar to chest with control. Press bar up until arms fully extended. Keep feet flat on floor.',
-                sets: 4,
-                reps: 8,
-                weight: 135,
-                image: ' Targets: Chest, Shoulders, Triceps'
-            },
-            'Incline Barbell Bench Press': {
-                equipment: 'Barbell, Incline Bench',
-                instructions: 'Set bench to 30-45 degrees. Lie back, grip bar slightly wider than shoulders. Lower to upper chest. Press straight up. Targets upper chest.',
-                sets: 4,
-                reps: 8,
-                weight: 115,
-                image: ' Targets: Upper Chest, Shoulders, Triceps'
-            },
-            'Decline Dumbbell Press': {
-                equipment: 'Dumbbells, Decline Bench',
-                instructions: 'Set bench to 15-30 degree decline. Secure feet. Lie back with dumbbells at chest. Press weights up and together. Lower with control. Targets lower chest.',
-                sets: 3,
-                reps: 10,
-                weight: 35,
-                image: ' Targets: Lower Chest, Triceps'
-            },
-            'Decline Barbell Bench Press': {
-                equipment: 'Barbell, Decline Bench',
-                instructions: 'Set bench to decline, secure feet. Grip bar slightly wider than shoulders. Lower to lower chest. Press up to full extension. Emphasizes lower pecs.',
-                sets: 3,
-                reps: 10,
-                weight: 125,
-                image: ' Targets: Lower Chest, Triceps'
-            },
-            'Flat Dumbbell Flyes': {
-                equipment: 'Dumbbells, Bench',
-                instructions: 'Lie on flat bench with dumbbells above chest, slight elbow bend. Lower weights out to sides in wide arc until stretch in chest. Squeeze pecs to bring weights back together.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Chest (stretch and squeeze)'
-            },
-            'Decline Dumbbell Flyes': {
-                equipment: 'Dumbbells, Decline Bench',
-                instructions: 'Lie on decline bench. Hold dumbbells above chest with slight elbow bend. Lower in arc motion feeling stretch in lower chest. Squeeze to return.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Lower Chest'
-            },
-            'Diamond Push-Ups': {
-                equipment: 'Bodyweight',
-                instructions: 'Get in push-up position. Place hands close together forming diamond shape with index fingers and thumbs. Lower chest to hands. Push back up. Harder on triceps.',
-                sets: 3,
-                reps: 12,
-                weight: 0,
-                image: ' Targets: Triceps, Inner Chest, Core'
-            },
-            'Wide Push-Ups': {
-                equipment: 'Bodyweight',
-                instructions: 'Push-up position with hands placed wider than shoulders. Lower chest toward ground. Push back up. Wider grip emphasizes chest more.',
-                sets: 3,
-                reps: 15,
-                weight: 0,
-                image: ' Targets: Chest, Shoulders'
-            },
-            'Decline Push-Ups': {
-                equipment: 'Bench/Box',
-                instructions: 'Place feet elevated on bench, hands on ground. Perform push-ups. Elevation increases difficulty and emphasizes upper chest.',
-                sets: 3,
-                reps: 12,
-                weight: 0,
-                image: ' Targets: Upper Chest, Shoulders'
-            },
-            'Incline Push-Ups': {
-                equipment: 'Bench/Box',
-                instructions: 'Place hands on elevated bench, feet on ground. Perform push-ups. Easier variation, good for beginners or burnout sets.',
-                sets: 3,
-                reps: 20,
-                weight: 0,
-                image: ' Targets: Chest, Triceps (beginner friendly)'
-            },
-            'Chest Dips': {
-                equipment: 'Dip Bar/Parallel Bars',
-                instructions: 'Grip bars, body suspended. Lean forward slightly. Lower body by bending elbows until shoulders are below elbows. Push back up. Lean determines chest vs tricep focus.',
-                sets: 3,
-                reps: 10,
-                weight: 0,
-                image: ' Targets: Lower Chest, Triceps, Shoulders'
-            },
-            'Cable Crossover': {
-                equipment: 'Cable Machine',
-                instructions: 'Stand between cable towers, handles at shoulder height. Step forward, slight bend in elbows. Bring handles together in front of chest in arc motion. Control return.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Inner Chest, Definition'
-            },
-            'Push-Up': {
-                equipment: 'Bodyweight',
-                instructions: 'Start in plank position with hands shoulder-width apart. Lower body until chest nearly touches floor. Push back up to starting position. Keep core tight throughout.',
-                sets: 3,
-                reps: 15,
-                weight: 0,
-                image: ' Targets: Chest, Triceps, Core'
-            },
-
-            // Back & Bicep Exercises
-            'Dumbbell Bent-Over Row': {
-                equipment: 'Dumbbells',
-                instructions: 'Hinge at hips with slight knee bend, back straight. Let dumbbells hang at arms length. Pull weights to sides of torso, squeezing shoulder blades together. Lower with control.',
-                sets: 4,
-                reps: 10,
-                weight: 35,
-                image: ' Targets: Mid Back, Lats, Biceps'
-            },
-            'Single-Arm Dumbbell Row': {
-                equipment: 'Dumbbell, Bench',
-                instructions: 'Place one knee and hand on bench. Hold dumbbell in free hand. Pull weight to hip, keeping elbow close to body. Lower with control. Complete all reps then switch sides.',
-                sets: 3,
-                reps: 12,
-                weight: 40,
-                image: ' Targets: Lats, Mid Back, Biceps'
-            },
-            'Dumbbell Bicep Curls': {
-                equipment: 'Dumbbells',
-                instructions: 'Stand with dumbbells at sides, palms forward. Curl weights up keeping elbows stationary at sides. Squeeze biceps at top. Lower with control, fully extending arms.',
-                sets: 3,
-                reps: 12,
-                weight: 25,
-                image: ' Targets: Biceps'
-            },
-            'Hammer Curls': {
-                equipment: 'Dumbbells',
-                instructions: 'Hold dumbbells with palms facing each other. Curl weights up keeping thumbs up throughout movement. Squeeze at top. Lower with control.',
-                sets: 3,
-                reps: 12,
-                weight: 25,
-                image: ' Targets: Biceps, Forearms'
-            },
-            'Barbell Bicep Curls': {
-                equipment: 'Barbell',
-                instructions: 'Stand holding barbell at arms length, palms up. Curl weight up keeping elbows stationary. Squeeze biceps at top. Lower with control.',
-                sets: 3,
-                reps: 10,
-                weight: 60,
-                image: ' Targets: Biceps'
-            },
-            'EZ-Bar Curls': {
-                equipment: 'EZ Curl Bar',
-                instructions: 'Hold EZ bar with angled grip (less wrist strain than straight bar). Curl up keeping elbows at sides. Squeeze biceps. Lower slowly.',
-                sets: 3,
-                reps: 12,
-                weight: 50,
-                image: ' Targets: Biceps (wrist-friendly)'
-            },
-            'Preacher Curls': {
-                equipment: 'Dumbbells or Barbell, Preacher Bench',
-                instructions: 'Sit at preacher bench, arms resting on pad. Curl weight up with strict form (pad prevents cheating). Lower to full extension.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Biceps (strict form)'
-            },
-            'Concentration Curls': {
-                equipment: 'Dumbbell',
-                instructions: 'Sit on bench, legs spread. Rest elbow against inner thigh. Curl dumbbell up to shoulder. Lower with control. Great isolation exercise.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Biceps Peak'
-            },
-            'Cable Bicep Curls': {
-                equipment: 'Cable Machine',
-                instructions: 'Stand at cable with low pulley and straight bar. Curl bar up keeping elbows stationary. Constant tension throughout movement.',
-                sets: 3,
-                reps: 15,
-                weight: 50,
-                image: ' Targets: Biceps (constant tension)'
-            },
-            'Zottman Curls': {
-                equipment: 'Dumbbells',
-                instructions: 'Curl dumbbells up with palms up (supinated). At top, rotate palms down (pronated). Lower slowly. Rotate palms up at bottom. Works biceps and forearms.',
-                sets: 3,
-                reps: 10,
-                weight: 20,
-                image: ' Targets: Biceps, Forearms'
-            },
-            'Incline Dumbbell Curls': {
-                equipment: 'Dumbbells, Incline Bench',
-                instructions: 'Lie back on incline bench (45 degrees). Let arms hang straight down. Curl weights up. Full stretch at bottom builds long head of bicep.',
-                sets: 3,
-                reps: 12,
-                weight: 20,
-                image: ' Targets: Biceps (stretch emphasis)'
-            },
-            'Dumbbell Shrugs': {
-                equipment: 'Dumbbells',
-                instructions: 'Stand holding dumbbells at sides. Elevate shoulders straight up toward ears as high as possible. Hold briefly at top. Lower with control. Keep arms straight throughout.',
-                sets: 3,
-                reps: 15,
-                weight: 45,
-                image: ' Targets: Traps, Upper Back'
-            },
-            'Pull-Ups': {
-                equipment: 'Pull-Up Bar',
-                instructions: 'Hang from bar with overhand grip (palms away), hands shoulder-width. Pull body up until chin clears bar. Lower with control to full extension. One of the best back exercises.',
-                sets: 3,
-                reps: 8,
-                weight: 0,
-                image: ' Targets: Lats, Biceps, Upper Back'
-            },
-            'Chin-Ups': {
-                equipment: 'Pull-Up Bar',
-                instructions: 'Hang from bar with underhand grip (palms facing you), hands shoulder-width. Pull up until chin over bar. Lower with control. Easier than pull-ups, more bicep activation.',
-                sets: 3,
-                reps: 10,
-                weight: 0,
-                image: ' Targets: Lats, Biceps, Forearms'
-            },
-            'Assisted Pull-Ups': {
-                equipment: 'Resistance Band or Machine',
-                instructions: 'Use resistance band under feet or assisted pull-up machine. Perform pull-up motion with assistance. Great for building up to unassisted pull-ups.',
-                sets: 3,
-                reps: 10,
-                weight: 0,
-                image: ' Targets: Lats, Biceps (progression exercise)'
-            },
-            'Negative Pull-Ups': {
-                equipment: 'Pull-Up Bar',
-                instructions: 'Jump or step up to top position of pull-up (chin over bar). Lower yourself down as slowly as possible (5-10 seconds). Step down and repeat. Builds strength for full pull-ups.',
-                sets: 3,
-                reps: 5,
-                weight: 0,
-                image: ' Targets: Lats, Back (eccentric strength)'
-            },
-            'Wide-Grip Pull-Ups': {
-                equipment: 'Pull-Up Bar',
-                instructions: 'Hang from bar with overhand grip wider than shoulders. Pull up bringing chest toward bar. Lower with control. Wider grip emphasizes lats more.',
-                sets: 3,
-                reps: 6,
-                weight: 0,
-                image: ' Targets: Lats, Upper Back'
-            },
-            'Barbell Bent-Over Row': {
-                equipment: 'Barbell',
-                instructions: 'Hinge at hips holding barbell, back straight, knees slightly bent. Pull bar to lower chest/upper abs, squeezing shoulder blades. Lower with control.',
-                sets: 4,
-                reps: 10,
-                weight: 95,
-                image: ' Targets: Mid Back, Lats, Biceps'
-            },
-            'Pendlay Row': {
-                equipment: 'Barbell',
-                instructions: 'Bend at hips until torso parallel to floor. Pull bar from floor to chest explosively. Return bar to floor between each rep. Builds explosive pulling power.',
-                sets: 4,
-                reps: 8,
-                weight: 85,
-                image: ' Targets: Back, Power, Explosiveness'
-            },
-            'T-Bar Row': {
-                equipment: 'Barbell, V-Handle',
-                instructions: 'Straddle bar with weight on one end. Grip V-handle or bar. Hinge at hips. Pull bar to chest squeezing back. Lower with control.',
-                sets: 3,
-                reps: 10,
-                weight: 70,
-                image: ' Targets: Mid Back, Lats, Thickness'
-            },
-            'Inverted Row': {
-                equipment: 'Bar/Smith Machine',
-                instructions: 'Lie under bar set at waist height. Grip bar with straight arms. Pull chest to bar. Lower with control. Like reverse push-up. Adjust height for difficulty.',
-                sets: 3,
-                reps: 12,
-                weight: 0,
-                image: ' Targets: Back, Biceps, Core'
-            },
-            'Lat Pulldown': {
-                equipment: 'Cable Machine',
-                instructions: 'Sit at lat pulldown machine. Grip bar wider than shoulders. Pull bar down to upper chest. Squeeze shoulder blades. Control weight back up.',
-                sets: 3,
-                reps: 12,
-                weight: 80,
-                image: ' Targets: Lats, Back Width'
-            },
-            'Close-Grip Lat Pulldown': {
-                equipment: 'Cable Machine, V-Handle',
-                instructions: 'Sit at pulldown. Use close-grip V-handle. Pull to upper chest. Squeeze lats and mid-back. Emphasizes thickness.',
-                sets: 3,
-                reps: 12,
-                weight: 80,
-                image: ' Targets: Lats, Mid Back, Thickness'
-            },
-            'Straight-Arm Pulldown': {
-                equipment: 'Cable Machine',
-                instructions: 'Stand at cable, arms extended overhead holding bar. Keep arms straight, pull bar down to thighs using lats. Control return. Great lat isolation.',
-                sets: 3,
-                reps: 15,
-                weight: 40,
-                image: ' Targets: Lats (isolation)'
-            },
-            'Face Pulls': {
-                equipment: 'Cable Machine, Rope',
-                instructions: 'Set cable at head height with rope attachment. Pull rope toward face, separating ends at face. Squeeze shoulder blades. Excellent for rear delts and posture.',
-                sets: 3,
-                reps: 15,
-                weight: 30,
-                image: ' Targets: Rear Delts, Upper Back, Posture'
-            },
-            'Seated Cable Row': {
-                equipment: 'Cable Machine',
-                instructions: 'Sit at cable row station. Feet on platform, knees slightly bent. Pull handle to torso, squeezing shoulder blades. Control return.',
-                sets: 3,
-                reps: 12,
-                weight: 90,
-                image: ' Targets: Mid Back, Lats, Biceps'
-            },
-            'Barbell Shrugs': {
-                equipment: 'Barbell',
-                instructions: 'Hold barbell at arms length in front of thighs. Elevate shoulders straight up as high as possible. Hold briefly. Lower with control. Builds traps.',
-                sets: 3,
-                reps: 15,
-                weight: 135,
-                image: ' Targets: Traps, Upper Back'
-            },
-            'Meadows Row': {
-                equipment: 'Barbell',
-                instructions: 'Stand perpendicular to barbell loaded on one end. Hinge at hips. Grab end of bar. Pull to hip rotating slightly. Great for lats and thickness.',
-                sets: 3,
-                reps: 10,
-                weight: 60,
-                image: ' Targets: Lats, Back Thickness'
-            },
-
-            // Shoulder & Tricep Exercises
-            'Dumbbell Shoulder Press': {
-                equipment: 'Dumbbells',
-                instructions: 'Sit or stand with dumbbells at shoulder level, palms forward. Press weights overhead until arms are fully extended. Lower with control back to shoulders.',
-                sets: 3,
-                reps: 10,
-                weight: 30,
-                image: ' Targets: Shoulders, Triceps'
-            },
-            'Dumbbell Lateral Raises': {
-                equipment: 'Dumbbells',
-                instructions: 'Stand with dumbbells at sides. Raise arms out to sides until parallel with floor, slight bend in elbows. Lead with elbows, not hands. Lower with control.',
-                sets: 3,
-                reps: 12,
-                weight: 15,
-                image: ' Targets: Side Delts'
-            },
-            'Dumbbell Front Raises': {
-                equipment: 'Dumbbells',
-                instructions: 'Hold dumbbells in front of thighs. Raise one or both weights forward and up to shoulder level, keeping arms straight. Lower with control.',
-                sets: 3,
-                reps: 12,
-                weight: 15,
-                image: ' Targets: Front Delts'
-            },
-            'Bent-Over Rear Delt Raises': {
-                equipment: 'Dumbbells',
-                instructions: 'Hinge at hips until torso is nearly parallel to floor. Let dumbbells hang down. Raise arms out to sides, squeezing shoulder blades. Lower with control.',
-                sets: 3,
-                reps: 15,
-                weight: 12,
-                image: ' Targets: Rear Delts, Upper Back'
-            },
-            'Overhead Tricep Extension': {
-                equipment: 'Dumbbell',
-                instructions: 'Hold one dumbbell with both hands overhead. Lower weight behind head by bending elbows. Keep upper arms stationary. Extend arms back to start position.',
-                sets: 3,
-                reps: 12,
-                weight: 25,
-                image: ' Targets: Triceps'
-            },
-            'Dumbbell Tricep Kickbacks': {
-                equipment: 'Dumbbells',
-                instructions: 'Hinge at hips, bring elbows to sides with 90-degree bend. Extend arms backward, straightening elbows fully. Squeeze triceps at top. Return to 90 degrees.',
-                sets: 3,
-                reps: 12,
-                weight: 15,
-                image: ' Targets: Triceps'
-            },
-            'Close-Grip Bench Press': {
-                equipment: 'Barbell, Bench',
-                instructions: 'Lie on bench. Grip bar with hands 8-12 inches apart. Lower to chest. Press up keeping elbows close to body. Excellent for triceps mass.',
-                sets: 4,
-                reps: 10,
-                weight: 95,
-                image: ' Targets: Triceps, Chest'
-            },
-            'Skull Crushers': {
-                equipment: 'EZ Bar or Dumbbells, Bench',
-                instructions: 'Lie on bench holding bar above chest. Lower bar toward forehead by bending elbows. Keep upper arms stationary. Extend back up. Also called lying tricep extension.',
-                sets: 3,
-                reps: 12,
-                weight: 40,
-                image: ' Targets: Triceps (long head)'
-            },
-            'Tricep Dips': {
-                equipment: 'Parallel Bars or Bench',
-                instructions: 'On parallel bars: grip bars, body suspended, stay upright. Lower by bending elbows. Push back up. Or use bench with feet extended forward.',
-                sets: 3,
-                reps: 12,
-                weight: 0,
-                image: ' Targets: Triceps, Chest, Shoulders'
-            },
-            'Cable Tricep Pushdown': {
-                equipment: 'Cable Machine, Rope or Bar',
-                instructions: 'Stand at cable with high pulley. Grip attachment with elbows at sides. Push down straightening arms. Squeeze triceps. Control return.',
-                sets: 3,
-                reps: 15,
-                weight: 50,
-                image: ' Targets: Triceps (isolation)'
-            },
-            'Overhead Cable Extension': {
-                equipment: 'Cable Machine, Rope',
-                instructions: 'Face away from cable with rope overhead. Extend arms forward and up. Keep upper arms stationary. Great for tricep stretch.',
-                sets: 3,
-                reps: 15,
-                weight: 30,
-                image: ' Targets: Triceps (long head)'
-            },
-            'Bench Dips': {
-                equipment: 'Bench',
-                instructions: 'Sit on edge of bench, hands gripping edge. Slide forward off bench, legs extended. Lower body by bending elbows. Push back up.',
-                sets: 3,
-                reps: 15,
-                weight: 0,
-                image: ' Targets: Triceps (bodyweight)'
-            },
-
-            // Core/Abs Exercises
-            'Dumbbell Russian Twists': {
-                equipment: 'Dumbbell',
-                instructions: 'Sit on floor, lean back slightly, lift feet. Hold dumbbell at chest. Rotate torso side to side, touching weight to floor on each side. Keep core tight.',
-                sets: 3,
-                reps: 20,
-                weight: 15,
-                image: ' Targets: Obliques, Core'
-            },
-            'Dumbbell Side Bends': {
-                equipment: 'Dumbbell',
-                instructions: 'Stand holding dumbbell in one hand. Bend sideways toward weight, lowering it down your leg. Return to upright. Complete all reps then switch sides.',
-                sets: 3,
-                reps: 15,
-                weight: 25,
-                image: ' Targets: Obliques'
-            },
-            'Plank': {
-                equipment: 'Bodyweight',
-                instructions: 'Support body on forearms and toes, body in straight line from head to heels. Keep core tight, don\'t let hips sag or pike up. Hold for time.',
-                sets: 3,
-                reps: 60,
-                weight: 0,
-                image: ' Targets: Core, Shoulders (time in seconds)'
-            },
-            'Mountain Climbers': {
-                equipment: 'Bodyweight',
-                instructions: 'Start in push-up position. Drive one knee toward chest, then quickly switch legs in running motion. Keep core tight and hips level.',
-                sets: 3,
-                reps: 20,
-                weight: 0,
-                image: ' Targets: Core, Cardio'
-            },
-            'Bicycle Crunches': {
-                equipment: 'Bodyweight',
-                instructions: 'Lie on back, hands behind head. Bring opposite elbow to opposite knee in cycling motion. Extend other leg out. Alternate sides in controlled manner.',
-                sets: 3,
-                reps: 20,
-                weight: 0,
-                image: ' Targets: Abs, Obliques'
-            },
-
-            // Kettlebell Exercises (30lb)
-            'Kettlebell Swings': {
-                equipment: 'Kettlebell (30lb)',
-                instructions: 'Stand with feet shoulder-width apart, kettlebell between feet. Hinge at hips, swing kettlebell back between legs. Drive hips forward powerfully, swinging weight to shoulder height.',
-                sets: 3,
-                reps: 15,
-                weight: 30,
-                image: ' Targets: Glutes, Hamstrings, Core, Cardio'
-            },
-            'Kettlebell Goblet Squat': {
-                equipment: 'Kettlebell (30lb)',
-                instructions: 'Hold kettlebell at chest by horns. Squat down keeping chest up, elbows inside knees. Push through heels to stand.',
-                sets: 3,
-                reps: 12,
-                weight: 30,
-                image: ' Targets: Quads, Glutes, Core'
-            },
-            'Kettlebell Turkish Get-Up': {
-                equipment: 'Kettlebell (30lb)',
-                instructions: 'Lie on back holding kettlebell overhead. Complex movement transitioning from lying to standing while keeping weight overhead. Reverse to return. Excellent full-body exercise.',
-                sets: 3,
-                reps: 5,
-                weight: 30,
-                image: ' Targets: Full Body, Core, Stability'
-            },
-            'Kettlebell Halos': {
-                equipment: 'Kettlebell (30lb)',
-                instructions: 'Hold kettlebell upside down at chest level. Circle it around your head, keeping core tight. Alternate directions.',
-                sets: 3,
-                reps: 10,
-                weight: 30,
-                image: ' Targets: Shoulders, Core'
-            },
-            'Kettlebell Single-Arm Row': {
-                equipment: 'Kettlebell (30lb)',
-                instructions: 'Hinge at hips, place one hand on bench for support. Row kettlebell to hip with free hand. Keep back straight. Complete reps then switch sides.',
-                sets: 3,
-                reps: 12,
-                weight: 30,
-                image: ' Targets: Back, Biceps'
-            },
-            'Kettlebell Overhead Press': {
-                equipment: 'Kettlebell (30lb)',
-                instructions: 'Clean kettlebell to shoulder (rack position). Press overhead until arm is fully extended. Lower with control. Complete reps then switch arms.',
-                sets: 3,
-                reps: 10,
-                weight: 30,
-                image: ' Targets: Shoulders, Core'
-            },
-
-            // Cardio Exercises
-            'Recumbent Bike': {
-                equipment: 'Recumbent Bike',
-                instructions: 'Adjust seat so legs are nearly fully extended at bottom of pedal stroke. Maintain steady cadence. Monitor heart rate. Vary resistance for intensity.',
-                sets: 1,
-                reps: 20,
-                weight: 0,
-                image: ' Targets: Cardiovascular, Quads, Glutes (time in minutes)'
-            },
-            'Rowing Machine': {
-                equipment: 'Rowing Machine',
-                instructions: 'Strap in feet. Drive with legs, then pull handle to chest. Reverse: extend arms, hinge at hips, bend knees. Keep back straight throughout.',
-                sets: 1,
-                reps: 15,
-                weight: 0,
-                image: ' Targets: Full Body Cardio, Back, Legs (time in minutes)'
-            },
-            'Interval Sprints - Bike': {
-                equipment: 'Recumbent Bike',
-                instructions: '30 seconds high intensity, 90 seconds recovery. Repeat for workout duration. Great for fat burning and conditioning.',
-                sets: 8,
-                reps: 1,
-                weight: 0,
-                image: ' Targets: HIIT Cardio, Fat Burning (intervals)'
-            },
-            'Interval Sprints - Rowing': {
-                equipment: 'Rowing Machine',
-                instructions: '30 seconds maximum effort, 90 seconds easy pace. Focus on powerful drives during work intervals.',
-                sets: 8,
-                reps: 1,
-                weight: 0,
-                image: ' Targets: HIIT Full Body, Conditioning (intervals)'
-            }
+            'Dumbbell Goblet Squat': { equipment: 'Dumbbell', instructions: 'Hold a dumbbell vertically at chest level. Stand with feet shoulder-width apart. Lower into a squat keeping chest up and knees tracking over toes. Push through heels to return.', sets: 3, reps: 12, weight: 25, image: ' Targets: Quads, Glutes, Core' },
+            'Dumbbell Romanian Deadlift': { equipment: 'Dumbbells', instructions: 'Hold dumbbells in front of thighs. Hinge at hips, keeping back straight and slight bend in knees. Lower weights along legs until you feel hamstring stretch. Return to standing.', sets: 3, reps: 10, weight: 30, image: ' Targets: Hamstrings, Glutes, Lower Back' },
+            'Dumbbell Lunges': { equipment: 'Dumbbells', instructions: 'Hold dumbbells at sides. Step forward into a lunge, lowering back knee toward ground. Front knee should stay behind toes. Push back to starting position. Alternate legs.', sets: 3, reps: 10, weight: 20, image: ' Targets: Quads, Glutes, Balance' },
+            'Dumbbell Calf Raises': { equipment: 'Dumbbells', instructions: 'Hold dumbbells at sides. Stand on edge of a step or platform with heels hanging off. Rise up on toes as high as possible, then lower heels below step level.', sets: 3, reps: 15, weight: 25, image: ' Targets: Calves' },
+            'Bodyweight Squats': { equipment: 'Bodyweight', instructions: 'Stand with feet shoulder-width apart, toes slightly pointed out. Keep chest up and core tight. Lower down by bending knees and pushing hips back as if sitting in a chair. Go as low as comfortable, ideally until thighs are parallel to ground. Push through heels to return to standing.', sets: 3, reps: 20, weight: 0, image: ' Targets: Quads, Glutes, Core' },
+            'Bulgarian Split Squats': { equipment: 'Dumbbells, Bench', instructions: 'Place rear foot elevated on bench behind you. Hold dumbbells at sides. Lower front leg until thigh is parallel to ground, back knee drops toward floor. Push through front heel to return. Complete all reps then switch legs.', sets: 3, reps: 10, weight: 20, image: ' Targets: Quads, Glutes, Balance' },
+            'Walking Lunges': { equipment: 'Dumbbells', instructions: 'Hold dumbbells at sides. Step forward into lunge with both knees at 90 degrees. Push off front foot and bring back leg forward into next lunge. Continue walking forward alternating legs each step.', sets: 3, reps: 20, weight: 20, image: ' Targets: Quads, Glutes, Coordination' },
+            'Step-Ups': { equipment: 'Dumbbells, Box/Bench', instructions: 'Hold dumbbells at sides, stand facing box or bench. Step up with one foot, drive through heel to lift body onto box. Step down with control. Alternate legs or complete all reps on one side first.', sets: 3, reps: 12, weight: 20, image: ' Targets: Quads, Glutes, Functional Strength' },
+            'Goblet Squats': { equipment: 'Dumbbell', instructions: 'Hold one dumbbell vertically at chest with both hands (like holding a goblet). Feet shoulder-width. Squat down keeping chest up, elbows track inside knees. Excellent for learning squat form.', sets: 3, reps: 15, weight: 30, image: ' Targets: Quads, Glutes, Core' },
+            'Wall Sits': { equipment: 'Bodyweight', instructions: 'Lean back against wall. Slide down until thighs are parallel to floor, knees at 90 degrees. Hold position. Great for building quad endurance.', sets: 3, reps: 45, weight: 0, image: ' Targets: Quads, Endurance (time in seconds)' },
+            'Jump Squats': { equipment: 'Bodyweight', instructions: 'Start in squat position. Explode up jumping as high as possible. Land softly and immediately descend into next squat. Builds explosive power.', sets: 3, reps: 12, weight: 0, image: ' Targets: Quads, Glutes, Power, Plyometrics' },
+            'Incline Dumbbell Press': { equipment: 'Dumbbells, Incline Bench', instructions: 'Set bench to 30-45 degrees. Lie back with dumbbells at shoulder level. Press weights up and together, fully extending arms. Lower with control to chest level.', sets: 4, reps: 10, weight: 35, image: ' Targets: Upper Chest, Shoulders, Triceps' },
+            'Flat Dumbbell Press': { equipment: 'Dumbbells, Bench', instructions: 'Lie on flat bench with dumbbells at chest level. Press weights straight up, bringing them together at top. Lower with control until elbows are at 90 degrees.', sets: 3, reps: 10, weight: 40, image: ' Targets: Middle Chest, Triceps' },
+            'Incline Dumbbell Flyes': { equipment: 'Dumbbells, Incline Bench', instructions: 'Set bench to 30 degrees. Start with arms extended above chest, slight elbow bend. Lower weights out to sides in arc motion. Squeeze chest to bring weights back together.', sets: 3, reps: 12, weight: 20, image: ' Targets: Chest, Shoulders (stretch focused)' },
+            'Dumbbell Pullover': { equipment: 'Dumbbell, Bench', instructions: 'Lie perpendicular on bench (upper back only). Hold one dumbbell with both hands above chest. Lower weight behind head in arc, feel chest and lat stretch. Pull back to start.', sets: 3, reps: 12, weight: 25, image: ' Targets: Chest, Lats, Serratus' },
+            'Barbell Bench Press': { equipment: 'Barbell, Bench', instructions: 'Lie on flat bench, grip barbell slightly wider than shoulders. Lower bar to chest with control. Press bar up until arms fully extended. Keep feet flat on floor.', sets: 4, reps: 8, weight: 135, image: ' Targets: Chest, Shoulders, Triceps' },
+            'Incline Barbell Bench Press': { equipment: 'Barbell, Incline Bench', instructions: 'Set bench to 30-45 degrees. Lie back, grip bar slightly wider than shoulders. Lower to upper chest. Press straight up. Targets upper chest.', sets: 4, reps: 8, weight: 115, image: ' Targets: Upper Chest, Shoulders, Triceps' },
+            'Decline Dumbbell Press': { equipment: 'Dumbbells, Decline Bench', instructions: 'Set bench to 15-30 degree decline. Secure feet. Lie back with dumbbells at chest. Press weights up and together. Lower with control. Targets lower chest.', sets: 3, reps: 10, weight: 35, image: ' Targets: Lower Chest, Triceps' },
+            'Decline Barbell Bench Press': { equipment: 'Barbell, Decline Bench', instructions: 'Set bench to decline, secure feet. Grip bar slightly wider than shoulders. Lower to lower chest. Press up to full extension. Emphasizes lower pecs.', sets: 3, reps: 10, weight: 125, image: ' Targets: Lower Chest, Triceps' },
+            'Flat Dumbbell Flyes': { equipment: 'Dumbbells, Bench', instructions: 'Lie on flat bench with dumbbells above chest, slight elbow bend. Lower weights out to sides in wide arc until stretch in chest. Squeeze pecs to bring weights back together.', sets: 3, reps: 12, weight: 20, image: ' Targets: Chest (stretch and squeeze)' },
+            'Decline Dumbbell Flyes': { equipment: 'Dumbbells, Decline Bench', instructions: 'Lie on decline bench. Hold dumbbells above chest with slight elbow bend. Lower in arc motion feeling stretch in lower chest. Squeeze to return.', sets: 3, reps: 12, weight: 20, image: ' Targets: Lower Chest' },
+            'Diamond Push-Ups': { equipment: 'Bodyweight', instructions: 'Get in push-up position. Place hands close together forming diamond shape with index fingers and thumbs. Lower chest to hands. Push back up. Harder on triceps.', sets: 3, reps: 12, weight: 0, image: ' Targets: Triceps, Inner Chest, Core' },
+            'Wide Push-Ups': { equipment: 'Bodyweight', instructions: 'Push-up position with hands placed wider than shoulders. Lower chest toward ground. Push back up. Wider grip emphasizes chest more.', sets: 3, reps: 15, weight: 0, image: ' Targets: Chest, Shoulders' },
+            'Decline Push-Ups': { equipment: 'Bench/Box', instructions: 'Place feet elevated on bench, hands on ground. Perform push-ups. Elevation increases difficulty and emphasizes upper chest.', sets: 3, reps: 12, weight: 0, image: ' Targets: Upper Chest, Shoulders' },
+            'Incline Push-Ups': { equipment: 'Bench/Box', instructions: 'Place hands on elevated bench, feet on ground. Perform push-ups. Easier variation, good for beginners or burnout sets.', sets: 3, reps: 20, weight: 0, image: ' Targets: Chest, Triceps (beginner friendly)' },
+            'Chest Dips': { equipment: 'Dip Bar/Parallel Bars', instructions: 'Grip bars, body suspended. Lean forward slightly. Lower body by bending elbows until shoulders are below elbows. Push back up. Lean determines chest vs tricep focus.', sets: 3, reps: 10, weight: 0, image: ' Targets: Lower Chest, Triceps, Shoulders' },
+            'Cable Crossover': { equipment: 'Cable Machine', instructions: 'Stand between cable towers, handles at shoulder height. Step forward, slight bend in elbows. Bring handles together in front of chest in arc motion. Control return.', sets: 3, reps: 12, weight: 20, image: ' Targets: Inner Chest, Definition' },
+            'Push-Up': { equipment: 'Bodyweight', instructions: 'Start in plank position with hands shoulder-width apart. Lower body until chest nearly touches floor. Push back up to starting position. Keep core tight throughout.', sets: 3, reps: 15, weight: 0, image: ' Targets: Chest, Triceps, Core' },
+            'Dumbbell Bent-Over Row': { equipment: 'Dumbbells', instructions: 'Hinge at hips with slight knee bend, back straight. Let dumbbells hang at arms length. Pull weights to sides of torso, squeezing shoulder blades together. Lower with control.', sets: 4, reps: 10, weight: 35, image: ' Targets: Mid Back, Lats, Biceps' },
+            'Single-Arm Dumbbell Row': { equipment: 'Dumbbell, Bench', instructions: 'Place one knee and hand on bench. Hold dumbbell in free hand. Pull weight to hip, keeping elbow close to body. Lower with control. Complete all reps then switch sides.', sets: 3, reps: 12, weight: 40, image: ' Targets: Lats, Mid Back, Biceps' },
+            'Dumbbell Bicep Curls': { equipment: 'Dumbbells', instructions: 'Stand with dumbbells at sides, palms forward. Curl weights up keeping elbows stationary at sides. Squeeze biceps at top. Lower with control, fully extending arms.', sets: 3, reps: 12, weight: 25, image: ' Targets: Biceps' },
+            'Hammer Curls': { equipment: 'Dumbbells', instructions: 'Hold dumbbells with palms facing each other. Curl weights up keeping thumbs up throughout movement. Squeeze at top. Lower with control.', sets: 3, reps: 12, weight: 25, image: ' Targets: Biceps, Forearms' },
+            'Barbell Bicep Curls': { equipment: 'Barbell', instructions: 'Stand holding barbell at arms length, palms up. Curl weight up keeping elbows stationary. Squeeze biceps at top. Lower with control.', sets: 3, reps: 10, weight: 60, image: ' Targets: Biceps' },
+            'EZ-Bar Curls': { equipment: 'EZ Curl Bar', instructions: 'Hold EZ bar with angled grip (less wrist strain than straight bar). Curl up keeping elbows at sides. Squeeze biceps. Lower slowly.', sets: 3, reps: 12, weight: 50, image: ' Targets: Biceps (wrist-friendly)' },
+            'Preacher Curls': { equipment: 'Dumbbells or Barbell, Preacher Bench', instructions: 'Sit at preacher bench, arms resting on pad. Curl weight up with strict form (pad prevents cheating). Lower to full extension.', sets: 3, reps: 12, weight: 20, image: ' Targets: Biceps (strict form)' },
+            'Concentration Curls': { equipment: 'Dumbbell', instructions: 'Sit on bench, legs spread. Rest elbow against inner thigh. Curl dumbbell up to shoulder. Lower with control. Great isolation exercise.', sets: 3, reps: 12, weight: 20, image: ' Targets: Biceps Peak' },
+            'Cable Bicep Curls': { equipment: 'Cable Machine', instructions: 'Stand at cable with low pulley and straight bar. Curl bar up keeping elbows stationary. Constant tension throughout movement.', sets: 3, reps: 15, weight: 50, image: ' Targets: Biceps (constant tension)' },
+            'Zottman Curls': { equipment: 'Dumbbells', instructions: 'Curl dumbbells up with palms up (supinated). At top, rotate palms down (pronated). Lower slowly. Rotate palms up at bottom. Works biceps and forearms.', sets: 3, reps: 10, weight: 20, image: ' Targets: Biceps, Forearms' },
+            'Incline Dumbbell Curls': { equipment: 'Dumbbells, Incline Bench', instructions: 'Lie back on incline bench (45 degrees). Let arms hang straight down. Curl weights up. Full stretch at bottom builds long head of bicep.', sets: 3, reps: 12, weight: 20, image: ' Targets: Biceps (stretch emphasis)' },
+            'Dumbbell Shrugs': { equipment: 'Dumbbells', instructions: 'Stand holding dumbbells at sides. Elevate shoulders straight up toward ears as high as possible. Hold briefly at top. Lower with control. Keep arms straight throughout.', sets: 3, reps: 15, weight: 45, image: ' Targets: Traps, Upper Back' },
+            'Pull-Ups': { equipment: 'Pull-Up Bar', instructions: 'Hang from bar with overhand grip (palms away), hands shoulder-width. Pull body up until chin clears bar. Lower with control to full extension. One of the best back exercises.', sets: 3, reps: 8, weight: 0, image: ' Targets: Lats, Biceps, Upper Back' },
+            'Chin-Ups': { equipment: 'Pull-Up Bar', instructions: 'Hang from bar with underhand grip (palms facing you), hands shoulder-width. Pull up until chin over bar. Lower with control. Easier than pull-ups, more bicep activation.', sets: 3, reps: 10, weight: 0, image: ' Targets: Lats, Biceps, Forearms' },
+            'Assisted Pull-Ups': { equipment: 'Resistance Band or Machine', instructions: 'Use resistance band under feet or assisted pull-up machine. Perform pull-up motion with assistance. Great for building up to unassisted pull-ups.', sets: 3, reps: 10, weight: 0, image: ' Targets: Lats, Biceps (progression exercise)' },
+            'Negative Pull-Ups': { equipment: 'Pull-Up Bar', instructions: 'Jump or step up to top position of pull-up (chin over bar). Lower yourself down as slowly as possible (5-10 seconds). Step down and repeat. Builds strength for full pull-ups.', sets: 3, reps: 5, weight: 0, image: ' Targets: Lats, Back (eccentric strength)' },
+            'Wide-Grip Pull-Ups': { equipment: 'Pull-Up Bar', instructions: 'Hang from bar with overhand grip wider than shoulders. Pull up bringing chest toward bar. Lower with control. Wider grip emphasizes lats more.', sets: 3, reps: 6, weight: 0, image: ' Targets: Lats, Upper Back' },
+            'Barbell Bent-Over Row': { equipment: 'Barbell', instructions: 'Hinge at hips holding barbell, back straight, knees slightly bent. Pull bar to lower chest/upper abs, squeezing shoulder blades. Lower with control.', sets: 4, reps: 10, weight: 95, image: ' Targets: Mid Back, Lats, Biceps' },
+            'Pendlay Row': { equipment: 'Barbell', instructions: 'Bend at hips until torso parallel to floor. Pull bar from floor to chest explosively. Return bar to floor between each rep. Builds explosive pulling power.', sets: 4, reps: 8, weight: 85, image: ' Targets: Back, Power, Explosiveness' },
+            'T-Bar Row': { equipment: 'Barbell, V-Handle', instructions: 'Straddle bar with weight on one end. Grip V-handle or bar. Hinge at hips. Pull bar to chest squeezing back. Lower with control.', sets: 3, reps: 10, weight: 70, image: ' Targets: Mid Back, Lats, Thickness' },
+            'Inverted Row': { equipment: 'Bar/Smith Machine', instructions: 'Lie under bar set at waist height. Grip bar with straight arms. Pull chest to bar. Lower with control. Like reverse push-up. Adjust height for difficulty.', sets: 3, reps: 12, weight: 0, image: ' Targets: Back, Biceps, Core' },
+            'Lat Pulldown': { equipment: 'Cable Machine', instructions: 'Sit at lat pulldown machine. Grip bar wider than shoulders. Pull bar down to upper chest. Squeeze shoulder blades. Control weight back up.', sets: 3, reps: 12, weight: 80, image: ' Targets: Lats, Back Width' },
+            'Close-Grip Lat Pulldown': { equipment: 'Cable Machine, V-Handle', instructions: 'Sit at pulldown. Use close-grip V-handle. Pull to upper chest. Squeeze lats and mid-back. Emphasizes thickness.', sets: 3, reps: 12, weight: 80, image: ' Targets: Lats, Mid Back, Thickness' },
+            'Straight-Arm Pulldown': { equipment: 'Cable Machine', instructions: 'Stand at cable, arms extended overhead holding bar. Keep arms straight, pull bar down to thighs using lats. Control return. Great lat isolation.', sets: 3, reps: 15, weight: 40, image: ' Targets: Lats (isolation)' },
+            'Face Pulls': { equipment: 'Cable Machine, Rope', instructions: 'Set cable at head height with rope attachment. Pull rope toward face, separating ends at face. Squeeze shoulder blades. Excellent for rear delts and posture.', sets: 3, reps: 15, weight: 30, image: ' Targets: Rear Delts, Upper Back, Posture' },
+            'Seated Cable Row': { equipment: 'Cable Machine', instructions: 'Sit at cable row station. Feet on platform, knees slightly bent. Pull handle to torso, squeezing shoulder blades. Control return.', sets: 3, reps: 12, weight: 90, image: ' Targets: Mid Back, Lats, Biceps' },
+            'Barbell Shrugs': { equipment: 'Barbell', instructions: 'Hold barbell at arms length in front of thighs. Elevate shoulders straight up as high as possible. Hold briefly. Lower with control. Builds traps.', sets: 3, reps: 15, weight: 135, image: ' Targets: Traps, Upper Back' },
+            'Meadows Row': { equipment: 'Barbell', instructions: 'Stand perpendicular to barbell loaded on one end. Hinge at hips. Grab end of bar. Pull to hip rotating slightly. Great for lats and thickness.', sets: 3, reps: 10, weight: 60, image: ' Targets: Lats, Back Thickness' },
+            'Dumbbell Shoulder Press': { equipment: 'Dumbbells', instructions: 'Sit or stand with dumbbells at shoulder level, palms forward. Press weights overhead until arms are fully extended. Lower with control back to shoulders.', sets: 3, reps: 10, weight: 30, image: ' Targets: Shoulders, Triceps' },
+            'Dumbbell Lateral Raises': { equipment: 'Dumbbells', instructions: 'Stand with dumbbells at sides. Raise arms out to sides until parallel with floor, slight bend in elbows. Lead with elbows, not hands. Lower with control.', sets: 3, reps: 12, weight: 15, image: ' Targets: Side Delts' },
+            'Dumbbell Front Raises': { equipment: 'Dumbbells', instructions: 'Hold dumbbells in front of thighs. Raise one or both weights forward and up to shoulder level, keeping arms straight. Lower with control.', sets: 3, reps: 12, weight: 15, image: ' Targets: Front Delts' },
+            'Bent-Over Rear Delt Raises': { equipment: 'Dumbbells', instructions: 'Hinge at hips until torso is nearly parallel to floor. Let dumbbells hang down. Raise arms out to sides, squeezing shoulder blades. Lower with control.', sets: 3, reps: 15, weight: 12, image: ' Targets: Rear Delts, Upper Back' },
+            'Overhead Tricep Extension': { equipment: 'Dumbbell', instructions: 'Hold one dumbbell with both hands overhead. Lower weight behind head by bending elbows. Keep upper arms stationary. Extend arms back to start position.', sets: 3, reps: 12, weight: 25, image: ' Targets: Triceps' },
+            'Dumbbell Tricep Kickbacks': { equipment: 'Dumbbells', instructions: 'Hinge at hips, bring elbows to sides with 90-degree bend. Extend arms backward, straightening elbows fully. Squeeze triceps at top. Return to 90 degrees.', sets: 3, reps: 12, weight: 15, image: ' Targets: Triceps' },
+            'Close-Grip Bench Press': { equipment: 'Barbell, Bench', instructions: 'Lie on bench. Grip bar with hands 8-12 inches apart. Lower to chest. Press up keeping elbows close to body. Excellent for triceps mass.', sets: 4, reps: 10, weight: 95, image: ' Targets: Triceps, Chest' },
+            'Skull Crushers': { equipment: 'EZ Bar or Dumbbells, Bench', instructions: 'Lie on bench holding bar above chest. Lower bar toward forehead by bending elbows. Keep upper arms stationary. Extend back up. Also called lying tricep extension.', sets: 3, reps: 12, weight: 40, image: ' Targets: Triceps (long head)' },
+            'Tricep Dips': { equipment: 'Parallel Bars or Bench', instructions: 'On parallel bars: grip bars, body suspended, stay upright. Lower by bending elbows. Push back up. Or use bench with feet extended forward.', sets: 3, reps: 12, weight: 0, image: ' Targets: Triceps, Chest, Shoulders' },
+            'Cable Tricep Pushdown': { equipment: 'Cable Machine, Rope or Bar', instructions: 'Stand at cable with high pulley. Grip attachment with elbows at sides. Push down straightening arms. Squeeze triceps. Control return.', sets: 3, reps: 15, weight: 50, image: ' Targets: Triceps (isolation)' },
+            'Overhead Cable Extension': { equipment: 'Cable Machine, Rope', instructions: 'Face away from cable with rope overhead. Extend arms forward and up. Keep upper arms stationary. Great for tricep stretch.', sets: 3, reps: 15, weight: 30, image: ' Targets: Triceps (long head)' },
+            'Bench Dips': { equipment: 'Bench', instructions: 'Sit on edge of bench, hands gripping edge. Slide forward off bench, legs extended. Lower body by bending elbows. Push back up.', sets: 3, reps: 15, weight: 0, image: ' Targets: Triceps (bodyweight)' },
+            'Dumbbell Russian Twists': { equipment: 'Dumbbell', instructions: 'Sit on floor, lean back slightly, lift feet. Hold dumbbell at chest. Rotate torso side to side, touching weight to floor on each side. Keep core tight.', sets: 3, reps: 20, weight: 15, image: ' Targets: Obliques, Core' },
+            'Dumbbell Side Bends': { equipment: 'Dumbbell', instructions: 'Stand holding dumbbell in one hand. Bend sideways toward weight, lowering it down your leg. Return to upright. Complete all reps then switch sides.', sets: 3, reps: 15, weight: 25, image: ' Targets: Obliques' },
+            'Plank': { equipment: 'Bodyweight', instructions: 'Support body on forearms and toes, body in straight line from head to heels. Keep core tight, don\'t let hips sag or pike up. Hold for time.', sets: 3, reps: 60, weight: 0, image: ' Targets: Core, Shoulders (time in seconds)' },
+            'Mountain Climbers': { equipment: 'Bodyweight', instructions: 'Start in push-up position. Drive one knee toward chest, then quickly switch legs in running motion. Keep core tight and hips level.', sets: 3, reps: 20, weight: 0, image: ' Targets: Core, Cardio' },
+            'Bicycle Crunches': { equipment: 'Bodyweight', instructions: 'Lie on back, hands behind head. Bring opposite elbow to opposite knee in cycling motion. Extend other leg out. Alternate sides in controlled manner.', sets: 3, reps: 20, weight: 0, image: ' Targets: Abs, Obliques' },
+            'Kettlebell Swings': { equipment: 'Kettlebell (30lb)', instructions: 'Stand with feet shoulder-width apart, kettlebell between feet. Hinge at hips, swing kettlebell back between legs. Drive hips forward powerfully, swinging weight to shoulder height.', sets: 3, reps: 15, weight: 30, image: ' Targets: Glutes, Hamstrings, Core, Cardio' },
+            'Kettlebell Goblet Squat': { equipment: 'Kettlebell (30lb)', instructions: 'Hold kettlebell at chest by horns. Squat down keeping chest up, elbows inside knees. Push through heels to stand.', sets: 3, reps: 12, weight: 30, image: ' Targets: Quads, Glutes, Core' },
+            'Kettlebell Turkish Get-Up': { equipment: 'Kettlebell (30lb)', instructions: 'Lie on back holding kettlebell overhead. Complex movement transitioning from lying to standing while keeping weight overhead. Reverse to return. Excellent full-body exercise.', sets: 3, reps: 5, weight: 30, image: ' Targets: Full Body, Core, Stability' },
+            'Kettlebell Halos': { equipment: 'Kettlebell (30lb)', instructions: 'Hold kettlebell upside down at chest level. Circle it around your head, keeping core tight. Alternate directions.', sets: 3, reps: 10, weight: 30, image: ' Targets: Shoulders, Core' },
+            'Kettlebell Single-Arm Row': { equipment: 'Kettlebell (30lb)', instructions: 'Hinge at hips, place one hand on bench for support. Row kettlebell to hip with free hand. Keep back straight. Complete reps then switch sides.', sets: 3, reps: 12, weight: 30, image: ' Targets: Back, Biceps' },
+            'Kettlebell Overhead Press': { equipment: 'Kettlebell (30lb)', instructions: 'Clean kettlebell to shoulder (rack position). Press overhead until arm is fully extended. Lower with control. Complete reps then switch arms.', sets: 3, reps: 10, weight: 30, image: ' Targets: Shoulders, Core' },
+            'Recumbent Bike': { equipment: 'Recumbent Bike', instructions: 'Adjust seat so legs are nearly fully extended at bottom of pedal stroke. Maintain steady cadence. Monitor heart rate. Vary resistance for intensity.', sets: 1, reps: 20, weight: 0, image: ' Targets: Cardiovascular, Quads, Glutes (time in minutes)' },
+            'Rowing Machine': { equipment: 'Rowing Machine', instructions: 'Strap in feet. Drive with legs, then pull handle to chest. Reverse: extend arms, hinge at hips, bend knees. Keep back straight throughout.', sets: 1, reps: 15, weight: 0, image: ' Targets: Full Body Cardio, Back, Legs (time in minutes)' },
+            'Interval Sprints - Bike': { equipment: 'Recumbent Bike', instructions: '30 seconds high intensity, 90 seconds recovery. Repeat for workout duration. Great for fat burning and conditioning.', sets: 8, reps: 1, weight: 0, image: ' Targets: HIIT Cardio, Fat Burning (intervals)' },
+            'Interval Sprints - Rowing': { equipment: 'Rowing Machine', instructions: '30 seconds maximum effort, 90 seconds easy pace. Focus on powerful drives during work intervals.', sets: 8, reps: 1, weight: 0, image: ' Targets: HIIT Full Body, Conditioning (intervals)' }
         };
 
         // ==================== GLOBAL VARIABLES & DATABASES (CORRECTED) ====================
@@ -3079,12 +2486,12 @@
             document.getElementById('completeSetBtn').style.display = 'none';
             document.getElementById('restDisplay').textContent = restTime;
 
-            restTimerInterval = setInterval(() => {
+            restInterval = setInterval(() => {
                 restTime--;
                 document.getElementById('restDisplay').textContent = restTime;
 
                 if (restTime <= 0) {
-                    clearInterval(restTimerInterval);
+                    clearInterval(restInterval);
                     document.getElementById('restTimer').style.display = 'none';
                     document.getElementById('completeSetBtn').style.display = 'block';
                     playBeep();
@@ -3093,7 +2500,7 @@
         }
 
         function skipRest() {
-            clearInterval(restTimerInterval);
+            clearInterval(restInterval);
             document.getElementById('restTimer').style.display = 'none';
             document.getElementById('completeSetBtn').style.display = 'block';
         }
@@ -3504,7 +2911,7 @@
             container.innerHTML = html || '<p style="text-align: center; color: #6c757d;">No exercises found</p>';
         }
 
-       function showExerciseInfo(exerciseName) {
+        function showExerciseInfo(exerciseName) {
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
             const exercise = exerciseDatabase[exerciseName] || customExercises[exerciseName];
 
