@@ -4206,24 +4206,47 @@ User's request: ${msg}`;
                                 </div>
                                 <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
                             </div>
-                            ${workout.notes ? `<div class="history-notes">📝 ${workout.notes}</div>` : ''}
+                             ${workout.notes ? `<div class="history-notes">📝 ${workout.notes}</div>` : ''}
                             <div class="history-details-body">
                     `;
 
-                    workout.exercises.forEach(exercise => {
-                        const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
-                        html += `
-                            <div class="history-exercise-detail">
-                                <span class="history-exercise-name">
-                                    ${exercise.name}
-                                    ${isPR ? '<span class="pr-badge">PR!</span>' : ''}
-                                </span>
-                                <span class="history-exercise-stats">
-                                    ${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs
-                                </span>
-                            </div>
-                        `;
-                    });
+                    // Check if exercises exist and determine type
+                    if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+                        // Case 1: Strength workout - exercises are objects with properties
+                        if (typeof workout.exercises[0] === 'object' && workout.exercises[0] !== null && workout.exercises[0].name) {
+                            workout.exercises.forEach(exercise => {
+                                const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
+                                html += `
+                                    <div class="history-exercise-detail">
+                                        <span class="history-exercise-name">
+                                            ${exercise.name}
+                                            ${isPR ? '<span class="pr-badge">PR!</span>' : ''}
+                                        </span>
+                                        <span class="history-exercise-stats">
+                                            ${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs
+                                        </span>
+                                    </div>
+                                `;
+                            });
+                        } 
+                        // Case 2: HIIT workout - exercises are just strings (exercise names)
+                        else {
+                            html += `
+                                <div class="history-exercise-detail">
+                                    <strong>Exercises:</strong> ${workout.exercises.join(', ')}
+                                </div>
+                            `;
+                            if (workout.rounds) {
+                                html += `
+                                    <div class="history-exercise-detail">
+                                        <strong>Rounds Completed:</strong> ${workout.rounds}
+                                    </div>
+                                `;
+                            }
+                        }
+                    } else {
+                        html += `<div class="history-exercise-detail">No exercise data available.</div>`;
+                    }
 
                     html += `
                             </div>
