@@ -4511,116 +4511,154 @@ User's request: ${msg}`;
         }
 
         function generateWorkoutQR() {
-            const select = document.getElementById('qrShareWorkoutSelect');
-            const selectedValue = select.value;
-            
-            if (!selectedValue) {
-                alert('Please select a workout to share');
+            const workoutSelect = document.getElementById('qrShareWorkoutSelect');
+            const workoutName = workoutSelect.value;
+            if (!workoutName) {
+                alert('Please select a workout to share.');
                 return;
             }
-
-            const [type, identifier] = selectedValue.split(':');
-            let workoutData;
-            let workoutName;
-
-            if (type === 'prebuilt') {
-                workoutData = workoutPrograms[identifier];
-                workoutName = select.options[select.selectedIndex].text;
-            } else {
-                const customWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
-                workoutData = customWorkouts[identifier];
-                workoutName = identifier;
-            }
-
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            const workoutData = savedCustomWorkouts[workoutName];
             if (!workoutData) {
-                alert('Workout not found!');
+                alert('Workout not found.');
                 return;
             }
 
-            // Bundle custom exercises
-            const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
-            const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
-            const bundledCustomExercises = {};
-            const bundledYouTubeLinks = {};
+            const customExercisesData = [];
+            const allCustomExercises = JSON.parse(localStorage.getItem('customExercises')) || {};
+            const exercisesInWorkout = workoutData.workoutType === 'hiit' ? workoutData.exercises : workoutData;
 
-            workoutData.forEach(exercise => {
-                if (customExercises[exercise.name]) {
-                    bundledCustomExercises[exercise.name] = customExercises[exercise.name];
-                }
-                if (customYouTubeLinks[exercise.name]) {
-                    bundledYouTubeLinks[exercise.name] = customYouTubeLinks[exercise.name];
-                }
-            });
+            if (Array.isArray(exercisesInWorkout)) {
+                exercisesInWorkout.forEach(ex => {
+                    if (allCustomExercises[ex.name] && !customExercisesData.some(customEx => customEx.name === ex.name)) {
+                        customExercisesData.push({ name: ex.name, ...allCustomExercises[ex.name] });
+                    }
+                });
+            }
 
-            const shareData = {
-                version: 'v2.2-b64zip',
-                name: workoutName,
-                workout: workoutData,
-                customExercises: bundledCustomExercises,
-                customYouTubeLinks: bundledYouTubeLinks
+            const shareableWorkout = {
+                v: '2.2-b64zip', 
+                t: workoutName,
+                d: workoutData,
+                c: customExercisesData,
+                s: new Date().toISOString()
             };
 
-            try {
-                const jsonString = JSON.stringify(shareData);
-                const compressed = pako.deflate(jsonString, { to: 'string' });
-                const base64 = btoa(compressed);
-                const shareUrl = `${window.location.origin}${window.location.pathname}?share=${encodeURIComponent(base64)}`;
+            const jsonString = JSON.stringify(shareableWorkout);
+            const compressedBinary = pako.deflate(jsonString);
+            const binaryString = String.fromCharCode.apply(null, compressedBinary);
+            const base64String = btoa(binaryString);
 
-                document.getElementById('qrCodeOutput').innerHTML = '';
-                new QRCode(document.getElementById('qrCodeOutput'), {
-                    text: shareUrl,
-                    width: 256,
-                    height: 256,
-                    colorDark: '#001f3f',
-                    colorLight: '#ffffff',
-                    correctLevel: QRCode.CorrectLevel.M
-                });
+            // Create a URL with the data
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?workout=${encodeURIComponent(base64String)}`;
+            
+            // Make the main container visible
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.style.display = 'block';
+            
+            // Get the dedicated output div
+            const qrCodeOutput = document.getElementById('qrCodeOutput');
+            // Clear any previous QR code from the output div
+            qrCodeOutput.innerHTML = '';
 
-                document.getElementById('qrCodeContainer').style.display = 'block';
-
-            } catch (error) {
-                console.error('Error generating QR code:', error);
-                alert('Error generating QR code. The workout might be too large. Try sharing a smaller workout.');
-            }
+            // Generate the new QR code inside the clean output div
+            new QRCode(qrCodeOutput, {
+                text: shareUrl,
+                width: 280,
+                height: 280,
+                colorDark: "#001f3f",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
         }
 
-        function checkForSharedWorkout() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedData = urlParams.get('share');
+        function handleIncomingWorkout() {
+            const params = new URLSearchParams(window.location.search);
+            const workoutParam = params.get('workout');
 
-            if (sharedData) {
+            if (!workoutParam) return; // No workout data in URL, do nothing
+
+            try {
+                let jsonString;
+                let sharedWorkout;
+                const qrData = decodeURIComponent(workoutParam);
+
                 try {
-                    const base64 = decodeURIComponent(sharedData);
-                    const compressed = atob(base64);
-                    const decompressed = pako.inflate(compressed, { to: 'string' });
-                    const data = JSON.parse(decompressed);
-
-                    if (data.version === 'v2.2-b64zip') {
-                        if (confirm(`Import workout: "${data.name}"?\n\nThis will add it to your custom workouts.`)) {
-                            const customWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
-                            customWorkouts[data.name] = data.workout;
-                            localStorage.setItem('customWorkouts', JSON.stringify(customWorkouts));
-
-                            if (data.customExercises && Object.keys(data.customExercises).length > 0) {
-                                const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
-                                Object.assign(customExercises, data.customExercises);
-                                localStorage.setItem('customExercises', JSON.stringify(customExercises));
-                            }
-
-                            if (data.customYouTubeLinks && Object.keys(data.customYouTubeLinks).length > 0) {
-                                const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
-                                Object.assign(customYouTubeLinks, data.customYouTubeLinks);
-                                localStorage.setItem('customYouTubeLinks', JSON.stringify(customYouTubeLinks));
-                            }
-
-                            alert('Workout imported successfully! You can find it in your custom workouts.');
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error importing workout:', error);
-                    alert('Error importing workout. The QR code might be invalid or corrupted.');
+                   const binaryString = atob(qrData);
+                   const compressedBinary = new Uint8Array(binaryString.length).map((_, i) => binaryString.charCodeAt(i));
+                   jsonString = pako.inflate(compressedBinary, { to: 'string' });
+                   sharedWorkout = JSON.parse(jsonString);
+                } catch (e) {
+                   console.log("Could not decompress, attempting to parse as plain JSON.");
+                   sharedWorkout = JSON.parse(qrData);
                 }
+                
+                const title = sharedWorkout.t || sharedWorkout.title;
+                const workoutData = sharedWorkout.d || sharedWorkout.workoutData;
+                const customExercisesData = sharedWorkout.c || sharedWorkout.customExercisesData;
+
+                if (!title || !workoutData) {
+                    alert('Invalid workout data in the URL.');
+                    return;
+                }
+                
+                const workoutType = workoutData.workoutType === 'hiit' ? 'HIIT' : 'Strength';
+                const exercises = workoutData.workoutType === 'hiit' ? workoutData.exercises : workoutData;
+                const exerciseCount = Array.isArray(exercises) ? exercises.length : 0;
+                
+                let confirmMsg = `Import this shared workout?\n\n`;
+                confirmMsg += `Name: ${title}\n`;
+                confirmMsg += `Type: ${workoutType}\n`;
+                confirmMsg += `Exercises: ${exerciseCount}\n`;
+                if (customExercisesData && customExercisesData.length > 0) {
+                    confirmMsg += `Custom Exercises: ${customExercisesData.length}\n`;
+                }
+                confirmMsg += `\nAdd this workout to your app?`;
+                
+                if (!confirm(confirmMsg)) {
+                     // Clean the URL even if user cancels
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    return;
+                }
+                
+                let importedExerciseCount = 0;
+                if (customExercisesData && customExercisesData.length > 0) {
+                    customExercisesData.forEach(ex => {
+                        const { name, ...exerciseData } = ex;
+                        if (!exerciseDatabase[name]) {
+                            saveCustomExerciseToDB(name, exerciseData);
+                            importedExerciseCount++;
+                        }
+                    });
+                }
+                
+                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+                let newName = title;
+                let counter = 1;
+                while (savedCustomWorkouts[newName]) {
+                    newName = `${title} (Imported ${counter++})`;
+                }
+                
+                savedCustomWorkouts[newName] = workoutData;
+                localStorage.setItem('customWorkouts', JSON.stringify(savedCustomWorkouts));
+                
+                loadCustomWorkoutsIntoDropdown();
+                populateShareWorkoutSelect();
+                
+                let successMsg = `Workout imported!\n\n"${newName}" is now available in your custom workouts.`;
+                if (importedExerciseCount > 0) {
+                    successMsg += `\n${importedExerciseCount} new custom exercise(s) were also added.`;
+                }
+                alert(successMsg);
+                
+                // Clean the URL after successful import
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+            } catch (error) {
+                console.error('Error importing workout:', error);
+                alert('Error importing workout. The QR code data may be invalid or corrupted.');
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         }
 
@@ -4699,7 +4737,7 @@ User's request: ${msg}`;
             updateProgress();
             loadHistory();
             populateShareWorkoutSelect();
-            checkForSharedWorkout();
+            handleIncomingWorkout();
             renderCalendar();
             loadBodyStats();
             loadCustomWorkoutsIntoDropdown();
