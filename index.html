@@ -3143,7 +3143,38 @@
                 resetWorkoutState();
             }, 1500);
         }
+        function resetWorkoutState() {
+            // Reset flags and UI
+            guidedMode = false;
+            window.hiitActive = false;
+            document.getElementById('workoutSetup').style.display = 'block';
+            document.getElementById('guidedWorkoutMode').style.display = 'none';
+            document.getElementById('hiitWorkoutMode').style.display = 'none';
+            document.getElementById('workoutType').value = '';
+            document.getElementById('workoutContainer').innerHTML = '';
+            document.getElementById('workoutModeSelection').style.display = 'none';
+            if (document.querySelector('.nav')) {
+                document.querySelector('.nav').style.display = 'flex';
+            }
 
+            // Reset all state variables to their defaults
+            currentWorkout = [];
+            completedSets = [];
+            currentExerciseIndex = 0;
+            currentSetNumber = 1;
+            currentRound = 1;
+            workoutStyle = 'traditional';
+            restTimeRemaining = 0;
+            
+            // Reset timers and update other sections
+            resetTimer();
+            loadRecommendation();
+            updateProgress();
+            loadHistory();
+            
+            // Go to a neutral tab after workout completion
+            showSection('history');
+        }
         function playHiitSound(type) {
             // If audioCtx was never created (because it's not a HIIT workout), it will just exit silently.
             if (!audioCtx) return;
