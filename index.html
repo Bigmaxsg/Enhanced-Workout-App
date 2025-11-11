@@ -3934,22 +3934,225 @@ User's request: ${msg}`;
                     </div>
                 `;
             } else {
-                // More advanced logic could go here, e.g., suggesting a workout based on the last one.
-                const lastWorkoutType = history[0].workoutName;
+                // SMART RECOMMENDATION LOGIC
+                const recommendation = generateSmartRecommendation(history);
                 recommendationHtml = `
                     <div class="recommendation-card">
-                        <h3>Keep Up the Great Work!</h3>
-                        <p>Your last workout was <strong>${lastWorkoutType}</strong>. Consider trying a different muscle group today to ensure balanced training and proper recovery.</p>
-                        <p>Maybe it's a good day for a cardio session or an ab workout!</p>
-                         <button class="btn" onclick="showSection('workout');">
-                            Go to Workout Section
-                        </button>
+                        <h3>${recommendation.title}</h3>
+                        <p>${recommendation.message}</p>
+                        ${recommendation.reasoning ? `<p style="margin-top: 10px; padding: 10px; background: rgba(0, 61, 92, 0.1); border-radius: 8px; font-size: 14px;"><strong>💡 Why?</strong> ${recommendation.reasoning}</p>` : ''}
+                        ${recommendation.workoutType ? `
+                            <button class="btn" onclick="document.querySelector('.nav-btn[onclick*=\\'workout\\']').click(); document.getElementById('workoutType').value='${recommendation.workoutType}'; loadWorkout();">
+                                Load ${recommendation.workoutName} Workout
+                            </button>
+                        ` : `
+                            <button class="btn" onclick="showSection('workout');">
+                                Go to Workout Section
+                            </button>
+                        `}
                     </div>
                 `;
             }
 
             container.innerHTML = recommendationHtml;
-        }// ==================== PROGRESS TRACKING ====================
+        }
+
+        function generateSmartRecommendation(history) {
+            const now = new Date();
+            const today = now.toDateString();
+            
+            // Check if user worked out today
+            const workedOutToday = history.some(w => new Date(w.date).toDateString() === today);
+            
+            if (workedOutToday) {
+                return {
+                    title: "🎉 Great Job Today!",
+                    message: "You've already crushed a workout today! Your body needs time to recover and grow stronger.",
+                    reasoning: "Rest and recovery are just as important as training. Consider light stretching, walking, or taking the day off completely."
+                };
+            }
+
+            // Get last 7 days of workouts
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const recentWorkouts = history.filter(w => new Date(w.date) >= sevenDaysAgo);
+
+            // Check for consecutive workout days (potential overtraining)
+            const last3Days = history.slice(0, 3);
+            const consecutiveDays = checkConsecutiveDays(last3Days);
+            
+            if (consecutiveDays >= 3) {
+                return {
+                    title: "⏸️ Consider a Rest Day",
+                    message: "You've worked out 3+ days in a row! Your muscles grow during rest, not during workouts.",
+                    reasoning: "Overtraining can lead to injury and burnout. Take a rest day or do light cardio/stretching."
+                };
+            }
+
+            // Analyze muscle groups trained recently
+            const muscleGroupMap = {
+                'chest': ['chest', 'press', 'fly', 'flyes', 'pushup', 'push-up', 'dips'],
+                'back': ['back', 'row', 'pull', 'deadlift', 'lat'],
+                'legs': ['leg', 'squat', 'lunge', 'calf', 'glute', 'thigh'],
+                'shoulders': ['shoulder', 'lateral', 'overhead', 'military', 'shrug', 'delt'],
+                'arms': ['curl', 'tricep', 'bicep', 'hammer', 'preacher'],
+                'core': ['ab', 'core', 'crunch', 'plank', 'russian', 'mountain'],
+                'cardio': ['hiit', 'bike', 'row', 'sprint', 'run', 'jump', 'cardio']
+            };
+
+            const recentMuscleGroups = {};
+            const last5Workouts = history.slice(0, 5);
+
+            last5Workouts.forEach(workout => {
+                const workoutName = (workout.workoutName || '').toLowerCase();
+                const exercises = workout.exercises || [];
+                
+                // Check workout name first
+                for (const [group, keywords] of Object.entries(muscleGroupMap)) {
+                    if (keywords.some(keyword => workoutName.includes(keyword))) {
+                        recentMuscleGroups[group] = (recentMuscleGroups[group] || 0) + 2; // Weight workout names more
+                    }
+                }
+
+                // Check individual exercises
+                exercises.forEach(exercise => {
+                    const exerciseName = (typeof exercise === 'object' ? exercise.name : exercise || '').toLowerCase();
+                    for (const [group, keywords] of Object.entries(muscleGroupMap)) {
+                        if (keywords.some(keyword => exerciseName.includes(keyword))) {
+                            recentMuscleGroups[group] = (recentMuscleGroups[group] || 0) + 1;
+                            break;
+                        }
+                    }
+                });
+            });
+
+            // Find least trained muscle groups
+            const allGroups = ['chest', 'back', 'legs', 'shoulders', 'arms', 'core', 'cardio'];
+            const leastTrained = allGroups
+                .map(group => ({ group, count: recentMuscleGroups[group] || 0 }))
+                .sort((a, b) => a.count - b.count);
+
+            // Check last workout to avoid same muscle group
+            const lastWorkout = history[0];
+            const lastWorkoutName = (lastWorkout.workoutName || '').toLowerCase();
+            const lastMuscleGroup = findPrimaryMuscleGroup(lastWorkoutName, lastWorkout.exercises, muscleGroupMap);
+
+            // Determine recommendation based on training history
+            let recommendation = {};
+
+            // If too much strength training, suggest cardio
+            const strengthWorkouts = last5Workouts.filter(w => 
+                (w.type !== 'HIIT' && w.type !== 'HIIT Workout') &&
+                !w.workoutName?.toLowerCase().includes('cardio')
+            ).length;
+
+            if (strengthWorkouts >= 4 && (recentMuscleGroups['cardio'] || 0) === 0) {
+                recommendation = {
+                    title: "🏃 Time for Cardio!",
+                    message: "You've been crushing strength training! Let's add some cardio for heart health and fat burning.",
+                    reasoning: "Balanced training includes cardiovascular exercise. HIIT is great for conditioning while maintaining muscle.",
+                    workoutType: null,
+                    workoutName: "HIIT"
+                };
+            }
+            // If lots of cardio, suggest strength
+            else if ((recentMuscleGroups['cardio'] || 0) >= 3) {
+                const strengthGroup = leastTrained.find(g => g.group !== 'cardio');
+                const workoutMapping = {
+                    'chest': { type: 'chest', name: 'Chest' },
+                    'back': { type: 'back', name: 'Back' },
+                    'legs': { type: 'legs', name: 'Leg' },
+                    'shoulders': { type: 'shoulders', name: 'Shoulder' },
+                    'arms': { type: 'arms', name: 'Arm' },
+                    'core': { type: 'abs', name: 'Core/Abs' }
+                };
+                
+                const suggested = workoutMapping[strengthGroup.group];
+                recommendation = {
+                    title: "💪 Build Some Muscle!",
+                    message: `You've been doing lots of cardio! Let's build strength with a ${suggested.name} workout.`,
+                    reasoning: `Your ${suggested.name.toLowerCase()} muscles haven't been trained recently. Time to focus on strength!`,
+                    workoutType: suggested.type,
+                    workoutName: suggested.name
+                };
+            }
+            // Suggest least trained muscle group
+            else {
+                const targetGroup = leastTrained[0];
+                
+                // Avoid suggesting same as last workout
+                let suggestedGroup = targetGroup;
+                if (targetGroup.group === lastMuscleGroup && leastTrained.length > 1) {
+                    suggestedGroup = leastTrained[1];
+                }
+
+                const workoutMapping = {
+                    'chest': { type: 'chest', name: 'Chest', emoji: '💪' },
+                    'back': { type: 'back', name: 'Back', emoji: '🔙' },
+                    'legs': { type: 'legs', name: 'Leg', emoji: '🦵' },
+                    'shoulders': { type: 'shoulders', name: 'Shoulder', emoji: '💪' },
+                    'arms': { type: 'arms', name: 'Arm', emoji: '💪' },
+                    'core': { type: 'abs', name: 'Core/Abs', emoji: '🎯' },
+                    'cardio': { type: null, name: 'HIIT/Cardio', emoji: '🏃' }
+                };
+
+                const suggested = workoutMapping[suggestedGroup.group] || workoutMapping['chest'];
+                
+                recommendation = {
+                    title: `${suggested.emoji} ${suggested.name} Day!`,
+                    message: `Your last workout was ${lastWorkout.workoutName}. Today's perfect for training ${suggested.name.toLowerCase()}!`,
+                    reasoning: `You haven't trained ${suggested.name.toLowerCase()} recently. Balanced training targets all muscle groups throughout the week.`,
+                    workoutType: suggested.type,
+                    workoutName: suggested.name
+                };
+            }
+
+            return recommendation;
+        }
+
+        function checkConsecutiveDays(workouts) {
+            if (workouts.length === 0) return 0;
+            
+            let consecutive = 1;
+            for (let i = 0; i < workouts.length - 1; i++) {
+                const current = new Date(workouts[i].date);
+                const next = new Date(workouts[i + 1].date);
+                const daysDiff = Math.floor((current - next) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff === 1) {
+                    consecutive++;
+                } else {
+                    break;
+                }
+            }
+            return consecutive;
+        }
+
+        function findPrimaryMuscleGroup(workoutName, exercises, muscleGroupMap) {
+            // Check workout name first
+            for (const [group, keywords] of Object.entries(muscleGroupMap)) {
+                if (keywords.some(keyword => workoutName.includes(keyword))) {
+                    return group;
+                }
+            }
+
+            // Check exercises
+            const groupCounts = {};
+            (exercises || []).forEach(exercise => {
+                const exerciseName = (typeof exercise === 'object' ? exercise.name : exercise || '').toLowerCase();
+                for (const [group, keywords] of Object.entries(muscleGroupMap)) {
+                    if (keywords.some(keyword => exerciseName.includes(keyword))) {
+                        groupCounts[group] = (groupCounts[group] || 0) + 1;
+                        break;
+                    }
+                }
+            });
+
+            // Return most common group
+            const sorted = Object.entries(groupCounts).sort((a, b) => b[1] - a[1]);
+            return sorted.length > 0 ? sorted[0][0] : 'chest';
+        }
+        // ==================== PROGRESS TRACKING ====================
         function updateProgress() {
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             
