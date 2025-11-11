@@ -1292,6 +1292,8 @@
             <!-- Progress Section -->
             <div id="progress" class="section">
                 <h2 style="margin-bottom: 20px;">📈 Your Progress</h2>
+                
+                <!-- Core Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number" id="totalWorkouts">0</div>
@@ -1310,16 +1312,83 @@
                         <div class="stat-label">Day Streak</div>
                     </div>
                 </div>
+
+                <!-- Enhanced Stats Grid -->
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgDuration">0:00</div>
+                        <div class="stat-label">💪 Avg Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="caloriesBurned">0</div>
+                        <div class="stat-label">🔥 Est. Calories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="thisMonth">0</div>
+                        <div class="stat-label">📅 This Month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="workoutFrequency">0</div>
+                        <div class="stat-label">⚡ Per Week Avg</div>
+                    </div>
+                </div>
+
+                <!-- Additional Enhanced Stats -->
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="personalRecordsCount">0</div>
+                        <div class="stat-label">🏆 PRs Set</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="consistencyScore">0%</div>
+                        <div class="stat-label">💎 Consistency</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="heaviestLift">0</div>
+                        <div class="stat-label">🔝 Heaviest Lift (lbs)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completionRate">0%</div>
+                        <div class="stat-label">💯 Completion Rate</div>
+                    </div>
+                </div>
+
+                <!-- Calorie Tracker Setup -->
+                <div class="info-box" style="margin-top: 20px;">
+                    <p><strong>🔥 Calorie Tracking:</strong> For more accurate calorie data, you can input calories from your fitness tracker (Apple Watch, Garmin, etc.)</p>
+                    <button class="btn btn-secondary" onclick="openCalorieModal()" style="margin-top: 10px; width: auto; padding: 10px 20px;">⚙️ Configure Calorie Tracking</button>
+                </div>
+
                 <div class="progress-chart">
                     <h3 class="chart-title">Workout Distribution</h3>
                     <div id="workoutDistribution"></div>
                 </div>
+                
+                <div class="progress-chart">
+                    <h3 class="chart-title">🎯 Most Trained Muscle Groups</h3>
+                    <div id="muscleGroupDistribution"></div>
+                </div>
+
                 <div class="progress-chart">
                     <h3 class="chart-title">Volume Progress (Last 10 Workouts)</h3>
                     <div id="volumeProgress"></div>
                 </div>
-            </div>
 
+                <div class="progress-chart">
+                    <h3 class="chart-title">📈 Volume Trend Analysis</h3>
+                    <div id="volumeTrend"></div>
+                </div>
+
+                <div class="progress-chart">
+                    <h3 class="chart-title">🎪 Exercise Variety Score</h3>
+                    <div id="exerciseVariety"></div>
+                </div>
+
+                <div class="progress-chart">
+                    <h3 class="chart-title">📊 Average Rest Between Workouts</h3>
+                    <div id="restBetweenWorkouts"></div>
+                </div>
+            </div>
             <!-- History Section -->
             <div id="history" class="section">
                 <h2 style="margin-bottom: 20px;">📜 Workout History</h2>
@@ -1619,7 +1688,51 @@
             </div>
         </div>
     </div>
+<!-- Calorie Tracking Modal -->
+    <div id="calorieModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🔥 Configure Calorie Tracking</h3>
+                <button class="modal-close" onclick="closeCalorieModal()">&times;</button>
+            </div>
+            <div>
+                <div class="info-box" style="margin-bottom: 20px;">
+                    <p><strong>How it works:</strong> Choose between automatic estimation based on workout data or manual input from your fitness tracker.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tracking Method</label>
+                    <select id="calorieTrackingMethod" onchange="toggleCalorieInputMethod()">
+                        <option value="automatic">Automatic Estimation</option>
+                        <option value="manual">Manual Input from Tracker</option>
+                    </select>
+                </div>
 
+                <div id="automaticCalorieInfo" style="display: block;">
+                    <div class="info-box">
+                        <p><strong>Automatic Estimation Formula:</strong></p>
+                        <p>• Strength Training: ~5 calories per minute</p>
+                        <p>• HIIT Training: ~10 calories per minute</p>
+                        <p>Adjust the multiplier based on your intensity level:</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Intensity Multiplier (0.5 - 2.0)</label>
+                        <input type="number" id="calorieMultiplier" step="0.1" min="0.5" max="2.0" value="1.0" placeholder="1.0 = Average">
+                        <small style="color: #6c757d;">Lower intensity: 0.5-0.8 | Average: 1.0 | High intensity: 1.2-2.0</small>
+                    </div>
+                </div>
+
+                <div id="manualCalorieInfo" style="display: none;">
+                    <div class="info-box">
+                        <p><strong>Manual Entry:</strong> After each workout, you'll be prompted to enter calories burned from your fitness tracker.</p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="saveCalorieSettings()">💾 Save Settings</button>
+            </div>
+        </div>
+    </div>
   
     <script>
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
@@ -2813,13 +2926,25 @@
             pauseTimer();
             const workoutDuration = timerSeconds;
 
+            // Check if manual calorie tracking is enabled
+            const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
+            let caloriesBurned = null;
+
+            if (calorieSettings.method === 'manual') {
+                const userCalories = prompt('Enter calories burned from your fitness tracker (or leave blank to skip):');
+                if (userCalories && !isNaN(userCalories) && userCalories > 0) {
+                    caloriesBurned = parseInt(userCalories);
+                }
+            }
+
             const workoutData = {
                 date: new Date().toISOString(),
                 exercises: currentWorkout,
                 duration: workoutDuration,
                 type: workoutMode,
                 workoutName: document.getElementById('workoutType').value || 'Custom',
-                notes: document.getElementById('workoutNotes')?.value || ''
+                notes: document.getElementById('workoutNotes')?.value || '',
+                caloriesBurned: caloriesBurned
             };
 
             let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
@@ -3099,13 +3224,25 @@
             pauseTimer();
             clearInterval(hiitTimerInterval);
 
+            // Check if manual calorie tracking is enabled
+            const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
+            let caloriesBurned = null;
+
+            if (calorieSettings.method === 'manual') {
+                const userCalories = prompt('Enter calories burned from your fitness tracker (or leave blank to skip):');
+                if (userCalories && !isNaN(userCalories) && userCalories > 0) {
+                    caloriesBurned = parseInt(userCalories);
+                }
+            }
+
             const workout = {
                 date: new Date().toISOString(),
                 type: 'HIIT Workout',
                 exercises: hiitWorkoutParams.exercises,
                 rounds: hiitCurrentRound - 1,
                 volume: 0,
-                duration: timerSeconds // Include the total duration from main timer
+                duration: timerSeconds,
+                caloriesBurned: caloriesBurned
             };
 
             workoutHistory.unshift(workout);
@@ -3114,7 +3251,6 @@
             alert('Workout saved! Great work!');
             resetWorkoutState();
         }
-
         function completeHiitWorkout() {
             pauseTimer();
             clearInterval(hiitTimerInterval);
@@ -3127,13 +3263,25 @@
             document.getElementById('hiitPauseResumeBtn').style.display = 'none';
 
             setTimeout(() => {
+                // Check if manual calorie tracking is enabled
+                const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
+                let caloriesBurned = null;
+
+                if (calorieSettings.method === 'manual') {
+                    const userCalories = prompt('Enter calories burned from your fitness tracker (or leave blank to skip):');
+                    if (userCalories && !isNaN(userCalories) && userCalories > 0) {
+                        caloriesBurned = parseInt(userCalories);
+                    }
+                }
+
                 const workout = {
                     date: new Date().toISOString(),
                     type: 'HIIT Workout',
                     exercises: hiitWorkoutParams.exercises,
                     rounds: hiitWorkoutParams.totalRounds,
                     volume: 0,
-                    duration: timerSeconds // Include the total duration from main timer
+                    duration: timerSeconds,
+                    caloriesBurned: caloriesBurned
                 };
 
                 workoutHistory.unshift(workout);
@@ -3801,8 +3949,7 @@ User's request: ${msg}`;
             }
 
             container.innerHTML = recommendationHtml;
-        }
-       // ==================== PROGRESS TRACKING ====================
+        }// ==================== PROGRESS TRACKING ====================
         function updateProgress() {
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             
@@ -3814,6 +3961,12 @@ User's request: ${msg}`;
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             const thisWeek = history.filter(w => new Date(w.date) >= oneWeekAgo).length;
             document.getElementById('thisWeek').textContent = thisWeek;
+
+            // This month
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+            const thisMonth = history.filter(w => new Date(w.date) >= oneMonthAgo).length;
+            document.getElementById('thisMonth').textContent = thisMonth;
 
             // Total volume
             let totalVolume = 0;
@@ -3828,11 +3981,32 @@ User's request: ${msg}`;
             const streak = calculateStreak(history);
             document.getElementById('streak').textContent = streak;
 
+            // NEW METRICS
+            updateAverageDuration(history);
+            updateCaloriesBurned(history);
+            updateWorkoutFrequency(history);
+            updatePersonalRecordsCount();
+            updateConsistencyScore(history);
+            updateHeaviestLift(history);
+            updateCompletionRate(history);
+
             // Workout distribution
             updateWorkoutDistribution(history);
 
+            // Muscle group distribution
+            updateMuscleGroupDistribution(history);
+
             // Volume progress
             updateVolumeProgress(history);
+
+            // Volume trend
+            updateVolumeTrend(history);
+
+            // Exercise variety
+            updateExerciseVariety(history);
+
+            // Rest between workouts
+            updateRestBetweenWorkouts(history);
         }
 
         function calculateStreak(history) {
@@ -3934,7 +4108,351 @@ User's request: ${msg}`;
 
             container.innerHTML = html;
         }
+// ==================== NEW ENHANCED METRICS ====================
+        
+        function updateAverageDuration(history) {
+            if (history.length === 0) {
+                document.getElementById('avgDuration').textContent = '0:00';
+                return;
+            }
 
+            const totalDuration = history.reduce((sum, w) => sum + (w.duration || 0), 0);
+            const avgSeconds = Math.floor(totalDuration / history.length);
+            const minutes = Math.floor(avgSeconds / 60);
+            const seconds = avgSeconds % 60;
+            
+            document.getElementById('avgDuration').textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateCaloriesBurned(history) {
+            const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
+            let totalCalories = 0;
+
+            history.forEach(workout => {
+                if (calorieSettings.method === 'manual' && workout.caloriesBurned) {
+                    totalCalories += workout.caloriesBurned;
+                } else {
+                    // Automatic estimation
+                    const duration = (workout.duration || 0) / 60; // Convert to minutes
+                    const multiplier = parseFloat(calorieSettings.multiplier) || 1.0;
+                    
+                    if (workout.type === 'HIIT' || workout.type === 'HIIT Workout') {
+                        totalCalories += duration * 10 * multiplier; // 10 cal/min for HIIT
+                    } else {
+                        totalCalories += duration * 5 * multiplier; // 5 cal/min for strength
+                    }
+                }
+            });
+
+            document.getElementById('caloriesBurned').textContent = Math.round(totalCalories).toLocaleString();
+        }
+
+        function updateWorkoutFrequency(history) {
+            if (history.length === 0) {
+                document.getElementById('workoutFrequency').textContent = '0';
+                return;
+            }
+
+            const oldestWorkout = new Date(history[history.length - 1].date);
+            const newestWorkout = new Date(history[0].date);
+            const weeksDiff = Math.max(1, (newestWorkout - oldestWorkout) / (1000 * 60 * 60 * 24 * 7));
+            const frequency = (history.length / weeksDiff).toFixed(1);
+
+            document.getElementById('workoutFrequency').textContent = frequency;
+        }
+
+        function updatePersonalRecordsCount() {
+            const prs = JSON.parse(localStorage.getItem('personalRecords') || '{}');
+            const prCount = Object.keys(prs).length;
+            document.getElementById('personalRecordsCount').textContent = prCount;
+        }
+
+        function updateConsistencyScore(history) {
+            if (history.length === 0) {
+                document.getElementById('consistencyScore').textContent = '0%';
+                return;
+            }
+
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const recentWorkouts = history.filter(w => new Date(w.date) >= thirtyDaysAgo);
+            const targetWorkouts = 12; // 3 per week for 4 weeks
+            const consistency = Math.min(100, Math.round((recentWorkouts.length / targetWorkouts) * 100));
+
+            document.getElementById('consistencyScore').textContent = `${consistency}%`;
+        }
+
+        function updateHeaviestLift(history) {
+            let heaviest = 0;
+
+            history.forEach(workout => {
+                if (workout.exercises && Array.isArray(workout.exercises)) {
+                    workout.exercises.forEach(exercise => {
+                        if (typeof exercise === 'object' && exercise.weight) {
+                            heaviest = Math.max(heaviest, exercise.weight);
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('heaviestLift').textContent = heaviest;
+        }
+
+        function updateCompletionRate(history) {
+            // This tracks workouts that were completed vs ended early
+            // We'll consider any workout saved as "completed" for now
+            // You could enhance this by tracking which workouts were ended early
+            const completed = history.length;
+            const total = history.length; // In future, track attempted workouts
+            
+            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('completionRate').textContent = `${rate}%`;
+        }
+
+        function updateMuscleGroupDistribution(history) {
+            const container = document.getElementById('muscleGroupDistribution');
+            const muscleGroups = {};
+
+            // Map exercises to muscle groups
+            const muscleGroupMap = {
+                'Chest': ['Press', 'Fly', 'Flyes', 'Push-Up', 'Dips', 'Chest', 'Pushup'],
+                'Back': ['Row', 'Pull', 'Deadlift', 'Lat', 'Back'],
+                'Legs': ['Squat', 'Lunge', 'Leg', 'Calf', 'Bulgarian', 'Step-Up', 'Glute'],
+                'Shoulders': ['Shoulder', 'Lateral', 'Front Raise', 'Overhead', 'Military', 'Shrug'],
+                'Arms': ['Curl', 'Tricep', 'Bicep', 'Hammer', 'Preacher'],
+                'Core': ['Crunch', 'Plank', 'Ab', 'Russian', 'Mountain', 'Bicycle', 'Side Bend'],
+                'Cardio': ['HIIT', 'Bike', 'Row', 'Sprint', 'Run', 'Jump']
+            };
+
+            history.forEach(workout => {
+                if (workout.exercises && Array.isArray(workout.exercises)) {
+                    workout.exercises.forEach(exercise => {
+                        const exerciseName = typeof exercise === 'object' ? exercise.name : exercise;
+                        
+                        // Determine muscle group
+                        for (const [group, keywords] of Object.entries(muscleGroupMap)) {
+                            if (keywords.some(keyword => exerciseName.includes(keyword))) {
+                                muscleGroups[group] = (muscleGroups[group] || 0) + 1;
+                                break;
+                            }
+                        }
+                    });
+                }
+            });
+
+            const sortedGroups = Object.entries(muscleGroups)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 7);
+
+            if (sortedGroups.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No workout data yet</p>';
+                return;
+            }
+
+            const maxCount = Math.max(...sortedGroups.map(([_, count]) => count));
+
+            let html = '';
+            sortedGroups.forEach(([group, count]) => {
+                const percentage = (count / maxCount) * 100;
+                html += `
+                    <div class="chart-bar">
+                        <div class="chart-label">${group}</div>
+                        <div class="chart-fill" style="width: ${percentage}%;">
+                            <div class="chart-value">${count}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updateVolumeTrend(history) {
+            const container = document.getElementById('volumeTrend');
+            
+            if (history.length < 2) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">Need at least 2 workouts to show trend</p>';
+                return;
+            }
+
+            const last10 = history.slice(0, 10).reverse();
+            const volumes = last10.map(workout => {
+                let volume = 0;
+                workout.exercises.forEach(exercise => {
+                    volume += (exercise.weight || 0) * (exercise.sets || 0) * (exercise.reps || 0);
+                });
+                return volume;
+            });
+
+            // Calculate trend
+            const firstHalf = volumes.slice(0, Math.floor(volumes.length / 2));
+            const secondHalf = volumes.slice(Math.floor(volumes.length / 2));
+            
+            const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+            const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+            
+            const percentChange = ((secondAvg - firstAvg) / firstAvg * 100).toFixed(1);
+            const trend = percentChange > 0 ? '📈 Increasing' : percentChange < 0 ? '📉 Decreasing' : '➡️ Stable';
+            const trendColor = percentChange > 0 ? '#28a745' : percentChange < 0 ? '#dc3545' : '#6c757d';
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 32px; font-weight: bold; color: ${trendColor};">${trend}</div>
+                    <div style="font-size: 24px; margin-top: 10px; color: ${trendColor};">${percentChange}%</div>
+                    <p style="margin-top: 10px; color: #6c757d;">Comparing first half vs second half of last ${volumes.length} workouts</p>
+                </div>
+            `;
+        }
+
+        function updateExerciseVariety(history) {
+            const container = document.getElementById('exerciseVariety');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">No workout data yet</p>';
+                return;
+            }
+
+            const uniqueExercises = new Set();
+            history.forEach(workout => {
+                if (workout.exercises && Array.isArray(workout.exercises)) {
+                    workout.exercises.forEach(exercise => {
+                        const exerciseName = typeof exercise === 'object' ? exercise.name : exercise;
+                        uniqueExercises.add(exerciseName);
+                    });
+                }
+            });
+
+            const varietyCount = uniqueExercises.size;
+            const totalExercisesInDatabase = Object.keys(exerciseDatabase).length + Object.keys(JSON.parse(localStorage.getItem('customExercises') || '{}')).length;
+            const varietyPercentage = Math.round((varietyCount / totalExercisesInDatabase) * 100);
+
+            let varietyRating = 'Beginner';
+            let varietyColor = '#dc3545';
+            if (varietyCount > 50) {
+                varietyRating = 'Master';
+                varietyColor = '#d4af37';
+            } else if (varietyCount > 30) {
+                varietyRating = 'Advanced';
+                varietyColor = '#28a745';
+            } else if (varietyCount > 15) {
+                varietyRating = 'Intermediate';
+                varietyColor = '#ffc107';
+            }
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 32px; font-weight: bold; color: ${varietyColor};">${varietyRating}</div>
+                    <div style="font-size: 48px; margin-top: 10px; font-weight: bold; color: #003d5c;">${varietyCount}</div>
+                    <p style="margin-top: 10px; color: #6c757d;">Unique exercises performed (${varietyPercentage}% of available)</p>
+                </div>
+            `;
+        }
+
+        function updateRestBetweenWorkouts(history) {
+            const container = document.getElementById('restBetweenWorkouts');
+            
+            if (history.length < 2) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">Need at least 2 workouts to calculate</p>';
+                return;
+            }
+
+            const sortedHistory = [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
+            let totalRestDays = 0;
+            let restPeriods = 0;
+
+            for (let i = 0; i < sortedHistory.length - 1; i++) {
+                const current = new Date(sortedHistory[i].date);
+                const next = new Date(sortedHistory[i + 1].date);
+                const daysDiff = Math.floor((current - next) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff > 0) {
+                    totalRestDays += daysDiff;
+                    restPeriods++;
+                }
+            }
+
+            const avgRest = restPeriods > 0 ? (totalRestDays / restPeriods).toFixed(1) : 0;
+            
+            let restRating = '';
+            let restColor = '#6c757d';
+            if (avgRest < 1) {
+                restRating = '⚠️ Very Frequent';
+                restColor = '#ffc107';
+            } else if (avgRest <= 2) {
+                restRating = '✅ Optimal';
+                restColor = '#28a745';
+            } else if (avgRest <= 4) {
+                restRating = '👍 Good';
+                restColor = '#003d5c';
+            } else {
+                restRating = '⏸️ Infrequent';
+                restColor = '#dc3545';
+            }
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; font-weight: bold; color: #003d5c;">${avgRest}</div>
+                    <p style="margin-top: 10px; color: #6c757d;">Average days between workouts</p>
+                    <div style="font-size: 20px; margin-top: 10px; font-weight: bold; color: ${restColor};">${restRating}</div>
+                </div>
+            `;
+        }
+
+        // ==================== CALORIE MODAL FUNCTIONS ====================
+        
+        function openCalorieModal() {
+            const modal = document.getElementById('calorieModal');
+            const settings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
+            
+            document.getElementById('calorieTrackingMethod').value = settings.method || 'automatic';
+            document.getElementById('calorieMultiplier').value = settings.multiplier || 1.0;
+            
+            toggleCalorieInputMethod();
+            modal.style.display = 'block';
+        }
+
+        function closeCalorieModal() {
+            document.getElementById('calorieModal').style.display = 'none';
+        }
+
+        function toggleCalorieInputMethod() {
+            const method = document.getElementById('calorieTrackingMethod').value;
+            const automaticDiv = document.getElementById('automaticCalorieInfo');
+            const manualDiv = document.getElementById('manualCalorieInfo');
+            
+            if (method === 'automatic') {
+                automaticDiv.style.display = 'block';
+                manualDiv.style.display = 'none';
+            } else {
+                automaticDiv.style.display = 'none';
+                manualDiv.style.display = 'block';
+            }
+        }
+
+        function saveCalorieSettings() {
+            const method = document.getElementById('calorieTrackingMethod').value;
+            const multiplier = document.getElementById('calorieMultiplier').value;
+            
+            const settings = {
+                method: method,
+                multiplier: parseFloat(multiplier) || 1.0
+            };
+            
+            localStorage.setItem('calorieSettings', JSON.stringify(settings));
+            alert('Calorie tracking settings saved!');
+            closeCalorieModal();
+            updateProgress(); // Refresh the progress display
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const calorieModal = document.getElementById('calorieModal');
+            if (event.target === calorieModal) {
+                closeCalorieModal();
+            }
+        };
+        
         // ==================== WORKOUT HISTORY ====================
         function loadHistory() {
             const container = document.getElementById('historyContainer');
