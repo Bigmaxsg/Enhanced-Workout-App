@@ -4491,23 +4491,14 @@ User's request: ${msg}`;
         function populateShareWorkoutSelect() {
             const select = document.getElementById('qrShareWorkoutSelect');
             if (!select) return;
-
-            const customWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
-            
-            let html = '<option value="">-- Choose a workout --</option>';
-            
-            // Add pre-built workouts
-            Object.keys(workoutPrograms).forEach(key => {
-                const name = document.querySelector(`#workoutType option[value="${key}"]`)?.textContent || key;
-                html += `<option value="prebuilt:${key}">${name}</option>`;
+            select.innerHTML = '<option value="">-- Choose a workout --</option>';
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            Object.keys(savedCustomWorkouts).forEach(workoutName => {
+                const option = document.createElement('option');
+                option.value = workoutName;
+                option.textContent = workoutName;
+                select.appendChild(option);
             });
-            
-            // Add custom workouts
-            Object.keys(customWorkouts).forEach(name => {
-                html += `<option value="custom:${name}">${name} (Custom)</option>`;
-            });
-            
-            select.innerHTML = html;
         }
 
         function generateWorkoutQR() {
