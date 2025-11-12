@@ -5646,7 +5646,18 @@ User's request: ${msg}`;
 
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             const workout = history[currentEditingWorkoutIndex];
+            // NEW: Get Date and Time and update the workout.date ISO string
+            const newDate = document.getElementById('editWorkoutDate').value; // YYYY-MM-DD
+            const newTime = document.getElementById('editWorkoutTime').value; // HH:MM
             
+            if (newDate && newTime) {
+                 // Create a local date object from the user's date and time
+                 const localDateTimeString = `${newDate}T${newTime}:00`; 
+                 const newWorkoutDate = new Date(localDateTimeString);
+                 if (!isNaN(newWorkoutDate)) {
+                     workout.date = newWorkoutDate.toISOString(); // Save as new ISO string
+                 }
+            }
             workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
             
             const durationMinutes = parseInt(document.getElementById('editDurationMinutes').value);
