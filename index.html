@@ -4268,6 +4268,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                 const day = String(date.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
             }
+        
         function confirmAppleWorkoutImport(workoutData) {
     
     // --- NEW: USER PROMPT FOR DATE AND TIME (FRIENDLIER FORMAT) ---
@@ -5565,8 +5566,8 @@ User's request: ${msg}`;
                                     </span>
                                     <span class="history-exercise-stats">
                                         ${isCardioLog ? 
-                                            // Displays the exercise-level duration in minutes (stored in minutes in the exercise object)
-                                            `${exercise.duration || 0} min${exercise.distance ? ` | ${exercise.distance} ${exercise.distanceUnit || 'mi'}` : ''}` :
+                                            // FIX: Prioritize exercise.distanceUnit, then the workout's top-level unit, then 'mi'
+                                            `${exercise.duration || 0} min${exercise.distance ? ` | ${exercise.distance} ${exercise.distanceUnit || workout.distanceUnit || 'mi'}` : ''}` :
                                             // Displays strength stats
                                             `${exercise.sets || 0}x${exercise.reps || 0} @ ${exercise.weight || 0}lbs`
                                         }
@@ -5854,116 +5855,116 @@ User's request: ${msg}`;
         }
 
         function renderDayView() {
-            const dateString = getLocalDateString(currentCalendarDate);
-            
-            document.getElementById('calendarMonthYear').textContent = 
-                currentCalendarDate.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const dateString = getLocalDateString(currentCalendarDate);
+    
+    document.getElementById('calendarMonthYear').textContent = 
+        currentCalendarDate.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-            const dayWorkouts = history.filter(w => {
-               // FIX 2: Compare against the correct local date string of the workout
-            const workoutDate = getLocalDateString(new Date(w.date));
-            return workoutDate === dateString;
-        });
+    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+    const dayWorkouts = history.filter(w => {
+        // FIX 2: Compare against the correct local date string of the workout
+        const workoutDate = getLocalDateString(new Date(w.date));
+        return workoutDate === dateString;
+    });
 
-            let html = '<div style="margin-top: 20px;">';
+    let html = '<div style="margin-top: 20px;">';
 
-            if (dayWorkouts.length === 0) {
-                const restDays = getRecommendedRestDays(history);
-                const isRestDay = restDays.includes(dateString);
+    if (dayWorkouts.length === 0) {
+        const restDays = getRecommendedRestDays(history);
+        const isRestDay = restDays.includes(dateString);
 
-                html += `
-                    <div class="info-box">
-                        <p>${isRestDay ? '🟡 Recommended rest day - your body needs recovery!' : 'No workouts completed on this day.'}</p>
+        html += `
+            <div class="info-box">
+                <p>${isRestDay ? '🟡 Recommended rest day - your body needs recovery!' : 'No workouts completed on this day.'}</p>
+            </div>
+        `;
+    } else {
+        dayWorkouts.forEach(workout => {
+            const time = new Date(workout.date).toLocaleTimeString();
+            const duration = workout.duration;
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+
+            html += `
+                <div class="history-item">
+                    <div class="history-header">
+                        <div>
+                            <div class="history-date">${time}</div>
+                            <div class="history-type">${workout.workoutName || 'Custom'} (${workout.type})</div>
+                        </div>
+                        <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
                     </div>
-                `;
-            } else {
-                dayWorkouts.forEach(workout => {
-                    const time = new Date(workout.date).toLocaleTimeString();
-                    const duration = workout.duration;
-                    const minutes = Math.floor(duration / 60);
-                    const seconds = duration % 60;
+                    ${workout.heartRate || workout.calories || workout.distance ? `
+                    <div style="background: #e3f2fd; padding: 8px; border-radius: 5px; margin: 8px 0; font-size: 13px;">
+                    ${workout.heartRate ? `💓 ${workout.heartRate} BPM &nbsp;` : ''}
+                    ${workout.calories ? `🔥 ${workout.calories} cal &nbsp;` : ''}
+                    ${workout.distance ? `📏 ${workout.distance} ${workout.distanceUnit}` : ''}
+                </div>
+            ` : ''}
+                     ${workout.notes ? `<div class="history-notes">📝 ${workout.notes}</div>` : ''}
+                    <div class="history-details-body">
+            `;
 
+            // Check if exercises exist and determine type
+            if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+                // Case 1: Strength workout - exercises are objects with properties
+                if (typeof workout.exercises[0] === 'object' && workout.exercises[0] !== null && workout.exercises[0].name) {
+                    workout.exercises.forEach(exercise => {
+                        const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
+                        html += `
+                            <div class="history-exercise-detail">
+                                <span class="history-exercise-name">
+                                    ${exercise.name}
+                                    ${isPR ? '<span class="pr-badge">PR!</span>' : ''}
+                                </span>
+                                <span class="history-exercise-stats">
+                                    ${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs
+                                </span>
+                            </div>
+                        `;
+                    });
+                } 
+                // Case 2: HIIT workout - exercises are just strings (exercise names)
+                else {
                     html += `
-                        <div class="history-item">
-                            <div class="history-header">
-                                <div>
-                                    <div class="history-date">${time}</div>
-                                    <div class="history-type">${workout.workoutName || 'Custom'} (${workout.type})</div>
-                                </div>
-                                <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
-                            </div>
-                            ${workout.heartRate || workout.calories || workout.distance ? `
-                            <div style="background: #e3f2fd; padding: 8px; border-radius: 5px; margin: 8px 0; font-size: 13px;">
-                            ${workout.heartRate ? `💓 ${workout.heartRate} BPM &nbsp;` : ''}
-                            ${workout.calories ? `🔥 ${workout.calories} cal &nbsp;` : ''}
-                            ${workout.distance ? `📏 ${workout.distance} ${workout.distanceUnit}` : ''}
+                        <div class="history-exercise-detail">
+                            <strong>Exercises:</strong> ${workout.exercises.join(', ')}
                         </div>
-                    ` : ''}
-                             ${workout.notes ? `<div class="history-notes">📝 ${workout.notes}</div>` : ''}
-                            <div class="history-details-body">
                     `;
-
-                    // Check if exercises exist and determine type
-                    if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
-                        // Case 1: Strength workout - exercises are objects with properties
-                        if (typeof workout.exercises[0] === 'object' && workout.exercises[0] !== null && workout.exercises[0].name) {
-                            workout.exercises.forEach(exercise => {
-                                const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
-                                html += `
-                                    <div class="history-exercise-detail">
-                                        <span class="history-exercise-name">
-                                            ${exercise.name}
-                                            ${isPR ? '<span class="pr-badge">PR!</span>' : ''}
-                                        </span>
-                                        <span class="history-exercise-stats">
-                                            ${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs
-                                        </span>
-                                    </div>
-                                `;
-                            });
-                        } 
-                        // Case 2: HIIT workout - exercises are just strings (exercise names)
-                        else {
-                            html += `
-                                <div class="history-exercise-detail">
-                                    <strong>Exercises:</strong> ${workout.exercises.join(', ')}
-                                </div>
-                            `;
-                            if (workout.rounds) {
-                                html += `
-                                    <div class="history-exercise-detail">
-                                        <strong>Rounds Completed:</strong> ${workout.rounds}
-                                    </div>
-                                `;
-                            }
-                        }
-                    } else {
-                        html += `<div class="history-exercise-detail">No exercise data available.</div>`;
+                    if (workout.rounds) {
+                        html += `
+                            <div class="history-exercise-detail">
+                                <strong>Rounds Completed:</strong> ${workout.rounds}
+                            </div>
+                        `;
                     }
-
-                     html += `
-                            </div>
-                            <button class="btn btn-secondary" onclick="editWorkoutStats(${history.indexOf(workout)})" style="margin-top: 10px; width: 100%;">
-                                ✏️ Edit Workout Stats
-                            </button>
-                        </div>
-                    `;
-                });
+                }
+            } else {
+                html += `<div class="history-exercise-detail">No exercise data available.</div>`;
             }
 
-            html += '</div>';
-            document.getElementById('calendarContent').innerHTML = html;
-        }
+             html += `
+                        </div>
+                        <button class="btn btn-secondary" onclick="editWorkoutStats(${history.indexOf(workout)})" style="margin-top: 10px; width: 100%;">
+                            ✏️ Edit Workout Stats
+                        </button>
+                    </div>
+                `;
+            });
+    }
 
+    html += '</div>';
+    document.getElementById('calendarContent').innerHTML = html;
+}
         function getWorkoutDateCounts(history) {
             const dateCounts = {};
             history.forEach(workout => {
+                // FIX: Use getLocalDateString to ensure correct local date is counted
                 const date = getLocalDateString(new Date(workout.date));
-        dateCounts[date] = (dateCounts[date] || 0) + 1;
-    });
-    return dateCounts;
-}
+                dateCounts[date] = (dateCounts[date] || 0) + 1;
+            });
+            return dateCounts;
+        }
 
         function getRecommendedRestDays(history) {
             const restDays = [];
@@ -6050,7 +6051,8 @@ User's request: ${msg}`;
         }
 
         function showDayDetail(dateString) {
-            currentCalendarDate = new Date(dateString);
+            // FIX: Force the date object to be created at local midnight to prevent timezone shifting the date.
+            currentCalendarDate = new Date(dateString + 'T00:00:00'); 
             switchCalendarView('day');
         }
 
