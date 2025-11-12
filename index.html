@@ -1074,11 +1074,17 @@
                     </div>
                     <div style="background: #e8dcc4; border: 2px solid #8b7355; border-radius: 10px; padding: 15px; height: 350px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;"
                         id="messages"></div>
-                    <!-- Apple Fitness Screenshot Import -->
+                    <div class="chat-input-container">
+                        <textarea id="userMessage"
+                            placeholder="e.g., 'a 30 minute leg workout' or 'add instructions for farmer's walk'..."
+                            rows="3"></textarea>
+                        <button class="btn" onclick="sendMessage()">📤 Send</button>
+                    </div>
+                    <!-- Fitness Tracker Screenshot Import -->
                     <div style="background: #e3f2fd; border: 2px solid #2196F3; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                        <h3 style="color: #1565C0; margin-bottom: 10px;">📸 Import Apple Fitness Workout</h3>
+                        <h3 style="color: #1565C0; margin-bottom: 10px;">📸 Import Fitness Tracker Workout Data</h3>
                         <p style="font-size: 14px; color: #424242; margin-bottom: 15px;">
-                            Upload a screenshot from your Apple Fitness app and AI will automatically log the workout to your history and calendar!
+                            Upload a screenshot from your Apple Fitness app or other fitness tracker and AI will automatically log the workout to your history and calendar!
                         </p>
                         <input type="file" id="appleWorkoutImage" accept="image/*" style="display: none;" onchange="processAppleWorkoutImage(event)">
                         <button class="btn" onclick="document.getElementById('appleWorkoutImage').click()" style="background: #2196F3;">
@@ -1089,13 +1095,8 @@
                      <!-- Smart Import Tip -->
                     <div class="info-box" style="background: #fff3cd; border-left-color: #ffc107; margin-bottom: 20px;">
                         <p><strong>💡 Smart Import Tip:</strong></p>
-                        <p>If you've already logged a workout manually, importing the Apple Fitness screenshot will ask if you want to UPDATE the existing workout with heart rate, calories, and distance data - no duplicates!</p>
-                    </div>
-                    <div class="chat-input-container">
-                        <textarea id="userMessage"
-                            placeholder="e.g., 'a 30 minute leg workout' or 'add instructions for farmer's walk'..."
-                            rows="3"></textarea>
-                        <button class="btn" onclick="sendMessage()">📤 Send</button>
+                        <p>If you've already logged a workout manually, importing the Fitness Tracker screenshot will ask if you want to UPDATE the existing workout with heart rate, calories, and distance data - no duplicates!</p>
+                   
                     </div>
                 </div>
             </div>
