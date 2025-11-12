@@ -1812,6 +1812,11 @@
                     <input type="number" id="editCalories" placeholder="e.g., 350">
                 </div>
                 <div class="form-group">
+                    <label>⏱️ Duration (Minutes)</label>
+                    <input type="number" id="editDurationMinutes" placeholder="e.g., 60">
+                    <small style="color: #6c757d;">Primary workout length in minutes.</small>
+                </div>
+                <div class="form-group">
                     <label>📏 Distance</label>
                     <div style="display: flex; gap: 10px;">
                         <input type="number" id="editDistance" placeholder="0.0" step="0.1" style="flex: 2;">
@@ -4319,7 +4324,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
             const workoutEntry = {
                 id: Date.now(),
                 date: workoutDate.toISOString(),
-                duration: workoutData.duration || 0,
+                duration: workoutData.duration || 0 * 60,
                 totalVolume: 0,
                 exercises: [],
                 workoutName: workoutData.workoutName,
@@ -5586,6 +5591,12 @@ User's request: ${msg}`;
 
             // Populate the form with existing data
             document.getElementById('editWorkoutName').value = workout.workoutName || '';
+            
+            // NEW: Duration in minutes
+            const durationInMinutes = Math.round((workout.duration || 0) / 60);
+            
+            document.getElementById('editDurationMinutes').value = durationInMinutes || ''; // Use the new ID
+            
             document.getElementById('editHeartRate').value = workout.heartRate || '';
             document.getElementById('editCalories').value = workout.calories || '';
             document.getElementById('editDistance').value = workout.distance || '';
@@ -5606,9 +5617,16 @@ User's request: ${msg}`;
 
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             const workout = history[currentEditingWorkoutIndex];
-
-            // Update workout with new stats
+            
             workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
+            
+            const durationMinutes = parseInt(document.getElementById('editDurationMinutes').value);
+            if (!isNaN(durationMinutes) && durationMinutes > 0) {
+                workout.duration = durationMinutes * 60; // Convert minutes to seconds
+            } else {
+                workout.duration = 0;
+            }
+            // Update workout with new stats
             workout.heartRate = parseInt(document.getElementById('editHeartRate').value) || null;
             workout.calories = parseInt(document.getElementById('editCalories').value) || null;
             
