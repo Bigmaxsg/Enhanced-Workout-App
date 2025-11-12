@@ -2326,25 +2326,50 @@
                     <p>Your saved custom workout. Adjust as needed!</p>
                 </div>
                 <div style="margin-bottom: 20px;">
-                    ${currentWorkout.map((ex, idx) => `
-                        <div class="exercise-card">
-                            <div class="exercise-name">${ex.name}</div>
-                            <div class="exercise-details">
-                                <div class="detail-input">
-                                    <label>Weight (lbs)</label>
-                                    <input type="number" value="${ex.weight}" onchange="updateExerciseValue(${idx}, 'weight', this.value)">
-                                </div>
-                                <div class="detail-input">
-                                    <label>Sets</label>
-                                    <input type="number" value="${ex.sets}" onchange="updateExerciseValue(${idx}, 'sets', this.value)">
-                                </div>
-                                <div class="detail-input">
-                                    <label>Reps</label>
-                                    <input type="number" value="${ex.reps}" onchange="updateExerciseValue(${idx}, 'reps', this.value)">
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
+                    ${currentWorkout.map((ex, idx) => {
+    const exerciseData = exerciseDatabase[ex.name] || {};
+    const isCardio = exerciseData.exerciseType === "cardio";
+    
+    return `
+        <div class="exercise-card">
+            <div class="exercise-name">${ex.name}</div>
+            ${isCardio ? `
+                <div class="exercise-details">
+                    <div class="detail-input">
+                        <label>⏱️ Duration (minutes)</label>
+                        <input type="number" value="${ex.duration || 30}" onchange="updateExerciseValue(${idx}, 'duration', this.value)">
+                    </div>
+                    <div class="detail-input">
+                        <label>📏 Distance</label>
+                        <input type="number" step="0.1" value="${ex.distance || 0}" onchange="updateExerciseValue(${idx}, 'distance', this.value)">
+                    </div>
+                    <div class="detail-input">
+                        <label>Unit</label>
+                        <select onchange="updateExerciseValue(${idx}, 'distanceUnit', this.value)">
+                            <option value="miles" ${ex.distanceUnit === 'miles' ? 'selected' : ''}>Miles</option>
+                            <option value="km" ${ex.distanceUnit === 'km' ? 'selected' : ''}>Kilometers</option>
+                        </select>
+                    </div>
+                </div>
+            ` : `
+                <div class="exercise-details">
+                    <div class="detail-input">
+                        <label>Weight (lbs)</label>
+                        <input type="number" value="${ex.weight}" onchange="updateExerciseValue(${idx}, 'weight', this.value)">
+                    </div>
+                    <div class="detail-input">
+                        <label>Sets</label>
+                        <input type="number" value="${ex.sets}" onchange="updateExerciseValue(${idx}, 'sets', this.value)">
+                    </div>
+                    <div class="detail-input">
+                        <label>Reps</label>
+                        <input type="number" value="${ex.reps}" onchange="updateExerciseValue(${idx}, 'reps', this.value)">
+                    </div>
+                </div>
+            `}
+        </div>
+    `;
+}).join('')}
                 </div>
             `;
 
