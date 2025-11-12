@@ -4343,7 +4343,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
             alert(`✅ ${workoutData.workoutName} imported successfully!\n\nDuration: ${workoutData.duration} min\nCalories: ${workoutData.calories || 'N/A'}\nDistance: ${workoutData.distance ? workoutData.distance + ' ' + workoutData.distanceUnit : 'N/A'}\n\nCheck your History and Calendar tabs!`);
         } 
         
-        / ==================== RETRY LOGIC FOR API RATE LIMITS ====================
+        // ==================== RETRY LOGIC FOR API RATE LIMITS ====================
         async function apiCallWithRetry(url, options, retryCount = 0) {
             const MAX_RETRIES = 3;
             const BASE_DELAY_MS = 2000; // Start with 2 seconds
