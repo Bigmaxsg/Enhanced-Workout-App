@@ -1184,6 +1184,17 @@
                             <label>📝 Workout Notes (Optional)</label>
                             <textarea id="workoutNotes" rows="2" placeholder="Add any notes about this workout..."></textarea>
                         </div>
+                        <!-- Cardio Tracking Info Box -->
+                        <div class="info-box" style="margin-top: 15px;">
+                            <p><strong>📱 For Cardio Tracking:</strong></p>
+                            <p>Use your preferred cardio app (Concept2 ErgData, Strava, Apple Fitness, etc.) during your workout, then:</p>
+                            <ol style="margin-left: 20px; margin-top: 5px;">
+                                <li>Take a screenshot of your workout summary</li>
+                                <li>Go to <strong>AI Coach</strong> tab</li>
+                                <li>Upload screenshot to auto-import data</li>
+                                <li>Or manually log using "Edit Stats" button in History</li>
+                            </ol>
+                        </div>
                         
                         <button class="btn" onclick="startGuidedWorkout('traditional')" style="margin-bottom: 10px;">
                             🏋️ Start Traditional Style
@@ -3873,17 +3884,19 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                         }]
                     });
                 });
-            } else {
-                // If no detailed exercises, create a generic entry
-                workoutEntry.exercises.push({
-                    name: workoutData.workoutName,
-                    sets: [{
-                        weight: 0,
-                        reps: workoutData.duration,
-                        completed: true
-                    }]
-                });
-            }
+                    } else {
+            // If no detailed exercises, create a cardio entry
+            const exerciseData = {
+                name: workoutData.workoutName,
+                duration: workoutData.duration || 0,
+                distance: workoutData.distance || 0,
+                distanceUnit: workoutData.distanceUnit || 'miles',
+                calories: workoutData.calories || 0,
+                heartRate: workoutData.heartRate || 0
+            };
+            
+            workoutEntry.exercises.push(exerciseData);
+        }
 
             // Add to workout history
             workoutHistory.push(workoutEntry);
@@ -4996,6 +5009,9 @@ User's request: ${msg}`;
                     if (typeof workout.exercises[0] === 'object' && workout.exercises[0] !== null && workout.exercises[0].name) {
                         workout.exercises.forEach(exercise => {
                             const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
+                            const exerciseData = exerciseDatabase[exercise.name] || {};
+                            const isCardio = exerciseData.exerciseType === "cardio";
+                            
                             html += `
                                 <div class="history-exercise-detail">
                                     <span class="history-exercise-name">
@@ -5003,7 +5019,10 @@ User's request: ${msg}`;
                                         ${isPR ? '<span class="pr-badge">PR!</span>' : ''}
                                     </span>
                                     <span class="history-exercise-stats">
-                                        ${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs
+                                        ${isCardio ? 
+                                            `${exercise.duration || 0} min${exercise.distance ? ` | ${exercise.distance} ${exercise.distanceUnit || 'mi'}` : ''}` :
+                                            `${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs`
+                                        }
                                     </span>
                                 </div>
                             `;
