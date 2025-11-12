@@ -3227,50 +3227,7 @@
                 
                 alert(`🎉 Interval Cardio Complete!\n\nDuration: ${Math.floor(workoutData.duration / 60)} minutes\n${workoutData.distance ? `Distance: ${workoutData.distance} ${workoutData.distanceUnit}\n` : ''}${workoutData.calories ? `Calories: ${workoutData.calories}\n` : ''}${workoutData.heartRate ? `Avg HR: ${workoutData.heartRate} BPM` : ''}\n\nGreat job!`);
             }
-            // Check if manual calorie tracking is enabled
-            const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
-            let caloriesBurned = null;
-
-            if (calorieSettings.method === 'manual') {
-                const userCalories = prompt('Enter calories burned from your fitness tracker (or leave blank to skip):');
-                if (userCalories && !isNaN(userCalories) && userCalories > 0) {
-                    caloriesBurned = parseInt(userCalories);
-                }
-            }
-
-            const workoutData = {
-                date: new Date().toISOString(),
-                exercises: currentWorkout,
-                duration: workoutDuration,
-                type: workoutMode,
-                workoutName: document.getElementById('workoutType').value || 'Custom',
-                notes: document.getElementById('workoutNotes')?.value || '',
-                caloriesBurned: caloriesBurned
-            };
-
-            let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-            history.unshift(workoutData);
-            localStorage.setItem('workoutHistory', JSON.stringify(history));
-
-            updatePersonalRecords(currentWorkout);
-
-            alert(`🎉 Workout Complete!\n\nDuration: ${Math.floor(workoutDuration / 60)} minutes ${workoutDuration % 60} seconds\n\nGreat job!`);
-
-            resetTimer();
-            document.getElementById('guidedWorkoutMode').style.display = 'none';
-            document.getElementById('workoutSetup').style.display = 'block';
-            document.getElementById('workoutType').value = '';
-            document.getElementById('workoutContainer').innerHTML = '';
-            document.getElementById('workoutModeSelection').style.display = 'none';
-            if (document.getElementById('workoutNotes')) {
-                document.getElementById('workoutNotes').value = '';
-            }
-
-            updateProgress();
-            loadHistory();
-            renderCalendar();
-        
-
+            
         // ==================== PERSONAL RECORDS TRACKING ====================
         function updatePersonalRecords(workout) {
             let prs = JSON.parse(localStorage.getItem('personalRecords') || '{}');
