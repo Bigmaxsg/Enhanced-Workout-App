@@ -4341,7 +4341,55 @@ If this is just a summary screen (showing duration/calories only), leave exercis
             renderCalendar();
 
             alert(`✅ ${workoutData.workoutName} imported successfully!\n\nDuration: ${workoutData.duration} min\nCalories: ${workoutData.calories || 'N/A'}\nDistance: ${workoutData.distance ? workoutData.distance + ' ' + workoutData.distanceUnit : 'N/A'}\n\nCheck your History and Calendar tabs!`);
-        }     
+        } 
+        
+        / ==================== RETRY LOGIC FOR API RATE LIMITS ====================
+        async function apiCallWithRetry(url, options, retryCount = 0) {
+            const MAX_RETRIES = 3;
+            const BASE_DELAY_MS = 2000; // Start with 2 seconds
+            
+            try {
+                const response = await fetch(url, options);
+                
+                // If rate limited and we have retries left
+                if (response.status === 429 && retryCount < MAX_RETRIES) {
+                    const delay = Math.pow(2, retryCount) * BASE_DELAY_MS + Math.random() * 1000;
+                    console.warn(`Rate limit hit. Retrying in ${(delay / 1000).toFixed(1)} seconds... (Attempt ${retryCount + 1}/${MAX_RETRIES})`);
+                    
+                    // Show user feedback in chat if available
+                    const messagesDiv = document.getElementById('messages');
+                    if (messagesDiv) {
+                        const retryMsg = document.createElement('div');
+                        retryMsg.style.padding = '10px';
+                        retryMsg.style.borderRadius = '8px';
+                        retryMsg.style.background = '#fff3cd';
+                        retryMsg.style.color = '#856404';
+                        retryMsg.style.alignSelf = 'center';
+                        retryMsg.style.fontSize = '13px';
+                        retryMsg.textContent = `⏳ Rate limit reached. Retrying in ${(delay / 1000).toFixed(0)} seconds... (${retryCount + 1}/${MAX_RETRIES})`;
+                        messagesDiv.appendChild(retryMsg);
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return apiCallWithRetry(url, options, retryCount + 1); // Recursive retry
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`API error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+                }
+                
+                return await response.json();
+                
+            } catch (error) {
+                if (retryCount >= MAX_RETRIES) {
+                    console.error("Failed after maximum retries:", error);
+                }
+                throw error;
+            }
+        }
+        
         async function sendMessage() {
             const msg = document.getElementById('userMessage').value.trim();
             if (!msg) return;
@@ -4382,33 +4430,28 @@ User's request: ${msg}`;
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
                 
-                // THIS IS THE WORKING API ENDPOINT
-                const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent?key=' + key, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: instruction_prompt
+                // Use retry logic for API calls
+                const data = await apiCallWithRetry(
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent?key=' + key,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: instruction_prompt
+                                }]
                             }]
-                        }]
-                    }),
-                    signal: controller.signal,
-                    mode: 'cors',
-                    cache: 'no-cache'
-                });
+                        }),
+                        signal: controller.signal,
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    }
+                );
 
                 clearTimeout(timeoutId);
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    console.error('API Error Response:', data);
-                    addMsg(`API Error: ${data.error?.message || response.statusText}. Please check your API key and its permissions.`, 'bot');
-                    return;
-                }
 
                 let resultText = 'Error getting response';
                 if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
