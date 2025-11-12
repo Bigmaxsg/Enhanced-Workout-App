@@ -5847,16 +5847,17 @@ User's request: ${msg}`;
         }
 
         function renderDayView() {
-            const dateString = currentCalendarDate.toISOString().split('T')[0];
+            const dateString = getLocalDateString(currentCalendarDate);
             
             document.getElementById('calendarMonthYear').textContent = 
                 currentCalendarDate.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             const dayWorkouts = history.filter(w => {
-                const workoutDate = new Date(w.date).toISOString().split('T')[0];
-                return workoutDate === dateString;
-            });
+               // FIX 2: Compare against the correct local date string of the workout
+            const workoutDate = getLocalDateString(new Date(w.date));
+            return workoutDate === dateString;
+        });
 
             let html = '<div style="margin-top: 20px;">';
 
