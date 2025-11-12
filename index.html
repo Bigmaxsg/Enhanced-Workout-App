@@ -4324,7 +4324,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
             const workoutEntry = {
                 id: Date.now(),
                 date: workoutDate.toISOString(),
-                duration: workoutData.duration || 0 * 60,
+                duration: (workoutData.duration || 0) * 60,
                 totalVolume: 0,
                 exercises: [],
                 workoutName: workoutData.workoutName,
