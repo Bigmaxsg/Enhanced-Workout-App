@@ -4253,7 +4253,39 @@ If this is just a summary screen (showing duration/calories only), leave exercis
         }
 
         function confirmAppleWorkoutImport(workoutData) {
-            const workoutDate = new Date(workoutData.date);
+            // --- NEW: USER PROMPT FOR DATE AND TIME ---
+
+    // 1. Get Date from user (pre-fill with AI's date or today)
+    const defaultDate = workoutData.date || new Date().toISOString().split('T')[0];
+    const userDate = prompt('Please confirm the workout date (YYYY-MM-DD):', defaultDate);
+
+    if (!userDate) {
+        alert('Workout logging canceled.');
+        document.getElementById('imageProcessingStatus').style.display = 'none';
+        return;
+    }
+
+    // 2. Get Time from user (pre-fill with a reasonable time or 12:00)
+    // Workout Time is 5:22 PM in the screenshot, let's ask for HH:MM format.
+    const defaultTime = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: false}).replace(/\s/g, '');
+    const userTime = prompt('Please confirm the workout time (HH:MM in 24hr format, e.g., 17:22):', defaultTime.substring(0, 5));
+
+    if (!userTime) {
+        alert('Workout logging canceled.');
+        document.getElementById('imageProcessingStatus').style.display = 'none';
+        return;
+    }
+
+    // Combine user date and time into a correct ISO string
+    const workoutDateTimeString = `${userDate}T${userTime}:00.000Z`;
+    const workoutDate = new Date(workoutDateTimeString);
+    
+    // Check for "Invalid Date"
+    if (isNaN(workoutDate)) {
+        alert('Invalid Date or Time entered. Workout logging canceled. Please use YYYY-MM-DD and HH:MM format.');
+        document.getElementById('imageProcessingStatus').style.display = 'none';
+        return;
+    }
             
             // ==================== DUPLICATE DETECTION ====================
             // Check if a workout already exists within 5 minutes of this time
@@ -4279,6 +4311,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                     workoutHistory[existingWorkoutIndex].calories = workoutData.calories || existingWorkout.calories;
                     workoutHistory[existingWorkoutIndex].distance = workoutData.distance || existingWorkout.distance;
                     workoutHistory[existingWorkoutIndex].distanceUnit = workoutData.distanceUnit || existingWorkout.distanceUnit;
+                    workoutHistory[existingWorkoutIndex].date = workoutDate.toISOString(); 
                     
                     // If Apple Fitness has exercise details, add/update them
                     if (workoutData.exercises && workoutData.exercises.length > 0) {
