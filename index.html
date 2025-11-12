@@ -3017,6 +3017,213 @@
                 // Start HIIT mode
                 startHiitWorkout();
 } 
+        // ==================== QUICK CARDIO LOGGER ====================
+function showQuickCardioLogger() {
+    const container = document.getElementById('workoutContainer');
+    
+    // Get only cardio exercises
+    const cardioExercises = Object.keys(exerciseDatabase).filter(ex => 
+        exerciseDatabase[ex].exerciseType === 'cardio'
+    ).sort();
+    
+    let html = `
+        <h3>🏃 Quick Cardio Session</h3>
+        <div class="info-box">
+            <p><strong>How it works:</strong></p>
+            <ol style="margin-left: 20px; margin-top: 5px;">
+                <li>Select your cardio activity</li>
+                <li>Start timer when you begin</li>
+                <li>Stop timer when done</li>
+                <li>Add stats (distance, calories, HR) from your fitness tracker</li>
+            </ol>
+        </div>
+        
+        <div class="form-group">
+            <label>Select Activity</label>
+            <select id="quickCardioActivity" onchange="updateQuickCardioDisplay()">
+                <option value="">-- Choose Activity --</option>
+                ${cardioExercises.map(ex => `<option value="${ex}">${ex}</option>`).join('')}
+            </select>
+        </div>
+        
+        <div id="quickCardioDetails" style="display: none;">
+            <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;">
+                <h3>⏱️ Session Timer</h3>
+                <div style="font-size: 48px; font-weight: bold; color: #1565C0; margin: 15px 0;" id="quickCardioTimer">00:00</div>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-success" id="quickCardioStartBtn" onclick="startQuickCardioTimer()">▶️ Start</button>
+                    <button class="btn btn-secondary" id="quickCardioPauseBtn" onclick="pauseQuickCardioTimer()" style="display: none;">⏸️ Pause</button>
+                    <button class="btn btn-danger" id="quickCardioStopBtn" onclick="stopQuickCardioTimer()" style="display: none;">⏹️ Stop & Log</button>
+                </div>
+            </div>
+            
+            <div id="quickCardioStatsForm" style="display: none;">
+                <h3 style="margin-top: 20px;">📊 Add Stats (Optional)</h3>
+                <div class="info-box" style="background: #e8f5e9;">
+                    <p>Add data from your fitness tracker or leave blank</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>📏 Distance</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="quickCardioDistance" placeholder="0.0" step="0.1" style="flex: 2;">
+                        <select id="quickCardioDistanceUnit" style="flex: 1;">
+                            <option value="miles">Miles</option>
+                            <option value="km">Kilometers</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>🔥 Calories Burned</label>
+                    <input type="number" id="quickCardioCalories" placeholder="e.g., 350">
+                </div>
+                
+                <div class="form-group">
+                    <label>💓 Average Heart Rate (BPM)</label>
+                    <input type="number" id="quickCardioHeartRate" placeholder="e.g., 145">
+                </div>
+                
+                <div class="form-group">
+                    <label>📝 Notes (Optional)</label>
+                    <textarea id="quickCardioNotes" rows="2" placeholder="How did it feel?"></textarea>
+                </div>
+                
+                <button class="btn btn-success" onclick="saveQuickCardioSession()">💾 Save Session</button>
+                <button class="btn btn-secondary" onclick="cancelQuickCardio()">❌ Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    document.getElementById('workoutModeSelection').style.display = 'none';
+}
+
+function updateQuickCardioDisplay() {
+    const activity = document.getElementById('quickCardioActivity').value;
+    if (activity) {
+        document.getElementById('quickCardioDetails').style.display = 'block';
+        resetQuickCardioTimer();
+    } else {
+        document.getElementById('quickCardioDetails').style.display = 'none';
+    }
+}
+
+// Quick Cardio Timer Variables
+let quickCardioTimerInterval = null;
+let quickCardioSeconds = 0;
+let quickCardioRunning = false;
+
+function startQuickCardioTimer() {
+    quickCardioRunning = true;
+    document.getElementById('quickCardioStartBtn').style.display = 'none';
+    document.getElementById('quickCardioPauseBtn').style.display = 'inline-block';
+    document.getElementById('quickCardioStopBtn').style.display = 'inline-block';
+    
+    quickCardioTimerInterval = setInterval(() => {
+        quickCardioSeconds++;
+        updateQuickCardioTimerDisplay();
+    }, 1000);
+}
+
+function pauseQuickCardioTimer() {
+    quickCardioRunning = false;
+    clearInterval(quickCardioTimerInterval);
+    document.getElementById('quickCardioStartBtn').style.display = 'inline-block';
+    document.getElementById('quickCardioStartBtn').textContent = '▶️ Resume';
+    document.getElementById('quickCardioPauseBtn').style.display = 'none';
+}
+
+function stopQuickCardioTimer() {
+    quickCardioRunning = false;
+    clearInterval(quickCardioTimerInterval);
+    document.getElementById('quickCardioStartBtn').style.display = 'none';
+    document.getElementById('quickCardioPauseBtn').style.display = 'none';
+    document.getElementById('quickCardioStopBtn').style.display = 'none';
+    
+    // Show stats form
+    document.getElementById('quickCardioStatsForm').style.display = 'block';
+    document.getElementById('quickCardioTimer').style.opacity = '0.5';
+}
+
+function resetQuickCardioTimer() {
+    quickCardioSeconds = 0;
+    quickCardioRunning = false;
+    clearInterval(quickCardioTimerInterval);
+    updateQuickCardioTimerDisplay();
+    document.getElementById('quickCardioStartBtn').style.display = 'inline-block';
+    document.getElementById('quickCardioStartBtn').textContent = '▶️ Start';
+    document.getElementById('quickCardioPauseBtn').style.display = 'none';
+    document.getElementById('quickCardioStopBtn').style.display = 'none';
+    document.getElementById('quickCardioStatsForm').style.display = 'none';
+    document.getElementById('quickCardioTimer').style.opacity = '1';
+}
+
+function updateQuickCardioTimerDisplay() {
+    const minutes = Math.floor(quickCardioSeconds / 60);
+    const seconds = quickCardioSeconds % 60;
+    document.getElementById('quickCardioTimer').textContent = 
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function saveQuickCardioSession() {
+    const activity = document.getElementById('quickCardioActivity').value;
+    const duration = Math.floor(quickCardioSeconds / 60); // Convert to minutes
+    const distance = parseFloat(document.getElementById('quickCardioDistance').value) || 0;
+    const distanceUnit = document.getElementById('quickCardioDistanceUnit').value;
+    const calories = parseInt(document.getElementById('quickCardioCalories').value) || null;
+    const heartRate = parseInt(document.getElementById('quickCardioHeartRate').value) || null;
+    const notes = document.getElementById('quickCardioNotes').value.trim();
+    
+    if (quickCardioSeconds < 60) {
+        alert('Please complete at least 1 minute of activity!');
+        return;
+    }
+    
+    // Create workout entry
+    const workoutEntry = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        duration: quickCardioSeconds,
+        workoutName: activity,
+        type: 'Cardio',
+        heartRate: heartRate,
+        calories: calories,
+        distance: distance > 0 ? distance : null,
+        distanceUnit: distance > 0 ? distanceUnit : null,
+        notes: notes,
+        exercises: [{
+            name: activity,
+            duration: duration,
+            distance: distance,
+            distanceUnit: distanceUnit
+        }],
+        source: 'Quick Cardio Logger'
+    };
+    
+    // Save to history
+    workoutHistory.push(workoutEntry);
+    localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+    
+    // Show success
+    alert(`✅ ${activity} logged!\n\nDuration: ${duration} minutes\n${distance > 0 ? `Distance: ${distance} ${distanceUnit}\n` : ''}${calories ? `Calories: ${calories}\n` : ''}${heartRate ? `Avg HR: ${heartRate} BPM` : ''}`);
+    
+    // Refresh displays
+    loadHistory();
+    renderCalendar();
+    
+    // Reset
+    document.getElementById('workoutType').value = '';
+    document.getElementById('workoutContainer').innerHTML = '';
+}
+
+function cancelQuickCardio() {
+    if (confirm('Cancel this cardio session? Timer will be reset.')) {
+        document.getElementById('workoutType').value = '';
+        document.getElementById('workoutContainer').innerHTML = '';
+        resetQuickCardioTimer();
+    }
+}
        // ==================== GUIDED WORKOUT MODE ====================
         function startGuidedWorkout(mode) {
             if (currentWorkout.length === 0 || !currentWorkout[0].name) {
