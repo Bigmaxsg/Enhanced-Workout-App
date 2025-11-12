@@ -1114,8 +1114,10 @@
                 <div id="workoutSetup">
                     <div class="form-group">
                         <label>Select Workout Type</label>
-                        <select id="workoutType" onchange="loadWorkout()">
+                       <select id="workoutType" onchange="loadWorkout()">
                             <option value="">-- Choose a Workout --</option>
+                            <option value="quick_cardio">🏃 Quick Log Cardio Session</option>
+                            <option value="interval_cardio">⚡ Interval Cardio Workout</option>
                             <option value="custom">🏋️ Create Custom Strength Workout</option>
                             <option value="custom_hiit">⚡ Create Custom HIIT Workout</option>
                             <option value="leg">🦵 Leg Day</option>
@@ -2401,7 +2403,15 @@
                 document.getElementById('workoutModeSelection').style.display = 'none';
                 return;
             }
-
+            if (workoutType === 'quick_cardio') {
+                showQuickCardioLogger();
+                return;
+            }
+            
+            if (workoutType === 'interval_cardio') {
+                showIntervalCardioBuilder();
+                return;
+            }
             if (workoutType === 'custom') {
                 showCustomWorkoutBuilder();
                 return;
@@ -2909,6 +2919,104 @@
             
             document.getElementById('customHiitWorkoutName').value = workoutName;
         }
+                   // ==================== INTERVAL CARDIO BUILDER ====================
+            function showIntervalCardioBuilder() {
+                const container = document.getElementById('workoutContainer');
+                
+                // Get only cardio exercises
+                const cardioExercises = Object.keys(exerciseDatabase).filter(ex => 
+                    exerciseDatabase[ex].exerciseType === 'cardio'
+                ).sort();
+                
+                currentWorkout = [];
+                
+                let html = `
+                    <h3>⚡ Build Interval Cardio Workout</h3>
+                    <div class="info-box">
+                        <p><strong>Perfect for:</strong> Rowing intervals, bike sprints, run/walk intervals, etc.</p>
+                        <p>Set your work time (e.g., 4 minutes rowing), rest time (e.g., 2 minutes rest), and rounds.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Select Cardio Activity</label>
+                        <select id="intervalCardioActivity">
+                            <option value="">-- Choose Activity --</option>
+                            ${cardioExercises.map(ex => `<option value="${ex}">${ex}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4 style="margin-bottom: 15px; color: #856404;">⏱️ Interval Settings</h4>
+                        
+                        <div class="form-group">
+                            <label>Work Time (seconds)</label>
+                            <input type="number" id="intervalWorkTime" value="240" step="15" placeholder="e.g., 240 for 4 minutes">
+                            <small style="color: #6c757d;">Tip: 60s = 1min, 120s = 2min, 240s = 4min</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Rest Time (seconds)</label>
+                            <input type="number" id="intervalRestTime" value="120" step="15" placeholder="e.g., 120 for 2 minutes">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Number of Rounds</label>
+                            <input type="number" id="intervalRounds" value="5" min="1" placeholder="e.g., 5">
+                        </div>
+                    </div>
+                    
+                    <div class="info-box" style="background: #e8f5e9; border-left-color: #4caf50;">
+                        <p><strong>Example Workout:</strong></p>
+                        <p>Rowing Machine: Work 240s (4min) → Rest 120s (2min) × 5 rounds = 30 minute workout</p>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="startIntervalCardio()" style="margin-top: 15px;">
+                        ⚡ Start Interval Cardio
+                    </button>
+                `;
+                
+                container.innerHTML = html;
+                document.getElementById('workoutModeSelection').style.display = 'none';
+            }
+            
+            function startIntervalCardio() {
+                const activity = document.getElementById('intervalCardioActivity').value;
+                const workTime = parseInt(document.getElementById('intervalWorkTime').value);
+                const restTime = parseInt(document.getElementById('intervalRestTime').value);
+                const rounds = parseInt(document.getElementById('intervalRounds').value);
+                
+                if (!activity) {
+                    alert('Please select a cardio activity!');
+                    return;
+                }
+                
+                if (workTime < 15 || restTime < 10 || rounds < 1) {
+                    alert('Please set valid interval times (work ≥15s, rest ≥10s, rounds ≥1)');
+                    return;
+                }
+                
+                // Set up as HIIT workout with single exercise
+                currentWorkout = [{
+                    name: activity,
+                    duration: 0,
+                    distance: 0,
+                    distanceUnit: 'miles'
+                }];
+                
+                hiitWorkoutParams = {
+                    workTime: workTime,
+                    restTime: restTime,
+                    totalRounds: rounds
+                };
+                
+                workoutStyle = 'hiit';
+                
+                // Start the main workout timer
+                startTimer();
+                
+                // Start HIIT mode
+                startHiitWorkout();
+} 
        // ==================== GUIDED WORKOUT MODE ====================
         function startGuidedWorkout(mode) {
             if (currentWorkout.length === 0 || !currentWorkout[0].name) {
@@ -3053,7 +3161,72 @@
         function finishWorkout() {
             pauseTimer();
             const workoutDuration = timerSeconds;
-
+            
+            const workoutData = {
+                    date: new Date().toISOString(),
+                    exercises: currentWorkout,
+                    duration: workoutDuration,
+                    type: workoutStyle === 'hiit' && currentWorkout[0] && exerciseDatabase[currentWorkout[0].name]?.exerciseType === 'cardio' ? 'Interval Cardio' : workoutStyle,
+                    workoutName: document.getElementById('workoutType').value || 'Custom',
+                    notes: document.getElementById('workoutNotes')?.value || ''
+                };
+            
+                let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+                history.unshift(workoutData);
+                localStorage.setItem('workoutHistory', JSON.stringify(history));
+            
+                updatePersonalRecords(currentWorkout);
+            
+                // Check if this was interval cardio - prompt for stats
+                if (workoutData.type === 'Interval Cardio') {
+                    promptForCardioStats(workoutData);
+                } else {
+                    alert(`🎉 Workout Complete!\n\nDuration: ${Math.floor(workoutDuration / 60)} minutes ${workoutDuration % 60} seconds\n\nGreat job!`);
+                }
+            
+                resetTimer();
+                document.getElementById('guidedWorkoutMode').style.display = 'none';
+                document.getElementById('hiitWorkoutMode').style.display = 'none';
+                document.getElementById('workoutSetup').style.display = 'block';
+                document.getElementById('workoutType').value = '';
+                document.getElementById('workoutContainer').innerHTML = '';
+                document.getElementById('workoutModeSelection').style.display = 'none';
+                if (document.getElementById('workoutNotes')) {
+                    document.getElementById('workoutNotes').value = '';
+                }
+            
+                updateProgress();
+                loadHistory();
+                renderCalendar();
+            }
+            
+            function promptForCardioStats(workoutData) {
+                const distance = prompt('📏 Distance (leave blank to skip):\n\nEnter distance completed:');
+                if (distance && parseFloat(distance) > 0) {
+                    const unit = confirm('Click OK for MILES\nClick Cancel for KILOMETERS') ? 'miles' : 'km';
+                    workoutData.distance = parseFloat(distance);
+                    workoutData.distanceUnit = unit;
+                }
+                
+                const calories = prompt('🔥 Calories burned (leave blank to skip):');
+                if (calories && parseInt(calories) > 0) {
+                    workoutData.calories = parseInt(calories);
+                }
+                
+                const heartRate = prompt('💓 Average heart rate in BPM (leave blank to skip):');
+                if (heartRate && parseInt(heartRate) > 0) {
+                    workoutData.heartRate = parseInt(heartRate);
+                }
+                
+                // Update in history
+                let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+                if (history[0].date === workoutData.date) {
+                    history[0] = workoutData;
+                    localStorage.setItem('workoutHistory', JSON.stringify(history));
+                }
+                
+                alert(`🎉 Interval Cardio Complete!\n\nDuration: ${Math.floor(workoutData.duration / 60)} minutes\n${workoutData.distance ? `Distance: ${workoutData.distance} ${workoutData.distanceUnit}\n` : ''}${workoutData.calories ? `Calories: ${workoutData.calories}\n` : ''}${workoutData.heartRate ? `Avg HR: ${workoutData.heartRate} BPM` : ''}\n\nGreat job!`);
+            }
             // Check if manual calorie tracking is enabled
             const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
             let caloriesBurned = null;
