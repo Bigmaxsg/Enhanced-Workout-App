@@ -3862,41 +3862,120 @@ If this is just a summary screen (showing duration/calories only), leave exercis
         function confirmAppleWorkoutImport(workoutData) {
             const workoutDate = new Date(workoutData.date);
             
-            // Create workout entry for history
+            // ==================== DUPLICATE DETECTION ====================
+            // Check if a workout already exists within 5 minutes of this time
+            const existingWorkoutIndex = workoutHistory.findIndex(w => {
+                const existingDate = new Date(w.date);
+                const timeDiff = Math.abs(existingDate - workoutDate);
+                const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+                
+                // Consider it a match if within 5 minutes and same workout name
+                return timeDiff < fiveMinutes && 
+                       (w.workoutName === workoutData.workoutName || 
+                        w.type === workoutData.workoutName);
+            });
+
+            if (existingWorkoutIndex !== -1) {
+                // Workout already exists - ASK USER what to do
+                const existingWorkout = workoutHistory[existingWorkoutIndex];
+                const existingTime = new Date(existingWorkout.date).toLocaleTimeString();
+                
+                if (confirm(`⚠️ Found existing workout:\n\n"${existingWorkout.workoutName || existingWorkout.type}" at ${existingTime}\n\nDo you want to UPDATE this workout with Apple Fitness data?\n\n✅ Click OK to update existing workout\n❌ Click Cancel to create a new separate entry`)) {
+                    // UPDATE existing workout with Apple Fitness data
+                    workoutHistory[existingWorkoutIndex].heartRate = workoutData.heartRate || existingWorkout.heartRate;
+                    workoutHistory[existingWorkoutIndex].calories = workoutData.calories || existingWorkout.calories;
+                    workoutHistory[existingWorkoutIndex].distance = workoutData.distance || existingWorkout.distance;
+                    workoutHistory[existingWorkoutIndex].distanceUnit = workoutData.distanceUnit || existingWorkout.distanceUnit;
+                    
+                    // If Apple Fitness has exercise details, add/update them
+                    if (workoutData.exercises && workoutData.exercises.length > 0) {
+                        workoutData.exercises.forEach(appleEx => {
+                            const existingEx = existingWorkout.exercises.find(e => e.name === appleEx.name);
+                            if (existingEx) {
+                                // Update existing exercise
+                                existingEx.duration = appleEx.duration || existingEx.duration;
+                                existingEx.distance = appleEx.distance || existingEx.distance;
+                                existingEx.distanceUnit = appleEx.distanceUnit || existingEx.distanceUnit;
+                            } else {
+                                // Add new exercise
+                                existingWorkout.exercises.push(appleEx);
+                            }
+                        });
+                    }
+
+                    localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+
+                    document.getElementById('imageProcessingStatus').innerHTML = `
+                        <div style="background: #4caf50; color: white; padding: 15px; border-radius: 5px;">
+                            ✅ Existing workout updated with Apple Fitness data!<br>
+                            <small>View it in the History or Calendar tab</small>
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+                        document.getElementById('imageProcessingStatus').style.display = 'none';
+                        document.getElementById('appleWorkoutImage').value = '';
+                    }, 3000);
+
+                    loadHistory();
+                    renderCalendar();
+
+                    alert(`✅ Workout updated!\n\n${workoutData.workoutName}\n\nAdded:\n• Heart Rate: ${workoutData.heartRate || 'N/A'} BPM\n• Calories: ${workoutData.calories || 'N/A'}\n• Distance: ${workoutData.distance ? workoutData.distance + ' ' + workoutData.distanceUnit : 'N/A'}`);
+                    return;
+                }
+            }
+
+            // ==================== CREATE NEW WORKOUT ====================
+            // Either no duplicate found, or user chose to create new entry
+            
             const workoutEntry = {
                 id: Date.now(),
                 date: workoutDate.toISOString(),
-                duration: workoutData.duration,
+                duration: workoutData.duration || 0,
                 totalVolume: 0,
                 exercises: [],
+                workoutName: workoutData.workoutName,
+                type: workoutData.workoutName,
+                heartRate: workoutData.heartRate || null,
+                calories: workoutData.calories || null,
+                distance: workoutData.distance || null,
+                distanceUnit: workoutData.distanceUnit || null,
                 source: 'Apple Fitness Import'
             };
 
             // Add exercises if available
             if (workoutData.exercises && workoutData.exercises.length > 0) {
                 workoutData.exercises.forEach(ex => {
-                    workoutEntry.exercises.push({
-                        name: ex.name,
-                        sets: [{
-                            weight: ex.weight || 0,
-                            reps: ex.reps || 0,
-                            completed: true
-                        }]
-                    });
-                });
+                    const exerciseData = exerciseDatabase[ex.name] || {};
+                    const isCardio = exerciseData.exerciseType === "cardio";
+                    
+                    if (isCardio) {
+                        // Cardio exercise
+                        workoutEntry.exercises.push({
+                            name: ex.name,
+                            duration: ex.duration || workoutData.duration || 0,
+                            distance: ex.distance || workoutData.distance || 0,
+                            distanceUnit: ex.distanceUnit || workoutData.distanceUnit || 'miles'
+                        });
                     } else {
-            // If no detailed exercises, create a cardio entry
-            const exerciseData = {
-                name: workoutData.workoutName,
-                duration: workoutData.duration || 0,
-                distance: workoutData.distance || 0,
-                distanceUnit: workoutData.distanceUnit || 'miles',
-                calories: workoutData.calories || 0,
-                heartRate: workoutData.heartRate || 0
-            };
-            
-            workoutEntry.exercises.push(exerciseData);
-        }
+                        // Strength exercise
+                        workoutEntry.exercises.push({
+                            name: ex.name,
+                            sets: ex.sets || 3,
+                            reps: ex.reps || 12,
+                            weight: ex.weight || 0
+                        });
+                    }
+                });
+            } else {
+                // If no detailed exercises, create a generic cardio entry
+                workoutEntry.exercises.push({
+                    name: workoutData.workoutName,
+                    duration: workoutData.duration || 0,
+                    distance: workoutData.distance || 0,
+                    distanceUnit: workoutData.distanceUnit || 'miles'
+                });
+            }
 
             // Add to workout history
             workoutHistory.push(workoutEntry);
@@ -3913,10 +3992,13 @@ If this is just a summary screen (showing duration/calories only), leave exercis
             // Clear after 3 seconds
             setTimeout(() => {
                 document.getElementById('imageProcessingStatus').style.display = 'none';
-                document.getElementById('appleWorkoutImage').value = ''; // Reset file input
+                document.getElementById('appleWorkoutImage').value = '';
             }, 3000);
 
-            alert(`✅ ${workoutData.workoutName} imported successfully!\n\nDuration: ${workoutData.duration} min\nCalories: ${workoutData.calories}\n\nCheck your History and Calendar tabs!`);
+            loadHistory();
+            renderCalendar();
+
+            alert(`✅ ${workoutData.workoutName} imported successfully!\n\nDuration: ${workoutData.duration} min\nCalories: ${workoutData.calories || 'N/A'}\nDistance: ${workoutData.distance ? workoutData.distance + ' ' + workoutData.distanceUnit : 'N/A'}\n\nCheck your History and Calendar tabs!`);
         }     
         async function sendMessage() {
             const msg = document.getElementById('userMessage').value.trim();
