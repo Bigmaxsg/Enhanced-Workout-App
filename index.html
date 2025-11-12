@@ -1774,7 +1774,45 @@
             </div>
         </div>
     </div>
-  
+  <!-- Edit Workout Stats Modal -->
+    <div id="editStatsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditStatsModal()">&times;</span>
+            <h2>✏️ Edit Workout Stats</h2>
+            <div id="editStatsForm">
+                <div class="form-group">
+                    <label>Workout Name</label>
+                    <input type="text" id="editWorkoutName" placeholder="e.g., Morning Run">
+                </div>
+                <div class="form-group">
+                    <label>💓 Average Heart Rate (BPM)</label>
+                    <input type="number" id="editHeartRate" placeholder="e.g., 145">
+                </div>
+                <div class="form-group">
+                    <label>🔥 Total Calories Burned</label>
+                    <input type="number" id="editCalories" placeholder="e.g., 350">
+                </div>
+                <div class="form-group">
+                    <label>📏 Distance</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="editDistance" placeholder="0.0" step="0.1" style="flex: 2;">
+                        <select id="editDistanceUnit" style="flex: 1;">
+                            <option value="">-- Select Unit --</option>
+                            <option value="miles">Miles</option>
+                            <option value="km">Kilometers</option>
+                            <option value="meters">Meters</option>
+                        </select>
+                    </div>
+                    <small style="color: #6c757d;">Use miles for walks/runs, km for rows/bikes</small>
+                </div>
+                <div class="form-group">
+                    <label>📝 Notes (Optional)</label>
+                    <textarea id="editWorkoutNotes" rows="3" placeholder="How did you feel? Any achievements?"></textarea>
+                </div>
+                <button class="btn btn-success" onclick="saveWorkoutStats()">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
     <script>
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
         const exerciseDatabase = {
@@ -4905,6 +4943,13 @@ User's request: ${msg}`;
                             </div>
                             <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
                         </div>
+                        ${workout.heartRate || workout.calories || workout.distance ? `
+                            <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px;">
+                                ${workout.heartRate ? `💓 Avg HR: <strong>${workout.heartRate} BPM</strong> &nbsp;|&nbsp; ` : ''}
+                                ${workout.calories ? `🔥 Calories: <strong>${workout.calories}</strong> &nbsp;|&nbsp; ` : ''}
+                                ${workout.distance ? `📏 Distance: <strong>${workout.distance} ${workout.distanceUnit}</strong>` : ''}
+                            </div>
+                        ` : ''}
                         <div class="history-exercises">
                             ${exercisesSummary}
                         </div>
@@ -4952,16 +4997,92 @@ User's request: ${msg}`;
 
                 html += `
                         </div>
-                        <button class="delete-btn" onclick="deleteWorkout(${index})" style="margin-top: 10px;">
-                            🗑️ Delete
-                        </button>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn btn-secondary" onclick="editWorkoutStats(${index})" style="flex: 1;">
+                                ✏️ Edit Stats
+                            </button>
+                            <button class="delete-btn" onclick="deleteWorkout(${index})" style="flex: 1;">
+                                🗑️ Delete
+                            </button>
+                        </div>
                     </div>
                 `;
             });
 
             container.innerHTML = html;
         }
+ // ==================== EDIT WORKOUT STATS ====================
+        let currentEditingWorkoutIndex = null;
 
+        function editWorkoutStats(index) {
+            currentEditingWorkoutIndex = index;
+            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+            const workout = history[index];
+
+            // Populate the form with existing data
+            document.getElementById('editWorkoutName').value = workout.workoutName || '';
+            document.getElementById('editHeartRate').value = workout.heartRate || '';
+            document.getElementById('editCalories').value = workout.calories || '';
+            document.getElementById('editDistance').value = workout.distance || '';
+            document.getElementById('editDistanceUnit').value = workout.distanceUnit || '';
+            document.getElementById('editWorkoutNotes').value = workout.notes || '';
+
+            // Show the modal
+            document.getElementById('editStatsModal').style.display = 'block';
+        }
+
+        function closeEditStatsModal() {
+            document.getElementById('editStatsModal').style.display = 'none';
+            currentEditingWorkoutIndex = null;
+        }
+
+        function saveWorkoutStats() {
+            if (currentEditingWorkoutIndex === null) return;
+
+            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+            const workout = history[currentEditingWorkoutIndex];
+
+            // Update workout with new stats
+            workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
+            workout.heartRate = parseInt(document.getElementById('editHeartRate').value) || null;
+            workout.calories = parseInt(document.getElementById('editCalories').value) || null;
+            
+            const distance = parseFloat(document.getElementById('editDistance').value);
+            const distanceUnit = document.getElementById('editDistanceUnit').value;
+            
+            if (distance && distanceUnit) {
+                workout.distance = distance;
+                workout.distanceUnit = distanceUnit;
+            } else {
+                workout.distance = null;
+                workout.distanceUnit = null;
+            }
+            
+            workout.notes = document.getElementById('editWorkoutNotes').value.trim() || '';
+
+            // Save back to localStorage
+            localStorage.setItem('workoutHistory', JSON.stringify(history));
+
+            // Update the global workoutHistory variable
+            workoutHistory = history;
+
+            // Refresh displays
+            loadHistory();
+            renderCalendar();
+
+            // Close modal
+            closeEditStatsModal();
+
+            alert('✅ Workout stats updated successfully!');
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editStatsModal');
+            if (event.target === modal) {
+                closeEditStatsModal();
+            }
+        });
         function deleteWorkout(index) {
             if (!confirm('Are you sure you want to delete this workout? This cannot be undone.')) {
                 return;
@@ -5141,6 +5262,13 @@ User's request: ${msg}`;
                                 </div>
                                 <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
                             </div>
+                            ${workout.heartRate || workout.calories || workout.distance ? `
+                            <div style="background: #e3f2fd; padding: 8px; border-radius: 5px; margin: 8px 0; font-size: 13px;">
+                            ${workout.heartRate ? `💓 ${workout.heartRate} BPM &nbsp;` : ''}
+                            ${workout.calories ? `🔥 ${workout.calories} cal &nbsp;` : ''}
+                            ${workout.distance ? `📏 ${workout.distance} ${workout.distanceUnit}` : ''}
+                        </div>
+                    ` : ''}
                              ${workout.notes ? `<div class="history-notes">📝 ${workout.notes}</div>` : ''}
                             <div class="history-details-body">
                     `;
@@ -5183,8 +5311,11 @@ User's request: ${msg}`;
                         html += `<div class="history-exercise-detail">No exercise data available.</div>`;
                     }
 
-                    html += `
+                     html += `
                             </div>
+                            <button class="btn btn-secondary" onclick="editWorkoutStats(${history.indexOf(workout)})" style="margin-top: 10px; width: 100%;">
+                                ✏️ Edit Workout Stats
+                            </button>
                         </div>
                     `;
                 });
