@@ -4159,7 +4159,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
 
                         // Use retry logic
                         const data = await apiCallWithRetry(
-                            `https://generativelanguage.googleapis.com/v2.0/models/gemini-2.0-flash-exp:generateContent?key=${key}`,
+                            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
                             {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -4477,7 +4477,7 @@ User's request: ${msg}`;
                 
                 // Use retry logic for API calls
                 const data = await apiCallWithRetry(
-                    'https://generativelanguage.googleapis.com/v2.0/models/gemini-2.0-flash-exp:generateContent?key=' + key,
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key,
                     {
                         method: 'POST',
                         headers: {
