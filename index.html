@@ -2733,12 +2733,13 @@
         }
 
         function addExerciseToCustomHiit() {
-            const hiitExercises = Object.keys(exerciseDatabase).filter(ex => {
-                const exercise = exerciseDatabase[ex];
-                return exercise.equipment === "Bodyweight" || 
-                       ex.includes("Jumping") || ex.includes("Burpees") || 
-                       ex.includes("High Knees") || ex.includes("Mountain");
-            });
+            // Get ALL exercises from database AND custom exercises
+            const allExercises = {
+                ...exerciseDatabase,
+                ...JSON.parse(localStorage.getItem('customExercises') || '{}')
+            };
+            
+            const hiitExercises = Object.keys(allExercises).sort();
             
             const exerciseSelect = document.createElement('select');
             exerciseSelect.className = 'exercise-select';
