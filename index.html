@@ -5522,14 +5522,15 @@ User's request: ${msg}`;
                 `;
 
                 // Check if exercises exist and determine type
-                if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
-                    // Case 1: Strength workout - exercises are objects with properties
+               if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+                    // Check if the first exercise item is an object (strength or single cardio log)
                     if (typeof workout.exercises[0] === 'object' && workout.exercises[0] !== null && workout.exercises[0].name) {
                         workout.exercises.forEach(exercise => {
                             const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
-                            const exerciseData = exerciseDatabase[exercise.name] || {};
-                            const isCardio = exerciseData.exerciseType === "cardio";
                             
+                            // NEW CHECK: Use property existence to determine cardio vs. strength
+                            const isCardioLog = exercise.duration !== undefined; // If it has a duration property, treat it as a logged cardio exercise.
+
                             html += `
                                 <div class="history-exercise-detail">
                                     <span class="history-exercise-name">
@@ -5537,15 +5538,17 @@ User's request: ${msg}`;
                                         ${isPR ? '<span class="pr-badge">PR!</span>' : ''}
                                     </span>
                                     <span class="history-exercise-stats">
-                                        ${isCardio ? 
+                                        ${isCardioLog ? 
+                                            // Displays the exercise-level duration in minutes (stored in minutes in the exercise object)
                                             `${exercise.duration || 0} min${exercise.distance ? ` | ${exercise.distance} ${exercise.distanceUnit || 'mi'}` : ''}` :
-                                            `${exercise.sets}x${exercise.reps} @ ${exercise.weight}lbs`
+                                            // Displays strength stats
+                                            `${exercise.sets || 0}x${exercise.reps || 0} @ ${exercise.weight || 0}lbs`
                                         }
                                     </span>
                                 </div>
                             `;
                         });
-                    } 
+                    }  
                     // Case 2: HIIT workout - exercises are just strings (exercise names)
                     else {
                         html += `
