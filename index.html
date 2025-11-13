@@ -5219,15 +5219,22 @@ User's request: ${msg}`;
             document.getElementById('avgDuration').textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
         }
 
-        function updateCaloriesBurned(history) {
+         function updateCaloriesBurned(history) {
             const calorieSettings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
             let totalCalories = 0;
 
             history.forEach(workout => {
-                if (calorieSettings.method === 'manual' && workout.caloriesBurned) {
-                    totalCalories += workout.caloriesBurned;
+                // Check both workout.calories (from AI/edit) and workout.caloriesBurned (legacy)
+                const workoutCalories = workout.calories || workout.caloriesBurned;
+                
+                if (workoutCalories && workoutCalories > 0) {
+                    // Use actual calories if available
+                    totalCalories += workoutCalories;
+                } else if (calorieSettings.method === 'manual') {
+                    // Manual mode with no calories recorded = skip estimation
+                    // Do nothing (don't estimate)
                 } else {
-                    // Automatic estimation
+                    // Automatic estimation when no calories are recorded
                     const duration = (workout.duration || 0) / 60; // Convert to minutes
                     const multiplier = parseFloat(calorieSettings.multiplier) || 1.0;
                     
@@ -5241,7 +5248,6 @@ User's request: ${msg}`;
 
             document.getElementById('caloriesBurned').textContent = Math.round(totalCalories).toLocaleString();
         }
-
         function updateWorkoutFrequency(history) {
             if (history.length === 0) {
                 document.getElementById('workoutFrequency').textContent = '0';
