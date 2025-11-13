@@ -97,16 +97,13 @@
             cursor: pointer;
             font-size: 11px;
             font-weight: 600;
-            color: #3e3024;
             transition: all 0.3s;
             white-space: nowrap;
             text-align: center;
         }
 
         .nav-btn.active {
-            background: #f5f5dc;
-            color: #001f3f;
-            border-bottom: 3px solid #d4af37;
+            border-bottom: 3px solid;
         }
 
         .content {
@@ -821,19 +818,14 @@
 
         .view-btn {
             padding: 8px 12px;
-            background: #d9c7a5;
-            border: 2px solid #8b7355;
             border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
             font-weight: 600;
-            color: #3e3024;
         }
 
         .view-btn.active {
-            background: #003d5c;
-            color: #d4af37;
-            border-color: #003d5c;
+            border-color: transparent;
         }
 
         .calendar-grid {
@@ -847,7 +839,6 @@
             text-align: center;
             font-weight: 600;
             padding: 10px 5px;
-            background: #d9c7a5;
             border-radius: 6px;
             font-size: 12px;
         }
@@ -855,21 +846,17 @@
         .calendar-day {
             min-height: 80px;
             padding: 8px;
-            background: #e8dcc4;
             border-radius: 8px;
-            border: 2px solid transparent;
+            border: 1px solid;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .calendar-day:hover {
-            border-color: #003d5c;
             transform: translateY(-2px);
         }
 
         .calendar-day.today {
-            border-color: #d4af37;
-            background: #f5f5dc;
         }
 
         .calendar-day.other-month {
@@ -877,13 +864,9 @@
         }
 
         .calendar-day.has-workout {
-            background: #c8e6c9;
-            border-color: #4a6741;
         }
 
         .calendar-day.rest-day {
-            background: #fff3cd;
-            border-color: #ffc107;
         }
 
         .day-number {
@@ -894,7 +877,6 @@
 
         .day-workout-count {
             font-size: 11px;
-            color: #4a6741;
             font-weight: 600;
         }
 
@@ -6952,10 +6934,11 @@ User's request: ${msg}`;
                 nav.style.borderBottomColor = adjustBrightness(colors.nav, -20);
             }
             
-            // Update nav buttons (inactive state)
-            document.querySelectorAll('.nav-btn').forEach(btn => {
+            // Update nav buttons (inactive state) - exclude active buttons
+            document.querySelectorAll('.nav-btn:not(.active)').forEach(btn => {
                 btn.style.color = colors.navText;
                 btn.style.background = 'none';
+                btn.style.borderBottom = 'none';
             });
             
             // Update nav buttons (active state)
@@ -6971,7 +6954,7 @@ User's request: ${msg}`;
             });
             
             // Update labels in all sections (especially Settings)
-            document.querySelectorAll('label, h3, h4, h5, h6, p, span, small, .form-group label').forEach(el => {
+            document.querySelectorAll('label, h2, h3, h4, h5, h6, p, span, small, .form-group label').forEach(el => {
                 // Don't override nav text colors
                 if (!el.closest('.nav')) {
                     el.style.color = textColor;
@@ -7120,6 +7103,70 @@ User's request: ${msg}`;
             document.querySelectorAll('.pr-badge').forEach(badge => {
                 badge.style.background = colors.accent;
                 badge.style.color = colors.primary;
+            });
+            
+            // Update calendar view buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.style.background = colors.nav;
+                btn.style.border = `2px solid ${adjustBrightness(colors.nav, -20)}`;
+                btn.style.color = colors.navText;
+            });
+            
+            document.querySelectorAll('.view-btn.active').forEach(btn => {
+                btn.style.background = colors.primary;
+                btn.style.color = colors.accent;
+                btn.style.borderColor = colors.primary;
+            });
+            
+            // Update calendar day headers
+            document.querySelectorAll('.calendar-day-header').forEach(header => {
+                header.style.background = colors.nav;
+                header.style.color = colors.navText;
+            });
+            
+            // Update calendar month/year display
+            const calendarMonthYear = document.getElementById('calendarMonthYear');
+            if (calendarMonthYear) {
+                calendarMonthYear.style.color = textColor;
+            }
+            
+            // Update calendar day cells
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.style.background = colors.card;
+                day.style.color = getContrastColor(colors.card);
+                day.style.borderColor = adjustBrightness(colors.card, -30);
+            });
+            
+            document.querySelectorAll('.calendar-day:hover').forEach(day => {
+                day.style.borderColor = colors.primary;
+            });
+            
+            document.querySelectorAll('.calendar-day.today').forEach(day => {
+                day.style.borderColor = colors.accent;
+                day.style.background = adjustBrightness(colors.card, 10);
+            });
+            
+            document.querySelectorAll('.calendar-day.has-workout').forEach(day => {
+                day.style.background = colors.success;
+                day.style.borderColor = adjustBrightness(colors.success, -20);
+                day.style.color = '#ffffff';
+            });
+            
+            document.querySelectorAll('.calendar-day.rest-day').forEach(day => {
+                day.style.background = adjustBrightness(colors.card, 20);
+                day.style.borderColor = colors.primary;
+                day.style.color = getContrastColor(colors.card);
+            });
+            
+            // Update day numbers in calendar
+            document.querySelectorAll('.day-number').forEach(num => {
+                num.style.color = 'inherit';
+            });
+            
+            // Update buttons inside recommendation cards
+            document.querySelectorAll('.recommendation-card .btn').forEach(btn => {
+                btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
+                btn.style.color = '#ffffff';
             });
         }
         
