@@ -2277,15 +2277,40 @@
 
         // ==================== NAVIGATION ====================
         function showSection(sectionId) {
+            // Get current colors
+            const colors = {
+                primary: document.getElementById('primaryColor')?.value || '#001f3f',
+                accent: document.getElementById('accentColor')?.value || '#d4af37',
+                background: document.getElementById('backgroundColor')?.value || '#f5f5dc',
+                nav: document.getElementById('navColor')?.value || '#d9c7a5',
+                navText: document.getElementById('navTextColor')?.value || '#3e3024'
+            };
+            
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
+            
+            // Remove active class and style from all nav buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
+                btn.style.background = 'none';
+                btn.style.color = colors.navText;
+                btn.style.borderBottom = 'none';
             });
             
             document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
+            
+            // Find and activate the correct nav button by matching the onclick attribute
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const onclickAttr = btn.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(`'${sectionId}'`)) {
+                    btn.classList.add('active');
+                    // Apply active styling immediately
+                    btn.style.background = colors.background;
+                    btn.style.color = getContrastColor(colors.background);  // Use contrast color instead of accent
+                    btn.style.borderBottom = `3px solid ${colors.accent}`;
+                }
+            });
 
             if (sectionId === 'exercises') {
                 renderExerciseList();
@@ -6944,7 +6969,7 @@ User's request: ${msg}`;
             // Update nav buttons (active state)
             document.querySelectorAll('.nav-btn.active').forEach(btn => {
                 btn.style.background = colors.background;
-                btn.style.color = colors.primary;
+                btn.style.color = getContrastColor(colors.background);  // Use contrast color for readability
                 btn.style.borderBottomColor = colors.accent;
             });
             
