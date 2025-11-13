@@ -6439,28 +6439,37 @@ User's request: ${msg}`;
                     return;
                 }
 
-                 // Collect any custom exercises
+                 // Collect any custom exercises from localStorage
                 if (Array.isArray(exercisesInWorkout)) {
                     exercisesInWorkout.forEach(ex => {
                         const exerciseName = ex.name;
-                        if (exerciseName) {
-                            // Check if it's a custom exercise (in localStorage)
-                            if (allCustomExercises[exerciseName]) {
-                                // Check if not already added
-                                if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
-                                    customExercisesData.push({ 
-                                        name: exerciseName, 
-                                        ...allCustomExercises[exerciseName] 
-                                    });
-                                }
+                        if (exerciseName && allCustomExercises[exerciseName]) {
+                            // Check if not already added
+                            if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
+                                customExercisesData.push({ 
+                                    name: exerciseName, 
+                                    ...allCustomExercises[exerciseName] 
+                                });
                             }
-                            // Also check if it's in exerciseDatabase but not in the default exercises
-                            // (This means it was custom-created and added to the runtime DB)
-                            else if (exerciseDatabase[exerciseName] && !isDefaultExercise(exerciseName)) {
-                                if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
+                        }
+                    });
+                }
+                
+                // Also check exerciseDatabase for any custom exercises that might only be there
+                if (Array.isArray(exercisesInWorkout)) {
+                    exercisesInWorkout.forEach(ex => {
+                        const exerciseName = ex.name;
+                        // If exercise is in exerciseDatabase but NOT in allCustomExercises yet
+                        if (exerciseName && exerciseDatabase[exerciseName]) {
+                            // Check if we haven't already added it
+                            if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
+                                // Check if it's truly custom by seeing if it was added after initial load
+                                // If it has a custom image or equipment field that differs from defaults
+                                const exerciseData = exerciseDatabase[exerciseName];
+                                if (exerciseData.image === 'Custom exercise' || exerciseData.image === 'AI Generated Exercise') {
                                     customExercisesData.push({ 
                                         name: exerciseName, 
-                                        ...exerciseDatabase[exerciseName] 
+                                        ...exerciseData 
                                     });
                                 }
                             }
