@@ -1797,6 +1797,7 @@
                             <button class="btn btn-secondary" onclick="applyTheme('dark')" style="margin-top: 0; padding: 10px;">🌙 Dark Mode</button>
                             <button class="btn btn-secondary" onclick="applyTheme('nike')" style="margin-top: 0; padding: 10px;">✔️ Nike Style</button>
                             <button class="btn btn-secondary" onclick="applyTheme('adidas')" style="margin-top: 0; padding: 10px;">⚫ Adidas Style</button>
+                            <button class="btn btn-secondary" onclick="applyTheme('kentucky')" style="margin-top: 0; padding: 10px;">🏀 UK Wildcats</button>
                             <button class="btn btn-secondary" onclick="applyTheme('ocean')" style="margin-top: 0; padding: 10px;">🌊 Ocean Blue</button>
                             <button class="btn btn-secondary" onclick="applyTheme('forest')" style="margin-top: 0; padding: 10px;">🌲 Forest Green</button>
                             <button class="btn btn-secondary" onclick="applyTheme('sunset')" style="margin-top: 0; padding: 10px;">🌅 Sunset Orange</button>
@@ -6848,8 +6849,8 @@ User's request: ${msg}`;
             // Calculate luminance
             const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
             
-            // Return black or white based on luminance
-            return luminance > 0.5 ? '#333333' : '#f5f5f5';
+            // Return black or white based on luminance - pure white for dark themes
+            return luminance > 0.5 ? '#333333' : '#ffffff';
         }
         
         function adjustBrightness(hex, percent) {
@@ -6919,12 +6920,12 @@ User's request: ${msg}`;
                 },
                 dark: {
                     primary: '#1a1a1a',
-                    accent: '#00bcd4',
-                    background: '#2d2d2d',
+                    accent: '#ffffff',
+                    background: '#1e1e1e',
                     success: '#4caf50',
                     danger: '#f44336',
-                    card: '#3d3d3d',
-                    nav: '#1a1a1a',
+                    card: '#2d2d2d',
+                    nav: '#0d0d0d',
                     navText: '#ffffff'
                 },
                 nike: {
@@ -6985,6 +6986,17 @@ User's request: ${msg}`;
                     danger: '#c2185b',
                     card: '#e1bee7',
                     nav: '#6a1b9a',
+                    navText: '#ffffff'
+                }
+                },
+                kentucky: {
+                    primary: '#0033A0',
+                    accent: '#ffffff',
+                    background: '#f8f8f8',
+                    success: '#0033A0',
+                    danger: '#c5050c',
+                    card: '#e6f0ff',
+                    nav: '#0033A0',
                     navText: '#ffffff'
                 }
             };
