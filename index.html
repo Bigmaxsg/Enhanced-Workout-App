@@ -479,13 +479,28 @@
         }
 
         .delete-btn {
-            background: #8b0000;
-            color: #f5f5dc;
+            background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%);
+            color: #ffffff;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin-left: 6px;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(139, 0, 0, 0.4);
+            background: linear-gradient(135deg, #a52a2a 0%, #8b0000 100%);
+        }
+
+        .delete-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .add-exercise-btn {
@@ -501,13 +516,28 @@
         }
 
         .edit-btn {
-            background: #003d5c;
+            background: linear-gradient(135deg, #003d5c 0%, #005580 100%);
             color: #d4af37;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin-left: 6px;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 61, 92, 0.4);
+            background: linear-gradient(135deg, #005580 0%, #003d5c 100%);
+        }
+
+        .edit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .workout-timer {
