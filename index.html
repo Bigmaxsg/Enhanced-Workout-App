@@ -5632,11 +5632,12 @@ User's request: ${msg}`;
 
                 html += `
                         </div>
+                       </div>
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button class="btn btn-secondary" onclick="editWorkoutStats(${index})" style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="editWorkoutStats(${index})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
                                 ✏️ Edit Stats
                             </button>
-                            <button class="delete-btn" onclick="deleteWorkout(${index})" style="flex: 1;">
+                            <button class="btn btn-danger" onclick="deleteWorkout(${index})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
                                 🗑️ Delete
                             </button>
                         </div>
@@ -5709,7 +5710,7 @@ User's request: ${msg}`;
             } else {
                 workout.duration = 0;
             }
-            // Update workout with new stats
+             // Update workout with new stats
             workout.heartRate = parseInt(document.getElementById('editHeartRate').value) || null;
             workout.calories = parseInt(document.getElementById('editCalories').value) || null;
             
@@ -5719,9 +5720,30 @@ User's request: ${msg}`;
             if (distance && distanceUnit) {
                 workout.distance = distance;
                 workout.distanceUnit = distanceUnit;
+                
+                // SYNC: Update distance in exercise objects as well (for cardio exercises)
+                if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+                    workout.exercises.forEach(exercise => {
+                        // Only update if this exercise has a distance property (cardio)
+                        if (exercise.distance !== undefined) {
+                            exercise.distance = distance;
+                            exercise.distanceUnit = distanceUnit;
+                        }
+                    });
+                }
             } else {
                 workout.distance = null;
                 workout.distanceUnit = null;
+                
+                // SYNC: Remove distance from exercise objects as well
+                if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+                    workout.exercises.forEach(exercise => {
+                        if (exercise.distance !== undefined) {
+                            exercise.distance = null;
+                            exercise.distanceUnit = null;
+                        }
+                    });
+                }
             }
             
             workout.notes = document.getElementById('editWorkoutNotes').value.trim() || '';
