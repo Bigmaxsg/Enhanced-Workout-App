@@ -6492,7 +6492,15 @@ User's request: ${msg}`;
                 // Compress and encode
                 const jsonString = JSON.stringify(shareableWorkout);
                 const compressedBinary = pako.deflate(jsonString);
-                const binaryString = String.fromCharCode.apply(null, compressedBinary);
+                
+                // Convert to binary string in chunks to avoid call stack issues
+                let binaryString = '';
+                const chunkSize = 8192;
+                for (let i = 0; i < compressedBinary.length; i += chunkSize) {
+                    const chunk = compressedBinary.subarray(i, i + chunkSize);
+                    binaryString += String.fromCharCode.apply(null, chunk);
+                }
+                
                 const base64String = btoa(binaryString);
 
                 // Create URL
