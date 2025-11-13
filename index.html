@@ -6443,12 +6443,24 @@ User's request: ${msg}`;
                 if (Array.isArray(exercisesInWorkout)) {
                     exercisesInWorkout.forEach(ex => {
                         const exerciseName = ex.name;
-                        if (exerciseName && allCustomExercises[exerciseName]) {
+                        // Check if exercise exists in custom exercises OR if it's in exerciseDatabase and was custom-created
+                        const customExercise = allCustomExercises[exerciseName];
+                        const dbExercise = exerciseDatabase[exerciseName];
+                        
+                        if (exerciseName && customExercise) {
                             // Check if not already added
                             if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
                                 customExercisesData.push({ 
                                     name: exerciseName, 
-                                    ...allCustomExercises[exerciseName] 
+                                    ...customExercise 
+                                });
+                            }
+                        } else if (exerciseName && dbExercise && allCustomExercises[exerciseName] !== undefined) {
+                            // Also include if it's in both places (was custom created)
+                            if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
+                                customExercisesData.push({ 
+                                    name: exerciseName, 
+                                    ...dbExercise 
                                 });
                             }
                         }
