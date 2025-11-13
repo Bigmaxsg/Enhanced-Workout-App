@@ -2700,14 +2700,19 @@
 
         function removeCustomExercise(index) {
             currentWorkout.splice(index, 1);
-            showCustomWorkoutBuilder();
             
+            // Clear the list container
+            const listContainer = document.getElementById('customExerciseList');
+            listContainer.innerHTML = '';
+            
+            // Rebuild all exercises with correct indices
             currentWorkout.forEach((ex, i) => {
                 if (ex.name) {
-                    const exerciseDiv = document.getElementById(`custom-exercise-${i}`);
-                    if (exerciseDiv) {
-                        updateCustomExerciseDisplay(i);
-                    }
+                    const exerciseDiv = document.createElement('div');
+                    exerciseDiv.className = 'exercise-card';
+                    exerciseDiv.id = `custom-exercise-${i}`;
+                    listContainer.appendChild(exerciseDiv);
+                    updateCustomExerciseDisplay(i);
                 }
             });
         }
