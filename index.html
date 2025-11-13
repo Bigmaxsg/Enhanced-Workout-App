@@ -6946,34 +6946,57 @@ User's request: ${msg}`;
                 el.style.color = textColor;
             });
             
+            // Update labels in all sections (especially Settings)
+            document.querySelectorAll('label, h3, h4, h5, h6, p, span, small, .form-group label').forEach(el => {
+                // Don't override nav text colors
+                if (!el.closest('.nav')) {
+                    el.style.color = textColor;
+                }
+            });
+            
+            // Fix specific settings text elements
+            document.querySelectorAll('.color-setting-card label').forEach(label => {
+                label.style.color = textColor;
+            });
+            
+            document.querySelectorAll('.color-setting-card small').forEach(small => {
+                small.style.color = textColor;
+                small.style.opacity = '0.7';
+            });
+            
             // Update exercise cards
             document.querySelectorAll('.exercise-card').forEach(card => {
                 card.style.background = colors.card;
                 card.style.borderLeftColor = colors.primary;
+                card.style.color = getContrastColor(colors.card);
             });
             
             // Update stat cards
             document.querySelectorAll('.stat-card').forEach(card => {
                 card.style.background = colors.card;
                 card.style.borderLeftColor = colors.primary;
+                card.style.color = getContrastColor(colors.card);
             });
             
             // Update history items
             document.querySelectorAll('.history-item').forEach(item => {
                 item.style.background = colors.card;
                 item.style.borderLeftColor = colors.primary;
+                item.style.color = getContrastColor(colors.card);
             });
             
             // Update info boxes
             document.querySelectorAll('.info-box').forEach(box => {
                 box.style.background = adjustBrightness(colors.card, 10);
                 box.style.borderLeftColor = colors.primary;
+                box.style.color = getContrastColor(colors.card);
             });
             
             // Update color setting cards
             document.querySelectorAll('.color-setting-card').forEach(card => {
                 card.style.background = colors.card;
                 card.style.borderLeftColor = colors.primary;
+                card.style.color = getContrastColor(colors.card);
             });
             
             // Update workout timer
@@ -7003,7 +7026,7 @@ User's request: ${msg}`;
             
             document.querySelectorAll('.btn-secondary').forEach(btn => {
                 btn.style.background = adjustBrightness(colors.nav, -10);
-                btn.style.color = colors.background;
+                btn.style.color = getContrastColor(adjustBrightness(colors.nav, -10));
             });
             
             document.querySelectorAll('.btn-success').forEach(btn => {
