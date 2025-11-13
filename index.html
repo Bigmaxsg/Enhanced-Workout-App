@@ -6381,67 +6381,115 @@ User's request: ${msg}`;
             });
         }
 
-        function generateWorkoutQR() {
-            const workoutSelect = document.getElementById('qrShareWorkoutSelect');
-            const workoutName = workoutSelect.value;
-            if (!workoutName) {
-                alert('Please select a workout to share.');
-                return;
-            }
-            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
-            const workoutData = savedCustomWorkouts[workoutName];
-            if (!workoutData) {
-                alert('Workout not found.');
-                return;
-            }
+       function generateWorkoutQR() {
+            try {
+                const workoutSelect = document.getElementById('qrShareWorkoutSelect');
+                const workoutName = workoutSelect.value;
+                
+                if (!workoutName) {
+                    alert('Please select a workout to share.');
+                    return;
+                }
+                
+                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+                const workoutData = savedCustomWorkouts[workoutName];
+                
+                if (!workoutData) {
+                    alert('Workout not found.');
+                    return;
+                }
 
-            const customExercisesData = [];
-            const allCustomExercises = JSON.parse(localStorage.getItem('customExercises')) || {};
-            const exercisesInWorkout = workoutData.workoutType === 'hiit' ? workoutData.exercises : workoutData;
+                // Collect custom exercises used in this workout
+                const customExercisesData = [];
+                const allCustomExercises = JSON.parse(localStorage.getItem('customExercises')) || {};
+                
+                // Determine workout type and extract exercises
+                let exercisesInWorkout = [];
+                let isHiitWorkout = false;
+                
+                if (workoutData.workoutType === 'hiit') {
+                    // HIIT workout created by AI
+                    isHiitWorkout = true;
+                    exercisesInWorkout = workoutData.exercises || [];
+                } else if (Array.isArray(workoutData)) {
+                    // Strength workout (array format)
+                    exercisesInWorkout = workoutData;
+                } else {
+                    console.error('Unknown workout format:', workoutData);
+                    alert('Error: Unable to determine workout format.');
+                    return;
+                }
 
-            if (Array.isArray(exercisesInWorkout)) {
-                exercisesInWorkout.forEach(ex => {
-                    if (allCustomExercises[ex.name] && !customExercisesData.some(customEx => customEx.name === ex.name)) {
-                        customExercisesData.push({ name: ex.name, ...allCustomExercises[ex.name] });
-                    }
+                // Collect any custom exercises
+                if (Array.isArray(exercisesInWorkout)) {
+                    exercisesInWorkout.forEach(ex => {
+                        const exerciseName = ex.name;
+                        if (exerciseName && allCustomExercises[exerciseName]) {
+                            // Check if not already added
+                            if (!customExercisesData.some(customEx => customEx.name === exerciseName)) {
+                                customExercisesData.push({ 
+                                    name: exerciseName, 
+                                    ...allCustomExercises[exerciseName] 
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // Create shareable workout object
+                const shareableWorkout = {
+                    v: '2.2-b64zip', 
+                    t: workoutName,
+                    d: workoutData,
+                    c: customExercisesData,
+                    s: new Date().toISOString()
+                };
+
+                console.log('Generating QR for workout:', workoutName);
+                console.log('Workout data:', workoutData);
+                console.log('Custom exercises:', customExercisesData);
+
+                // Compress and encode
+                const jsonString = JSON.stringify(shareableWorkout);
+                const compressedBinary = pako.deflate(jsonString);
+                const binaryString = String.fromCharCode.apply(null, compressedBinary);
+                const base64String = btoa(binaryString);
+
+                // Create URL
+                const baseUrl = window.location.origin + window.location.pathname;
+                const shareUrl = `${baseUrl}?workout=${encodeURIComponent(base64String)}`;
+                
+                console.log('Share URL length:', shareUrl.length);
+                
+                // Make the container visible
+                const qrContainer = document.getElementById('qrCodeContainer');
+                qrContainer.style.display = 'block';
+                
+                // Get the output div and clear it
+                const qrCodeOutput = document.getElementById('qrCodeOutput');
+                qrCodeOutput.innerHTML = '';
+
+                // Generate QR code
+                if (typeof QRCode === 'undefined') {
+                    alert('Error: QR Code library not loaded. Please refresh the page.');
+                    return;
+                }
+
+                new QRCode(qrCodeOutput, {
+                    text: shareUrl,
+                    width: 280,
+                    height: 280,
+                    colorDark: "#001f3f",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
                 });
+                
+                console.log('QR Code generated successfully!');
+                
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                alert(`Error generating QR code: ${error.message}\n\nPlease check the console for more details.`);
             }
-
-            const shareableWorkout = {
-                v: '2.2-b64zip', 
-                t: workoutName,
-                d: workoutData,
-                c: customExercisesData,
-                s: new Date().toISOString()
-            };
-
-            const jsonString = JSON.stringify(shareableWorkout);
-            const compressedBinary = pako.deflate(jsonString);
-            const binaryString = String.fromCharCode.apply(null, compressedBinary);
-            const base64String = btoa(binaryString);
-
-            // Create a URL with the data
-            const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}?workout=${encodeURIComponent(base64String)}`;
-            
-            // Make the main container visible
-            const qrContainer = document.getElementById('qrCodeContainer');
-            qrContainer.style.display = 'block';
-            
-            // Get the dedicated output div
-            const qrCodeOutput = document.getElementById('qrCodeOutput');
-            // Clear any previous QR code from the output div
-            qrCodeOutput.innerHTML = '';
-
-            // Generate the new QR code inside the clean output div
-            new QRCode(qrCodeOutput, {
-                text: shareUrl,
-                width: 280,
-                height: 280,
-                colorDark: "#001f3f",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.M
-            });
         }
 
         function handleIncomingWorkout() {
