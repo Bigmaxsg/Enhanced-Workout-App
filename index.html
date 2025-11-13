@@ -1766,6 +1766,22 @@
                             </div>
                             <small style="color: #6c757d;">Exercise cards and content boxes</small>
                         </div>
+                        
+                        <div class="color-setting-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <label style="font-weight: 600; font-size: 15px;">📊 Nav Bar Background</label>
+                                <input type="color" id="navColor" value="#d9c7a5" onchange="updateColors()" style="width: 60px; height: 40px; border: 2px solid #ccc; border-radius: 5px; cursor: pointer;">
+                            </div>
+                            <small style="color: #6c757d;">Navigation bar background color</small>
+                        </div>
+                        
+                        <div class="color-setting-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <label style="font-weight: 600; font-size: 15px;">🔤 Nav Text Color</label>
+                                <input type="color" id="navTextColor" value="#3e3024" onchange="updateColors()" style="width: 60px; height: 40px; border: 2px solid #ccc; border-radius: 5px; cursor: pointer;">
+                            </div>
+                            <small style="color: #6c757d;">Text color for navigation buttons</small>
+                        </div>
                     </div>
                     
                     <div style="display: flex; gap: 10px; margin-top: 25px;">
@@ -1779,6 +1795,8 @@
                         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
                             <button class="btn btn-secondary" onclick="applyTheme('default')" style="margin-top: 0; padding: 10px;">🏛️ Classic (Default)</button>
                             <button class="btn btn-secondary" onclick="applyTheme('dark')" style="margin-top: 0; padding: 10px;">🌙 Dark Mode</button>
+                            <button class="btn btn-secondary" onclick="applyTheme('nike')" style="margin-top: 0; padding: 10px;">✔️ Nike Style</button>
+                            <button class="btn btn-secondary" onclick="applyTheme('adidas')" style="margin-top: 0; padding: 10px;">⚫ Adidas Style</button>
                             <button class="btn btn-secondary" onclick="applyTheme('ocean')" style="margin-top: 0; padding: 10px;">🌊 Ocean Blue</button>
                             <button class="btn btn-secondary" onclick="applyTheme('forest')" style="margin-top: 0; padding: 10px;">🌲 Forest Green</button>
                             <button class="btn btn-secondary" onclick="applyTheme('sunset')" style="margin-top: 0; padding: 10px;">🌅 Sunset Orange</button>
@@ -6648,14 +6666,16 @@ User's request: ${msg}`;
             event.target.value = '';
         }
         // ==================== COLOR CUSTOMIZATION ====================
-        function updateColors() {
+       function updateColors() {
             const colors = {
                 primary: document.getElementById('primaryColor').value,
                 accent: document.getElementById('accentColor').value,
                 background: document.getElementById('backgroundColor').value,
                 success: document.getElementById('successColor').value,
                 danger: document.getElementById('dangerColor').value,
-                card: document.getElementById('cardColor').value
+                card: document.getElementById('cardColor').value,
+                nav: document.getElementById('navColor').value,
+                navText: document.getElementById('navTextColor').value
             };
             
             // Apply colors using CSS variables
@@ -6665,6 +6685,8 @@ User's request: ${msg}`;
             document.documentElement.style.setProperty('--success-color', colors.success);
             document.documentElement.style.setProperty('--danger-color', colors.danger);
             document.documentElement.style.setProperty('--card-color', colors.card);
+            document.documentElement.style.setProperty('--nav-color', colors.nav);
+            document.documentElement.style.setProperty('--nav-text-color', colors.navText);
             
             // Update specific elements
             updateColorStyles(colors);
@@ -6674,6 +6696,9 @@ User's request: ${msg}`;
         }
         
         function updateColorStyles(colors) {
+            // Calculate contrasting text color for background
+            const textColor = getContrastColor(colors.background);
+            
             // Update body gradient
             document.body.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
             
@@ -6689,13 +6714,32 @@ User's request: ${msg}`;
             const container = document.querySelector('.container');
             if (container) {
                 container.style.background = colors.background;
+                container.style.borderColor = adjustBrightness(colors.nav, -20);
             }
             
-            // Update nav buttons
+            // Update ALL navigation styling
+            const nav = document.querySelector('.nav');
+            if (nav) {
+                nav.style.background = colors.nav;
+                nav.style.borderBottomColor = adjustBrightness(colors.nav, -20);
+            }
+            
+            // Update nav buttons (inactive state)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.style.color = colors.navText;
+                btn.style.background = 'none';
+            });
+            
+            // Update nav buttons (active state)
             document.querySelectorAll('.nav-btn.active').forEach(btn => {
                 btn.style.background = colors.background;
                 btn.style.color = colors.primary;
                 btn.style.borderBottomColor = colors.accent;
+            });
+            
+            // Update all text in content areas
+            document.querySelectorAll('.content, .section').forEach(el => {
+                el.style.color = textColor;
             });
             
             // Update exercise cards
@@ -6710,24 +6754,102 @@ User's request: ${msg}`;
                 card.style.borderLeftColor = colors.primary;
             });
             
+            // Update history items
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.style.background = colors.card;
+                item.style.borderLeftColor = colors.primary;
+            });
+            
+            // Update info boxes
+            document.querySelectorAll('.info-box').forEach(box => {
+                box.style.background = adjustBrightness(colors.card, 10);
+                box.style.borderLeftColor = colors.primary;
+            });
+            
+            // Update color setting cards
+            document.querySelectorAll('.color-setting-card').forEach(card => {
+                card.style.background = colors.card;
+                card.style.borderLeftColor = colors.primary;
+            });
+            
+            // Update workout timer
+            document.querySelectorAll('.workout-timer').forEach(timer => {
+                timer.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
+                timer.style.color = colors.accent;
+                timer.style.borderColor = colors.accent;
+            });
+            
+            // Update modal content
+            document.querySelectorAll('.modal-content').forEach(modal => {
+                modal.style.background = colors.background;
+                modal.style.borderColor = colors.primary;
+            });
+            
+            // Update modal headers
+            document.querySelectorAll('.modal-header').forEach(header => {
+                header.style.background = adjustBrightness(colors.card, -5);
+                header.style.borderBottomColor = colors.primary;
+            });
+            
             // Update buttons
             document.querySelectorAll('.btn:not(.btn-secondary):not(.btn-success):not(.btn-danger)').forEach(btn => {
                 btn.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
                 btn.style.color = colors.accent;
             });
             
+            document.querySelectorAll('.btn-secondary').forEach(btn => {
+                btn.style.background = adjustBrightness(colors.nav, -10);
+                btn.style.color = colors.background;
+            });
+            
             document.querySelectorAll('.btn-success').forEach(btn => {
                 btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
+                btn.style.color = '#ffffff';
             });
             
             document.querySelectorAll('.delete-btn, .btn-danger').forEach(btn => {
                 btn.style.background = `linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%)`;
+                btn.style.color = '#ffffff';
             });
             
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
                 btn.style.color = colors.accent;
             });
+            
+            // Update chart bars
+            document.querySelectorAll('.chart-bar').forEach(bar => {
+                bar.style.background = adjustBrightness(colors.card, -5);
+            });
+            
+            document.querySelectorAll('.chart-fill').forEach(fill => {
+                fill.style.background = `linear-gradient(90deg, ${colors.primary}, ${colors.accent})`;
+            });
+            
+            // Update inputs and selects
+            document.querySelectorAll('input:not([type="color"]):not([type="file"]), select, textarea').forEach(input => {
+                input.style.borderColor = adjustBrightness(colors.card, -20);
+                input.style.background = '#ffffff';
+            });
+            
+            // Update PR badges
+            document.querySelectorAll('.pr-badge').forEach(badge => {
+                badge.style.background = colors.accent;
+                badge.style.color = colors.primary;
+            });
+        }
+        
+        function getContrastColor(hexColor) {
+            // Convert hex to RGB
+            const r = parseInt(hexColor.substr(1, 2), 16);
+            const g = parseInt(hexColor.substr(3, 2), 16);
+            const b = parseInt(hexColor.substr(5, 2), 16);
+            
+            // Calculate luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            // Return black or white based on luminance
+            return luminance > 0.5 ? '#333333' : '#f5f5f5';
         }
         
         function adjustBrightness(hex, percent) {
@@ -6754,6 +6876,8 @@ User's request: ${msg}`;
             document.getElementById('successColor').value = '#4a6741';
             document.getElementById('dangerColor').value = '#8b0000';
             document.getElementById('cardColor').value = '#e8dcc4';
+            document.getElementById('navColor').value = '#d9c7a5';
+            document.getElementById('navTextColor').value = '#3e3024';
             
             updateColors();
             alert('✅ Colors reset to default!');
@@ -6769,7 +6893,9 @@ User's request: ${msg}`;
                 background: document.getElementById('backgroundColor').value,
                 success: document.getElementById('successColor').value,
                 danger: document.getElementById('dangerColor').value,
-                card: document.getElementById('cardColor').value
+                card: document.getElementById('cardColor').value,
+                nav: document.getElementById('navColor').value,
+                navText: document.getElementById('navTextColor').value
             };
             
             const presets = JSON.parse(localStorage.getItem('colorPresets') || '{}');
@@ -6787,7 +6913,9 @@ User's request: ${msg}`;
                     background: '#f5f5dc',
                     success: '#4a6741',
                     danger: '#8b0000',
-                    card: '#e8dcc4'
+                    card: '#e8dcc4',
+                    nav: '#d9c7a5',
+                    navText: '#3e3024'
                 },
                 dark: {
                     primary: '#1a1a1a',
@@ -6795,7 +6923,29 @@ User's request: ${msg}`;
                     background: '#2d2d2d',
                     success: '#4caf50',
                     danger: '#f44336',
-                    card: '#3d3d3d'
+                    card: '#3d3d3d',
+                    nav: '#1a1a1a',
+                    navText: '#ffffff'
+                },
+                nike: {
+                    primary: '#111111',
+                    accent: '#ff6b35',
+                    background: '#f5f5f5',
+                    success: '#00c853',
+                    danger: '#ff1744',
+                    card: '#e0e0e0',
+                    nav: '#111111',
+                    navText: '#ffffff'
+                },
+                adidas: {
+                    primary: '#000000',
+                    accent: '#00a0df',
+                    background: '#ffffff',
+                    success: '#00a650',
+                    danger: '#e30613',
+                    card: '#f0f0f0',
+                    nav: '#000000',
+                    navText: '#ffffff'
                 },
                 ocean: {
                     primary: '#006064',
@@ -6803,7 +6953,9 @@ User's request: ${msg}`;
                     background: '#e0f7fa',
                     success: '#00796b',
                     danger: '#d32f2f',
-                    card: '#b2ebf2'
+                    card: '#b2ebf2',
+                    nav: '#00838f',
+                    navText: '#ffffff'
                 },
                 forest: {
                     primary: '#1b5e20',
@@ -6811,7 +6963,9 @@ User's request: ${msg}`;
                     background: '#f1f8e9',
                     success: '#388e3c',
                     danger: '#c62828',
-                    card: '#dcedc8'
+                    card: '#dcedc8',
+                    nav: '#33691e',
+                    navText: '#ffffff'
                 },
                 sunset: {
                     primary: '#e65100',
@@ -6819,7 +6973,9 @@ User's request: ${msg}`;
                     background: '#fff3e0',
                     success: '#ef6c00',
                     danger: '#b71c1c',
-                    card: '#ffe0b2'
+                    card: '#ffe0b2',
+                    nav: '#f57c00',
+                    navText: '#ffffff'
                 },
                 purple: {
                     primary: '#4a148c',
@@ -6827,7 +6983,9 @@ User's request: ${msg}`;
                     background: '#f3e5f5',
                     success: '#7b1fa2',
                     danger: '#c2185b',
-                    card: '#e1bee7'
+                    card: '#e1bee7',
+                    nav: '#6a1b9a',
+                    navText: '#ffffff'
                 }
             };
             
@@ -6840,6 +6998,8 @@ User's request: ${msg}`;
             document.getElementById('successColor').value = theme.success;
             document.getElementById('dangerColor').value = theme.danger;
             document.getElementById('cardColor').value = theme.card;
+            document.getElementById('navColor').value = theme.nav;
+            document.getElementById('navTextColor').value = theme.navText;
             
             updateColors();
         }
@@ -6848,12 +7008,14 @@ User's request: ${msg}`;
             const savedColors = localStorage.getItem('customColors');
             if (savedColors) {
                 const colors = JSON.parse(savedColors);
-                document.getElementById('primaryColor').value = colors.primary;
-                document.getElementById('accentColor').value = colors.accent;
-                document.getElementById('backgroundColor').value = colors.background;
-                document.getElementById('successColor').value = colors.success;
-                document.getElementById('dangerColor').value = colors.danger;
-                document.getElementById('cardColor').value = colors.card;
+                document.getElementById('primaryColor').value = colors.primary || '#001f3f';
+                document.getElementById('accentColor').value = colors.accent || '#d4af37';
+                document.getElementById('backgroundColor').value = colors.background || '#f5f5dc';
+                document.getElementById('successColor').value = colors.success || '#4a6741';
+                document.getElementById('dangerColor').value = colors.danger || '#8b0000';
+                document.getElementById('cardColor').value = colors.card || '#e8dcc4';
+                document.getElementById('navColor').value = colors.nav || '#d9c7a5';
+                document.getElementById('navTextColor').value = colors.navText || '#3e3024';
                 updateColors();
             }
         }
