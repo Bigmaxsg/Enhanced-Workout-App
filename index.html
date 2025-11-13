@@ -1180,6 +1180,21 @@
                             <option value="fullbody">💯 Full Body Power</option>
                         </select>
                     </div>
+                    <!-- Custom Workout Management Section -->
+                    <div class="form-group" id="manageCustomWorkoutsSection" style="display:none;">
+                        <label>Manage Custom Workouts</label>
+                        <select id="manageCustomWorkoutSelect">
+                            <option value="">-- Select a Custom Workout --</option>
+                        </select>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn btn-secondary" onclick="editCustomWorkout()" style="flex: 1;">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn" onclick="deleteCustomWorkout()" style="flex: 1; background: #dc3545; color: white;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
                     <div id="workoutContainer"></div>
                     <div id="workoutModeSelection" style="display:none;">
                         <div class="info-box">
@@ -2713,6 +2728,130 @@
                 option.setAttribute('data-custom', 'true'); // Mark it as a custom entry
                 dropdown.appendChild(option);
             });
+            
+            // Also populate the management dropdown
+            populateManageCustomWorkoutsDropdown();
+        }
+        
+        // ==================== CUSTOM WORKOUT MANAGEMENT ====================
+        function populateManageCustomWorkoutsDropdown() {
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            const customWorkoutNames = Object.keys(savedCustomWorkouts);
+            
+            const manageDropdown = document.getElementById('manageCustomWorkoutSelect');
+            const manageSection = document.getElementById('manageCustomWorkoutsSection');
+            
+            if (!manageDropdown) return;
+            
+            // Clear existing options except the first one
+            manageDropdown.innerHTML = '<option value="">-- Select a Custom Workout --</option>';
+            
+            // Show/hide the management section based on whether custom workouts exist
+            if (customWorkoutNames.length > 0) {
+                manageSection.style.display = 'block';
+                
+                // Add all custom workouts to the management dropdown
+                customWorkoutNames.sort().forEach(name => {
+                    const workout = savedCustomWorkouts[name];
+                    const option = document.createElement('option');
+                    const isHiit = typeof workout === 'object' && !Array.isArray(workout) && workout.workoutType === 'hiit';
+                    
+                    option.value = name;
+                    option.textContent = isHiit ? `⚡ ${name} (HIIT)` : `🏋️ ${name} (Strength)`;
+                    manageDropdown.appendChild(option);
+                });
+            } else {
+                manageSection.style.display = 'none';
+            }
+        }
+        
+        function editCustomWorkout() {
+            const manageDropdown = document.getElementById('manageCustomWorkoutSelect');
+            const selectedWorkoutName = manageDropdown.value;
+            
+            if (!selectedWorkoutName) {
+                alert('Please select a workout to edit.');
+                return;
+            }
+            
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            const workout = savedCustomWorkouts[selectedWorkoutName];
+            
+            if (!workout) {
+                alert('Workout not found.');
+                return;
+            }
+            
+            // Determine if it's a HIIT or Strength workout
+            const isHiit = typeof workout === 'object' && !Array.isArray(workout) && workout.workoutType === 'hiit';
+            
+            if (isHiit) {
+                // Load HIIT builder with this workout
+                document.getElementById('workoutType').value = 'custom_hiit';
+                showCustomHiitBuilder();
+                
+                // Populate with existing data
+                currentWorkout = [...workout.exercises];
+                hiitWorkoutParams = { ...workout.hiitParams };
+                
+                // Update the display
+                updateHiitExerciseList();
+                document.getElementById('hiitWorkTime').value = hiitWorkoutParams.workTime;
+                document.getElementById('hiitRestTime').value = hiitWorkoutParams.restTime;
+                document.getElementById('hiitRounds').value = hiitWorkoutParams.totalRounds;
+                
+                // Pre-fill the workout name
+                setTimeout(() => {
+                    const nameInput = document.getElementById('customHiitWorkoutName');
+                    if (nameInput) nameInput.value = selectedWorkoutName;
+                }, 100);
+            } else {
+                // Load Strength builder with this workout
+                document.getElementById('workoutType').value = 'custom';
+                showCustomWorkoutBuilder();
+                
+                // Populate with existing data
+                currentWorkout = JSON.parse(JSON.stringify(workout));
+                
+                // Update the display
+                updateCustomExerciseList();
+                
+                // Pre-fill the workout name
+                setTimeout(() => {
+                    const nameInput = document.getElementById('customWorkoutName');
+                    if (nameInput) nameInput.value = selectedWorkoutName;
+                }, 100);
+            }
+            
+            // Clear the management dropdown selection
+            manageDropdown.value = '';
+        }
+        
+        function deleteCustomWorkout() {
+            const manageDropdown = document.getElementById('manageCustomWorkoutSelect');
+            const selectedWorkoutName = manageDropdown.value;
+            
+            if (!selectedWorkoutName) {
+                alert('Please select a workout to delete.');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete "${selectedWorkoutName}"? This cannot be undone.`)) {
+                return;
+            }
+            
+            // Remove from localStorage
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+            delete savedCustomWorkouts[selectedWorkoutName];
+            localStorage.setItem('customWorkouts', JSON.stringify(savedCustomWorkouts));
+            
+            // Refresh both dropdowns
+            loadCustomWorkoutsIntoDropdown();
+            
+            // Clear selection
+            manageDropdown.value = '';
+            
+            alert(`"${selectedWorkoutName}" has been deleted.`);
         }
 
         // ==================== CUSTOM WORKOUT BUILDER ====================
@@ -2744,6 +2883,41 @@
             populateLoadCustomWorkoutSelect();
             document.getElementById('workoutModeSelection').style.display = 'block';
             document.getElementById('hiitPreWorkoutAdjustments').style.display = 'none';
+        }
+        
+        function updateCustomExerciseList() {
+            const exerciseListDiv = document.getElementById('customExerciseList');
+            if (!exerciseListDiv) return;
+            
+            let html = '';
+            currentWorkout.forEach((exercise, index) => {
+                html += `
+                    <div class="exercise-card">
+                        <div class="exercise-header">
+                            <div class="exercise-name">${exercise.name}</div>
+                            <button class="delete-btn" onclick="removeExerciseFromCustom(${index})">✖</button>
+                        </div>
+                        <div class="exercise-details">
+                            <div class="detail-input">
+                                <label>Weight (lbs)</label>
+                                <input type="number" value="${exercise.weight || 0}" 
+                                    onchange="updateCustomExercise(${index}, 'weight', this.value)">
+                            </div>
+                            <div class="detail-input">
+                                <label>Sets</label>
+                                <input type="number" value="${exercise.sets || 3}" 
+                                    onchange="updateCustomExercise(${index}, 'sets', this.value)">
+                            </div>
+                            <div class="detail-input">
+                                <label>Reps</label>
+                                <input type="number" value="${exercise.reps || 12}" 
+                                    onchange="updateCustomExercise(${index}, 'reps', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            exerciseListDiv.innerHTML = html;
         }
 
         function addExerciseToCustomWorkout() {
@@ -7077,4 +7251,3 @@ User's request: ${msg}`;
     </script>
 </body>
 </html>
-
