@@ -7041,7 +7041,7 @@ User's request: ${msg}`;
             const backgroundRgb = hexToRgb(colors.background);
             const cardRgb = hexToRgb(colors.card);
             const primaryRgb = hexToRgb(colors.primary);
-        
+            const navRgb = hexToRgb(colors.nav);
             const css = `
                 body {
                     /* The background is now handled by the showSection function */
@@ -7055,22 +7055,26 @@ User's request: ${msg}`;
                     backdrop-filter: blur(5px);
                 }
                 .header {
-                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+                    background: rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.75);
                     color: ${colors.accent};
                     border-bottom-color: ${colors.accent};
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
                 }
                 .header h1, .header p {
                     color: ${colors.accent};
                 }
                 .nav {
-                    background: ${colors.nav};
+                    background: rgba(${navRgb.r}, ${navRgb.g}, ${navRgb.b}, 0.80);
                     border-bottom-color: ${adjustBrightness(colors.nav, -20)};
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
                 }
                 .nav-btn {
                     color: ${colors.navText};
                 }
                 .nav-btn.active {
-                    background: ${colors.background};
+                    background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
                     color: ${textColor};
                     border-bottom-color: ${colors.accent};
                 }
