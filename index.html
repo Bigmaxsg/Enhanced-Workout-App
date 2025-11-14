@@ -1857,7 +1857,8 @@
                             <button class="btn btn-secondary" onclick="applyTheme('ocean')" style="margin-top: 0; padding: 10px;">🌊 Ocean Blue</button>
                             <button class="btn btn-secondary" onclick="applyTheme('forest')" style="margin-top: 0; padding: 10px;">🌲 Forest Green</button>
                             <button class="btn btn-secondary" onclick="applyTheme('sunset')" style="margin-top: 0; padding: 10px;">🌅 Sunset Orange</button>
-                            <button class="btn btn-secondary" onclick="applyTheme('purple')" style="margin-top: 0; padding: 10px;">💜 Purple Haze</button>
+                            <button class="btn btn-secondary" onclick="applyTheme('purple')" style="margin-top: 0; padding: 10px;">💜 Purple Haze</button>                                
+                            <button class="btn btn-secondary" onclick="applyTheme('gympak')" style="margin-top: 0; padding: 10px;">💪 GYMPAK Dark</button>
                         </div>
                     </div>
                 </div>
@@ -7135,6 +7136,24 @@ User's request: ${msg}`;
             background: ${colors.background};
             border-color: ${colors.primary};
         }
+        // Special override for GYMPAK theme to create the "frosted glass" effect
+if (colors.background === '#000000' && colors.accent === '#dfff00') {
+    const glassCSS = `
+        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box {
+            background: rgba(42, 42, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        .btn-success {
+            color: #000000; /* Black text on lime button */
+        }
+        .nav-btn.active {
+            background: #2a2a2a; /* Card color for active tab */
+        }
+    `;
+    themeStyle.innerHTML += glassCSS;
+}
     `;
     
     themeStyle.innerHTML = css;
