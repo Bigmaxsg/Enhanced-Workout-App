@@ -3870,6 +3870,9 @@ function cancelQuickCardio() {
                 updateProgress();
                 loadHistory();
                 renderCalendar();
+                
+                // Navigate to history tab to show the completed workout
+                showSection('history');
             }
             
             function promptForCardioStats(workoutData) {
@@ -7088,7 +7091,7 @@ User's request: ${msg}`;
                 }
         
                  /* === CARD STYLING (FROSTED GLASS EFFECT) === */
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box {
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card {
                     /* MODIFICATION: Use RGBA for card transparency */
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
                     border: 1px solid rgba(255, 255, 255, 0.3);
