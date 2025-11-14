@@ -7057,7 +7057,10 @@ User's request: ${msg}`;
         .history-type { color: ${colors.primary}; }
         .measurement-value { color: ${colors.primary}; }
         .exercise-not-found { color: ${textColor}; }
-
+        #exercises .exercise-card {
+            border: 2px solid ${adjustBrightness(colors.card, -35)};
+            border-left: 4px solid ${colors.primary};
+        }
         /* BUTTONS */
         .btn {
             background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
@@ -7074,10 +7077,12 @@ User's request: ${msg}`;
         .btn-danger, .delete-btn {
             background: linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%);
             color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
         .edit-btn {
             background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
             color: ${colors.accent};
+            border: 1px solid ${colors.accent};
         }
         .timer-btn {
             color: ${colors.accent};
