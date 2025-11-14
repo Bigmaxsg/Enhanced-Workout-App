@@ -2237,7 +2237,17 @@
             'Interval Sprints - Bike': 'https://www.youtube.com/results?search_query=hiit+interval+sprints+bike',
             'Interval Sprints - Rowing': 'https://www.youtube.com/results?search_query=hiit+rowing+machine+intervals'
         };
-        
+                // ==================== TAB BACKGROUND IMAGES ====================
+        const tabBackgrounds = {
+            'workout': 'https://user-images.githubusercontent.com/15313833/236605558-8380e224-b1df-4b36-8805-3c137452f361.jpg',
+            'exercises': 'https://user-images.githubusercontent.com/15313833/236605562-9502b115-2821-4a46-8809-ebb39f263b36.jpg',
+            'progress': 'https://user-images.githubusercontent.com/15313833/236605565-d6c63c72-f87c-4a31-857c-2b27a3a830f0.jpg',
+            'history': 'https://user-images.githubusercontent.com/15313833/236605566-f1e16848-5226-4734-9799-3177f373e351.jpg',
+            'body-stats': 'https://user-images.githubusercontent.com/15313833/236605568-124b8d1b-7a13-4a6c-9556-8316c4c89280.jpg',
+            'recommend': 'https://user-images.githubusercontent.com/15313833/236605558-8380e224-b1df-4b36-8805-3c137452f361.jpg', // Using the same as workout
+            'calendar': 'https://user-images.githubusercontent.com/15313833/236605566-f1e16848-5226-4734-9799-3177f373e351.jpg' // Using the same as history
+            // You can add more for 'ai-coach', 'share-workout', etc.
+        };
         // This holds AI-generated or custom instructions. It MUST be declared here at the top.
         let exerciseDescriptions = JSON.parse(localStorage.getItem('exerciseDescriptions')) || {};
 
@@ -2347,6 +2357,22 @@
                     btn.style.background = colors.background;
                     btn.style.color = getContrastColor(colors.background);  // Use contrast color instead of accent
                     btn.style.borderBottom = `3px solid ${colors.accent}`;
+                }
+                // === NEW: Set background image based on the active tab ===
+                const newBgUrl = tabBackgrounds[sectionId];
+                if (newBgUrl) {
+                    // If a specific background is defined for this tab, use it
+                    applyBackgroundImage(newBgUrl);
+                } else {
+                    // Otherwise, fall back to the user-uploaded image or the theme's default gradient
+                    const savedImage = localStorage.getItem('backgroundImage');
+                    if (savedImage) {
+                        applyBackgroundImage(savedImage);
+                    } else {
+                        // No specific or user image, so reset to the theme's default gradient
+                        document.body.style.backgroundImage = ''; // Clear image
+                        updateColors(); // Re-apply theme gradient
+                    }
                 }
             });
 
@@ -7367,6 +7393,19 @@ User's request: ${msg}`;
                 document.getElementById('navColor').value = colors.nav || '#d9c7a5';
                 document.getElementById('navTextColor').value = colors.navText || '#3e3024';
                 updateColors();
+            }
+        }
+        function applyBackgroundImage(imageData) {
+            const primaryColor = document.getElementById('primaryColor').value || '#000000';
+            const overlayColor = hexToRgb(primaryColor);
+            if (overlayColor) {
+                // Clear any previous linear-gradient from the theme before applying the image
+                document.body.style.background = ''; 
+                
+                document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6)), url('${imageData}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundPosition = 'center';
             }
         }
         // ==================== INITIALIZATION (MOVED TO THE END) ====================
