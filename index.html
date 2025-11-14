@@ -2353,27 +2353,23 @@
                     btn.classList.add('active');
                     // Apply active styling immediately
                     btn.style.background = colors.background;
-                    btn.style.color = getContrastColor(colors.background);  // Use contrast color instead of accent
+                    btn.style.color = getContrastColor(colors.background);
                     btn.style.borderBottom = `3px solid ${colors.accent}`;
                 }
-                // === NEW: Set background image based on the active tab ===
-                const newBgUrl = tabBackgrounds[sectionId];
-                if (newBgUrl) {
-                    // If a specific background is defined for this tab, use it
-                    applyBackgroundImage(newBgUrl);
-                } else {
-                    // Otherwise, fall back to the user-uploaded image or the theme's default gradient
-                    const savedImage = localStorage.getItem('backgroundImage');
-                    if (savedImage) {
-                        applyBackgroundImage(savedImage);
-                    } else {
-                        // No specific or user image, so reset to the theme's default gradient
-                        document.body.style.backgroundImage = ''; // Clear image
-                        updateColors(); // Re-apply theme gradient
-                    }
-                }
             });
+        
+            // === NEW LOGIC: Set background image based on the active tab ===
+            const newBgUrl = tabBackgrounds[sectionId];
+            if (newBgUrl) {
+                // If a specific background is defined for this tab, use it
+                applyBackgroundImage(newBgUrl);
+            } else {
+                // Otherwise, fall back to the theme's default gradient
+                document.body.style.backgroundImage = ''; // Clear any layered image
+                updateColors(); // This will re-apply the theme's gradient
+            }
 
+            // --- Original logic for loading section-specific data ---
             if (sectionId === 'exercises') {
                 renderExerciseList();
             } else if (sectionId === 'recommend') {
@@ -7022,167 +7018,167 @@ User's request: ${msg}`;
         }
         
        function updateColorStyles(colors) {
-    // Get or create the style tag
-    let themeStyle = document.getElementById('theme-styles');
-    if (!themeStyle) {
-        themeStyle = document.createElement('style');
-        themeStyle.id = 'theme-styles';
-        document.head.appendChild(themeStyle);
-    }
-
-    const textColor = getContrastColor(colors.background);
-    const cardTextColor = getContrastColor(colors.card);
-    const fadedCardTextColor = adjustBrightness(cardTextColor, -30);
-    const primaryContrast = getContrastColor(colors.primary);
-
-    const css = `
-        body {
-            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
-        }
-        .container {
-            background: ${colors.background};
-            border-color: ${adjustBrightness(colors.nav, -20)};
-        }
-        .header {
-            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
-            color: ${colors.accent};
-            border-bottom-color: ${colors.accent};
-        }
-        .header h1, .header p {
-            color: ${colors.accent};
-        }
-        .nav {
-            background: ${colors.nav};
-            border-bottom-color: ${adjustBrightness(colors.nav, -20)};
-        }
-        .nav-btn {
-            color: ${colors.navText};
-        }
-        .nav-btn.active {
-            background: ${colors.background};
-            color: ${textColor};
-            border-bottom-color: ${colors.accent};
-        }
-        .content, h2, h3, h4, label {
-             color: ${textColor};
-        }
-
-        /* === CARD STYLING (THE KEY FIX IS HERE) === */
-        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box {
-            background: ${colors.card};
-            border: 1px solid ${adjustBrightness(colors.card, -20)};
-            border-left: 4px solid ${colors.primary};
-            color: ${cardTextColor};
-        }
-        .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title {
-            color: ${cardTextColor};
-        }
-        .exercise-equipment, .history-exercises, .history-exercise-stats {
-            color: ${fadedCardTextColor};
-        }
-        .history-type { color: ${colors.primary}; }
-        .measurement-value { color: ${colors.primary}; }
-        .exercise-not-found { color: ${textColor}; }
-        #exercises .exercise-card {
-            border: 2px solid ${adjustBrightness(colors.card, -35)};
-            border-left: 4px solid ${colors.primary};
-        }
-        /* BUTTONS */
-        .btn {
-            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
-            color: ${colors.accent};
-        }
-        .btn-secondary {
-            background: ${adjustBrightness(colors.nav, -10)};
-            color: ${getContrastColor(adjustBrightness(colors.nav, -10))};
-        }
-        .btn-success {
-            background: linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%);
-            color: #ffffff;
-        }
-        .btn-danger, .delete-btn {
-            background: linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        .edit-btn {
-            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
-            color: ${colors.accent};
-            border: 1px solid ${colors.accent};
-        }
-        .timer-btn {
-            color: ${colors.accent};
-            border-color: ${colors.accent};
-        }
-
-        /* OTHER COMPONENTS */
-        .workout-timer {
-            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
-            color: ${primaryContrast};
-            border-color: ${colors.accent};
-        }
-        .workout-timer h3 { color: ${primaryContrast}; }
-        .timer-display { color: ${colors.accent}; }
-
-        .stat-card {
-            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
-            border-color: ${colors.accent};
-        }
-        .stat-number { color: ${colors.accent}; }
-        .stat-label { color: ${primaryContrast}; }
-
-        .info-box {
-            background: ${adjustBrightness(colors.card, 10)};
-            border-left-color: ${colors.primary};
-        }
-        .info-box p { color: ${cardTextColor}; }
-        .history-stats-box {
-            background: ${adjustBrightness(colors.card, -10)};
-            color: ${getContrastColor(adjustBrightness(colors.card, -10))};
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        .history-stats-box strong {
-            color: ${getContrastColor(adjustBrightness(colors.card, -10))};
-        }
-        .chart-fill {
-            background: linear-gradient(90deg, ${colors.primary}, ${colors.accent});
-        }
-        .chart-value {
-             color: ${getContrastColor(colors.primary)};
-        }
-        .pr-badge {
-            background: ${colors.accent};
-            color: ${colors.primary};
-        }
-        .modal-content {
-            background: ${colors.background};
-            border-color: ${colors.primary};
-        }
-    `;
-     themeStyle.innerHTML = css;
-     
-       // Special override for GYMPAK theme to create the "frosted glass" effect
-        if (colors.background === '#000000' && colors.accent === '#dfff00') {
-            const glassCSS = `
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box {
-                    background: rgba(42, 42, 42, 0.75);
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    -webkit-backdrop-filter: blur(10px);
-                    backdrop-filter: blur(10px);
+            // Get or create the style tag
+            let themeStyle = document.getElementById('theme-styles');
+            if (!themeStyle) {
+                themeStyle = document.createElement('style');
+                themeStyle.id = 'theme-styles';
+                document.head.appendChild(themeStyle);
+            }
+        
+            const textColor = getContrastColor(colors.background);
+            const cardTextColor = getContrastColor(colors.card);
+            const fadedCardTextColor = adjustBrightness(cardTextColor, -30);
+            const primaryContrast = getContrastColor(colors.primary);
+        
+            const css = `
+                body {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
                 }
-                .btn-success {
-                    color: #000000; /* Black text on lime button */
+                .container {
+                    background: ${colors.background};
+                    border-color: ${adjustBrightness(colors.nav, -20)};
+                }
+                .header {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+                    color: ${colors.accent};
+                    border-bottom-color: ${colors.accent};
+                }
+                .header h1, .header p {
+                    color: ${colors.accent};
+                }
+                .nav {
+                    background: ${colors.nav};
+                    border-bottom-color: ${adjustBrightness(colors.nav, -20)};
+                }
+                .nav-btn {
+                    color: ${colors.navText};
                 }
                 .nav-btn.active {
-                    background: #2a2a2a; /* Card color for active tab */
+                    background: ${colors.background};
+                    color: ${textColor};
+                    border-bottom-color: ${colors.accent};
+                }
+                .content, h2, h3, h4, label {
+                     color: ${textColor};
+                }
+        
+                /* === CARD STYLING === */
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box {
+                    background: ${colors.card};
+                    border: 1px solid ${adjustBrightness(colors.card, -20)};
+                    border-left: 4px solid ${colors.primary};
+                    color: ${cardTextColor};
+                }
+                .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title {
+                    color: ${cardTextColor};
+                }
+                .exercise-equipment, .history-exercises, .history-exercise-stats {
+                    color: ${fadedCardTextColor};
+                }
+                .history-type { color: ${colors.primary}; }
+                .measurement-value { color: ${colors.primary}; }
+                .exercise-not-found { color: ${textColor}; }
+                #exercises .exercise-card {
+                    border: 2px solid ${adjustBrightness(colors.card, -35)};
+                    border-left: 4px solid ${colors.primary};
+                }
+                /* BUTTONS */
+                .btn {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+                    color: ${colors.accent};
+                }
+                .btn-secondary {
+                    background: ${adjustBrightness(colors.nav, -10)};
+                    color: ${getContrastColor(adjustBrightness(colors.nav, -10))};
+                }
+                .btn-success {
+                    background: linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%);
+                    color: #ffffff;
+                }
+                .btn-danger, .delete-btn {
+                    background: linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%);
+                    color: #ffffff;
+                    border: 1px solid rgba(255, 255, 255, 0.6);
+                }
+                .edit-btn {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
+                    color: ${colors.accent};
+                    border: 1px solid ${colors.accent};
+                }
+                .timer-btn {
+                    color: ${colors.accent};
+                    border-color: ${colors.accent};
+                }
+        
+                /* OTHER COMPONENTS */
+                .workout-timer {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
+                    color: ${primaryContrast};
+                    border-color: ${colors.accent};
+                }
+                .workout-timer h3 { color: ${primaryContrast}; }
+                .timer-display { color: ${colors.accent}; }
+        
+                .stat-card {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+                    border-color: ${colors.accent};
+                }
+                .stat-number { color: ${colors.accent}; }
+                .stat-label { color: ${primaryContrast}; }
+        
+                .info-box {
+                    background: ${adjustBrightness(colors.card, 10)};
+                    border-left-color: ${colors.primary};
+                }
+                .info-box p { color: ${cardTextColor}; }
+                .history-stats-box {
+                    background: ${adjustBrightness(colors.card, -10)};
+                    color: ${getContrastColor(adjustBrightness(colors.card, -10))};
+                    padding: 10px;
+                    border-radius: 5px;
+                    margin: 10px 0;
+                    font-size: 14px;
+                }
+                .history-stats-box strong {
+                    color: ${getContrastColor(adjustBrightness(colors.card, -10))};
+                }
+                .chart-fill {
+                    background: linear-gradient(90deg, ${colors.primary}, ${colors.accent});
+                }
+                .chart-value {
+                     color: ${getContrastColor(colors.primary)};
+                }
+                .pr-badge {
+                    background: ${colors.accent};
+                    color: ${colors.primary};
+                }
+                .modal-content {
+                    background: ${colors.background};
+                    border-color: ${colors.primary};
                 }
             `;
-            themeStyle.innerHTML += glassCSS;
-        }
-    }           
+             themeStyle.innerHTML = css;
+             
+               // Special override for GYMPAK theme to create the "frosted glass" effect
+                if (colors.background === '#000000' && colors.accent === '#dfff00') {
+                    const glassCSS = `
+                        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box {
+                            background: rgba(42, 42, 42, 0.75);
+                            border: 1px solid rgba(255, 255, 255, 0.2);
+                            -webkit-backdrop-filter: blur(10px);
+                            backdrop-filter: blur(10px);
+                        }
+                        .btn-success {
+                            color: #000000; /* Black text on lime button */
+                        }
+                        .nav-btn.active {
+                            background: #2a2a2a; /* Card color for active tab */
+                        }
+                    `;
+                    themeStyle.innerHTML += glassCSS;
+                }
+            }
         function getContrastColor(hexColor) {
             // Convert hex to RGB
             const r = parseInt(hexColor.substr(1, 2), 16);
@@ -7394,25 +7390,26 @@ User's request: ${msg}`;
             }
         }
         function hexToRgb(hex) {
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
-
-function applyBackgroundImage(imageData) {
-    const primaryColor = document.getElementById('primaryColor').value || '#000000';
-    const overlayColor = hexToRgb(primaryColor);
-    if (overlayColor) {
-        document.body.style.background = ''; // Clear previous gradient
-        document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6)), url('${imageData}')`;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundAttachment = 'fixed';
-        document.body.style.backgroundPosition = 'center';
-    }
-}
+            let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        function applyBackgroundImage(imageData) {
+            const primaryColor = document.getElementById('primaryColor').value || '#000000';
+            const overlayColor = hexToRgb(primaryColor);
+            
+            if (overlayColor) {
+                // This creates a layered background: a semi-transparent color gradient on top of the image
+                document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6)), url('${imageData}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundPosition = 'center';
+            }
+        }
 
 function removeBackgroundImage() {
     if (!confirm('Are you sure you want to remove the custom background image?')) return;
