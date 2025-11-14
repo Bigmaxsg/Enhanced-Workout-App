@@ -7417,25 +7417,64 @@ User's request: ${msg}`;
         }
         
         function applyBackgroundImage(imageData) {
-            // Remove the overlay completely and just show the image
-            document.body.style.setProperty('background-image', `url('${imageData}')`, 'important');
-            document.body.style.setProperty('background-size', 'cover', 'important');
-            document.body.style.setProperty('background-attachment', 'fixed', 'important');
-            document.body.style.setProperty('background-position', 'center', 'important');
-            document.body.style.setProperty('background-repeat', 'no-repeat', 'important');
+            // Detect if user is on mobile/iOS
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             
-            // Make container more transparent to show the background image
+            if (isMobile) {
+                // Mobile approach: Apply background to a fixed pseudo-element
+                // Create or update a style element for the fixed background
+                let bgStyle = document.getElementById('mobile-bg-style');
+                if (!bgStyle) {
+                    bgStyle = document.createElement('style');
+                    bgStyle.id = 'mobile-bg-style';
+                    document.head.appendChild(bgStyle);
+                }
+                
+                bgStyle.textContent = `
+                    body::before {
+                        content: '';
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-image: url('${imageData}');
+                        background-size: cover;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        z-index: -1;
+                    }
+                `;
+                
+                // Clear body background since we're using ::before
+                document.body.style.backgroundImage = 'none';
+            } else {
+                // Desktop approach: Use background-attachment: fixed with !important
+                document.body.style.setProperty('background-image', `url('${imageData}')`, 'important');
+                document.body.style.setProperty('background-size', 'cover', 'important');
+                document.body.style.setProperty('background-attachment', 'fixed', 'important');
+                document.body.style.setProperty('background-position', 'center', 'important');
+                document.body.style.setProperty('background-repeat', 'no-repeat', 'important');
+            }
+            
+            // Make container more transparent to show the background image (both mobile and desktop)
             const container = document.querySelector('.container');
             if (container) {
                 container.style.background = 'rgba(255, 255, 255, 0.1)';
                 container.style.backdropFilter = 'blur(5px)';
                 container.style.webkitBackdropFilter = 'blur(5px)';
             }
-        } 
+        }
 
 function removeBackgroundImage() {
     if (!confirm('Are you sure you want to remove the custom background image?')) return;
     localStorage.removeItem('backgroundImage');
+    
+    // Remove mobile background style if it exists
+    const bgStyle = document.getElementById('mobile-bg-style');
+    if (bgStyle) {
+        bgStyle.remove();
+    }
     
     const activeSectionId = document.querySelector('.section.active')?.id;
     if (activeSectionId) {
