@@ -7094,12 +7094,12 @@ User's request: ${msg}`;
                 h2 {
                      font-size: 24px !important;
                      font-weight: 700 !important;
-                     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                     text-shadow: 1px 1px 2px rgba(255,255,255, 0.3);
                 }
                 label {
                      font-weight: 700 !important;
                      font-size: 15px !important;
-                     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+                     text-shadow: 1px 1px 2px rgba(255,255,255, 0.2);
                 }
         
                  /* === CARD STYLING (FROSTED GLASS EFFECT) === */
@@ -7195,9 +7195,22 @@ User's request: ${msg}`;
                     background: ${colors.accent};
                     color: ${colors.primary};
                 }
+                .modal {
+                    z-index: 10000 !important;
+                }
                 .modal-content {
-                    background: ${colors.background};
+                    background: ${colors.background} !important;
                     border-color: ${colors.primary};
+                    opacity: 1 !important;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                }
+                .modal-content label,
+                .modal-content h3,
+                .modal-content input,
+                .modal-content textarea,
+                .modal-content select {
+                    color: ${textColor} !important;
+                    opacity: 1 !important;
                 }
             `;
              themeStyle.innerHTML = css;
