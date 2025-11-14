@@ -649,9 +649,29 @@
         .modal-close {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 32px;
             cursor: pointer;
-            color: #6c757d;
+            color: var(--primary-color, #001f3f);
+            padding: 8px 12px;
+            line-height: 1;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            opacity: 0.8;
+        }
+
+        .modal-close:hover {
+            background-color: var(--primary-color, #001f3f);
+            color: var(--accent-color, #d4af37);
+            opacity: 1;
+        }
+
+        .modal-close:active {
+            opacity: 0.9;
         }
 
         #userMessage {
@@ -1962,9 +1982,10 @@
   <!-- Edit Workout Stats Modal -->
     <div id="editStatsModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeEditStatsModal()">&times;</span>
-            <h2>✏️ Edit Workout Stats</h2>
-            <div id="editStatsForm">
+            <div class="modal-header">
+            <h3 class="modal-title">✏️ Edit Workout Stats</h3>
+            <button class="modal-close" onclick="closeEditStatsModal()">&times;</button>
+            </div>
                 <!-- NEW DATE/TIME FIELDS ADDED HERE -->
                 <div class="form-group">
                     <label>📅 Workout Date</label>
@@ -7254,11 +7275,25 @@ User's request: ${msg}`;
                 num.style.color = 'inherit';
             });
             
-            // Update buttons inside recommendation cards
+           // Update buttons inside recommendation cards
             document.querySelectorAll('.recommendation-card .btn').forEach(btn => {
                 btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
                 btn.style.color = '#ffffff';
             });
+            
+            // Update modal close buttons with theme colors
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.style.color = colors.primary;
+            });
+            
+            btn.onmouseover = function() {
+                this.style.backgroundColor = colors.primary;
+                this.style.color = colors.accent;
+            };
+            btn.onmouseout = function() {
+                this.style.backgroundColor = 'none';
+                this.style.color = colors.primary;
+            };
         }
         
         function getContrastColor(hexColor) {
