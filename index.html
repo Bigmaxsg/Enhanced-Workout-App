@@ -7395,19 +7395,47 @@ User's request: ${msg}`;
                 updateColors();
             }
         }
-        function applyBackgroundImage(imageData) {
-            const primaryColor = document.getElementById('primaryColor').value || '#000000';
-            const overlayColor = hexToRgb(primaryColor);
-            if (overlayColor) {
-                // Clear any previous linear-gradient from the theme before applying the image
-                document.body.style.background = ''; 
-                
-                document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6)), url('${imageData}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundAttachment = 'fixed';
-                document.body.style.backgroundPosition = 'center';
-            }
-        }
+        function hexToRgb(hex) {
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function applyBackgroundImage(imageData) {
+    const primaryColor = document.getElementById('primaryColor').value || '#000000';
+    const overlayColor = hexToRgb(primaryColor);
+    if (overlayColor) {
+        document.body.style.background = ''; // Clear previous gradient
+        document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6)), url('${imageData}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundAttachment = 'fixed';
+        document.body.style.backgroundPosition = 'center';
+    }
+}
+
+function removeBackgroundImage() {
+    if (!confirm('Are you sure you want to remove the custom background image?')) return;
+    localStorage.removeItem('backgroundImage');
+    
+    const activeSectionId = document.querySelector('.section.active')?.id;
+    if (activeSectionId) {
+        showSection(activeSectionId);
+    } else {
+        document.body.style.backgroundImage = '';
+        updateColors();
+    }
+    alert('Background image removed.');
+}
+
+function loadBackgroundImage() {
+    const savedImage = localStorage.getItem('backgroundImage');
+    if (savedImage) {
+        applyBackgroundImage(savedImage);
+    }
+}
         // ==================== INITIALIZATION (MOVED TO THE END) ====================
         document.addEventListener('DOMContentLoaded', function() {
             checkApiKey();
@@ -7421,6 +7449,7 @@ User's request: ${msg}`;
             loadBodyStats();
             loadCustomWorkoutsIntoDropdown();
             loadSavedColors();
+            loadBackgroundImage();
         });
        
     </script>
