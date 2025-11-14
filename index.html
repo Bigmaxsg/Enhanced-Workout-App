@@ -3611,6 +3611,19 @@ function cancelQuickCardio() {
             currentSet = 1;
             workoutStartTime = Date.now();
 
+            // Initialize audio context for rest timer beeps
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log("Audio Context initialized for traditional/circuit workout rest timers.");
+                } catch (e) {
+                    console.log("Could not initialize audio context:", e);
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
             document.getElementById('workoutSetup').style.display = 'none';
             document.getElementById('guidedWorkoutMode').style.display = 'block';
 
@@ -3690,11 +3703,20 @@ function cancelQuickCardio() {
                 restTime--;
                 document.getElementById('restDisplay').textContent = restTime;
 
+                // Play countdown beeps in the last 3 seconds
+                if (restTime === 3) {
+                    playHiitSound('countdown3');
+                } else if (restTime === 2) {
+                    playHiitSound('countdown2');
+                } else if (restTime === 1) {
+                    playHiitSound('countdown1');
+                }
+
                 if (restTime <= 0) {
                     clearInterval(restInterval);
                     document.getElementById('restTimer').style.display = 'none';
                     document.getElementById('completeSetBtn').style.display = 'block';
-                    playBeep();
+                    playHiitSound('rest'); // Final beep when rest is complete
                 }
             }, 1000);
         }
