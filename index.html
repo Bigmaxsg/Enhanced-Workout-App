@@ -5049,8 +5049,9 @@ User's request: ${msg}`;
                 }));
             }
 
+            const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
             aiWorkout.exercises.forEach(ex => {
-                if (!exerciseDatabase[ex.name]) {
+                if (!exerciseDatabase[ex.name] && !customExercises[ex.name]) {
                     const newExerciseData = {
                         equipment: ex.equipment || 'Bodyweight',
                         instructions: ex.description || 'No specific instructions provided by AI.',
