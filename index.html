@@ -6996,477 +6996,352 @@ User's request: ${msg}`;
         }
         
         function updateColorStyles(colors) {
-            // Calculate contrasting text color for the main background (usually dark gray)
-            const textColor = getContrastColor(colors.background);
-            
-            // Apply colors using CSS variables
-            document.documentElement.style.setProperty('--primary-color', colors.primary);
-            document.documentElement.style.setProperty('--accent-color', colors.accent);
-            document.documentElement.style.setProperty('--bg-color', colors.background);
-            document.documentElement.style.setProperty('--success-color', colors.success);
-            document.documentElement.style.setProperty('--danger-color', colors.danger);
-            document.documentElement.style.setProperty('--card-color', colors.card);
-            document.documentElement.style.setProperty('--nav-color', colors.nav);
-            document.documentElement.style.setProperty('--nav-text-color', colors.navText);
-            
-            // --- 1. HEADER FIXES ---
-            // Update body gradient
-            document.body.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
-            
-            // Update header
-            const header = document.querySelector('.header');
-            if (header) {
-                header.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
-                // Set header text to ACCENT color (Yellow), not contrast color (White)
-                header.style.color = colors.accent;
-                header.style.borderBottomColor = colors.accent;
-                
-                const h1 = header.querySelector('h1');
-                const p = header.querySelector('p');
-                
-                // Force H1 and P to use the Accent Color
-                if (h1) h1.style.color = colors.accent;
-                if (p) {
-                    p.style.color = colors.accent;
-                    p.style.opacity = '1'; // Remove transparency so it matches the title
-                }
-            }
-            
-            // Update container
-            const container = document.querySelector('.container');
-            if (container) {
-                container.style.background = colors.background;
-                container.style.borderColor = adjustBrightness(colors.nav, -20);
-            }
-            
-            // Update ALL navigation styling
-            const nav = document.querySelector('.nav');
-            if (nav) {
-                nav.style.background = colors.nav;
-                nav.style.borderBottomColor = adjustBrightness(colors.nav, -20);
-            }
-            
-            // Update nav buttons (inactive state)
-            document.querySelectorAll('.nav-btn:not(.active)').forEach(btn => {
-                btn.style.color = colors.navText;
-                btn.style.background = 'none';
-                btn.style.borderBottom = 'none';
-            });
-            
-            // Update nav buttons (active state)
-            document.querySelectorAll('.nav-btn.active').forEach(btn => {
-                btn.style.background = colors.background;
-                btn.style.color = getContrastColor(colors.background);
-                btn.style.borderBottomColor = colors.accent;
-            });
-            
-            // Update all text in content areas
-            document.querySelectorAll('.content, .section').forEach(el => {
-                el.style.color = textColor;
-            });
-            
-            // Update generic labels/text to use the calculated text color
-            document.querySelectorAll('label, h2, h3, h4, h5, h6, p, span, small, .form-group label').forEach(el => {
-                // Don't override nav text colors or header colors
-                if (!el.closest('.nav') && !el.closest('.header')) {
-                    el.style.color = textColor;
-                }
-            });
-            
-            // --- 2. WORKOUT TIMER FIX ---
-            document.querySelectorAll('.workout-timer').forEach(timer => {
-                timer.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
-                // The container text should be white (contrast against blue)
-                timer.style.color = getContrastColor(colors.primary);
-                timer.style.borderColor = colors.accent;
-
-                // Force the H3 inside the timer to be White (override the generic H3 rule above)
-                const h3 = timer.querySelector('h3');
-                if (h3) h3.style.color = getContrastColor(colors.primary);
-            });
-            
-            // Update specific settings text elements
-            document.querySelectorAll('.color-setting-card label').forEach(label => {
-                label.style.color = textColor;
-            });
-            
-            document.querySelectorAll('.color-setting-card small').forEach(small => {
-                small.style.color = textColor;
-                small.style.opacity = '0.7';
-            });
-            
-            // Update exercise cards with proper borders
-            document.querySelectorAll('.exercise-card').forEach(card => {
-                card.style.background = colors.card;
-                card.style.borderLeft = `4px solid ${colors.primary}`;
-                card.style.borderRadius = '12px';
-                card.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
-                card.style.borderLeft = `4px solid ${colors.primary}`;
-                card.style.color = getContrastColor(colors.card);
-            });
-            
-            // Update stat cards with gradient and proper theme colors
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
-                card.style.borderColor = colors.accent;
-                card.style.border = `2px solid ${colors.accent}`;
-                card.style.color = colors.accent;
-                card.style.borderRadius = '12px';
-                const statNumber = card.querySelector('.stat-number');
-                const statLabel = card.querySelector('.stat-label');
-                if (statNumber) statNumber.style.color = colors.accent;
-                if (statLabel) statLabel.style.color = getContrastColor(colors.primary);
-            });
-            
-            // Update progress charts
-            document.querySelectorAll('.progress-chart').forEach(chart => {
-                chart.style.background = colors.card;
-                chart.style.borderColor = adjustBrightness(colors.card, -20);
-                chart.style.border = `2px solid ${adjustBrightness(colors.card, -20)}`;
-                chart.style.color = getContrastColor(colors.card);
-                chart.style.borderRadius = '12px';
-                
-                // Update chart titles
-                const titles = chart.querySelectorAll('.chart-title');
-                titles.forEach(title => {
-                    title.style.color = getContrastColor(colors.card);
-                });
-                
-                // Update chart fill/progress bars
-                const fills = chart.querySelectorAll('.chart-fill');
-                fills.forEach(fill => {
-                    fill.style.background = `linear-gradient(90deg, ${colors.primary}, ${colors.accent})`;
-                });
-                
-                // Update chart values
-                const values = chart.querySelectorAll('.chart-value');
-                values.forEach(value => {
-                    value.style.color = getContrastColor(colors.card);
-                });
-            });
-            
-            // Update exercise cards with proper styling and nested elements
-            document.querySelectorAll('.exercise-card').forEach(card => {
-                card.style.background = colors.card;
-                card.style.borderLeft = `4px solid ${colors.primary}`;
-                card.style.borderRadius = '12px';
-                card.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
-                card.style.borderLeft = `4px solid ${colors.primary}`;
-                card.style.color = getContrastColor(colors.card);
-                
-                // Update exercise name color
-                const exerciseName = card.querySelector('.exercise-name');
-                if (exerciseName) exerciseName.style.color = getContrastColor(colors.card);
-                
-                // Update equipment text color
-                const equipment = card.querySelector('.exercise-equipment');
-                if (equipment) equipment.style.color = adjustBrightness(getContrastColor(colors.card), -30);
-            });
-            
-            // Update "no exercises found" text
-            document.querySelectorAll('.exercise-not-found').forEach(el => {
-                el.style.color = getContrastColor(colors.background);
-            });
-            
-            // Update history items with complete styling
-            document.querySelectorAll('.history-item').forEach(item => {
-                item.style.background = colors.card;
-                item.style.borderLeft = `4px solid ${colors.primary}`;
-                item.style.borderRadius = '10px';
-                item.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
-                item.style.borderLeft = `4px solid ${colors.primary}`;
-                item.style.color = getContrastColor(colors.card);
-                
-                // Update history date
-                const historyDate = item.querySelector('.history-date');
-                if (historyDate) historyDate.style.color = getContrastColor(colors.card);
-                
-                // Update history type
-                const historyType = item.querySelector('.history-type');
-                if (historyType) historyType.style.color = colors.primary;
-                
-                // Update history duration
-                const duration = item.querySelector('.history-duration');
-                if (duration) duration.style.color = getContrastColor(colors.card);
-                
-                // Update exercise names in history
-                const exerciseNames = item.querySelectorAll('.history-exercise-name');
-                exerciseNames.forEach(name => {
-                    name.style.color = getContrastColor(colors.card);
-                });
-                
-                // Update exercise stats in history
-                const exerciseStats = item.querySelectorAll('.history-exercise-stats');
-                exerciseStats.forEach(stat => {
-                    stat.style.color = adjustBrightness(getContrastColor(colors.card), -30);
-                });
-                
-                // Update history exercises summary
-                const exercisesSummary = item.querySelector('.history-exercises');
-                if (exercisesSummary) exercisesSummary.style.color = adjustBrightness(getContrastColor(colors.card), -30);
-                
-                // Update history notes
-                const notes = item.querySelector('.history-notes');
-                if (notes) notes.style.color = getContrastColor(colors.card);
-                
-                // Update history details body border
-                const detailsBody = item.querySelector('.history-details-body');
-                if (detailsBody) detailsBody.style.borderTopColor = adjustBrightness(colors.card, -20);
-                
-                // Update workout stats boxes (heart rate, calories, distance)
-                const statsBox = item.querySelector('[style*="background: #e3f2fd"]');
-                if (statsBox) {
-                    statsBox.style.background = adjustBrightness(colors.card, 15) + ' !important';
-                    statsBox.style.color = getContrastColor(colors.card);
-                }
-            });
-            
-            // Update measurement cards with proper borders and theme colors
-            document.querySelectorAll('.measurement-card').forEach(card => {
-                card.style.background = colors.card;
-                card.style.borderLeft = `4px solid ${colors.primary}`;
-                card.style.borderRadius = '12px';
-                card.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
-                card.style.borderLeft = `4px solid ${colors.primary}`;
-                card.style.color = getContrastColor(colors.card);
-                
-                // Update measurement label
-                const label = card.querySelector('.measurement-label');
-                if (label) label.style.color = getContrastColor(colors.card);
-                
-                // Update measurement value
-                const value = card.querySelector('.measurement-value');
-                if (value) value.style.color = colors.primary;
-                
-                // Update measurement trend
-                const trend = card.querySelector('.measurement-trend');
-                if (trend) trend.style.color = getContrastColor(colors.card);
-            });
-            
-            // Update trend colors
-            document.querySelectorAll('.trend-up').forEach(el => {
-                el.style.color = colors.success;
-            });
-            
-            document.querySelectorAll('.trend-down').forEach(el => {
-                el.style.color = colors.danger;
-            });
-            
-            // Add white outline borders in dark mode for better visibility
-            const isDarkMode = colors.background === '#1e1e1e' || colors.primary === '#1a1a1a';
-            if (isDarkMode) {
-                // Add white border to all buttons
-                document.querySelectorAll('.btn').forEach(btn => {
-                    btn.style.border = '1px solid rgba(255, 255, 255, 0.4)';
-                });
-                
-                // Add white border to info boxes
-                document.querySelectorAll('.info-box').forEach(box => {
-                    box.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                });
-                
-                // Add white border to modal content
-                document.querySelectorAll('.modal-content').forEach(modal => {
-                    modal.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-                });
-                
-                // Add white border to cards
-                document.querySelectorAll('.exercise-card, .stat-card, .workout-history-item, .measurement-card').forEach(card => {
-                    card.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                });
-            } else {
-                // Light mode - no extra borders needed
-                document.querySelectorAll('.btn, .info-box, .modal-content, .exercise-card, .stat-card, .workout-history-item, .measurement-card').forEach(el => {
-                    if (el.style.border && el.style.border.includes('rgba(255, 255, 255')) {
-                        el.style.border = '';
-                    }
-                });
-            }
-            
-            // Update info boxes
-            document.querySelectorAll('.info-box').forEach(box => {
-                box.style.background = adjustBrightness(colors.card, 10);
-                box.style.borderLeftColor = colors.primary;
-                box.style.color = getContrastColor(colors.card);
-            });
-            
-            // Update color setting cards
-            document.querySelectorAll('.color-setting-card').forEach(card => {
-                card.style.background = colors.card;
-                card.style.borderLeftColor = colors.primary;
-                card.style.color = getContrastColor(colors.card);
-            });
-
-            // Update recommendation cards
-            document.querySelectorAll('.recommendation-card').forEach(card => {
-                card.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
-                card.style.color = colors.accent;
-                card.style.border = `2px solid ${colors.accent}`;
-                 // Ensure text inside recommendation card uses accent color or contrast
-                 const p = card.querySelector('p');
-                 const h3 = card.querySelector('h3');
-                 if(p) p.style.color = getContrastColor(colors.primary); 
-                 if(h3) h3.style.color = colors.accent;
-            });
-            
-            // Update chat messages box
-            document.querySelectorAll('.chat-messages-box').forEach(box => {
-                box.style.background = colors.card;
-                box.style.border = `2px solid ${adjustBrightness(colors.card, -20)}`;
-                box.style.color = getContrastColor(colors.card);
-            });
-            
-            // Update modal content
-            document.querySelectorAll('.modal-content').forEach(modal => {
-                modal.style.background = colors.background;
-                modal.style.borderColor = colors.primary;
-            });
-            
-            // Update modal headers
-            document.querySelectorAll('.modal-header').forEach(header => {
-                header.style.background = adjustBrightness(colors.card, -5);
-                header.style.borderBottomColor = colors.primary;
-            });
-            
-            // Update buttons
-            document.querySelectorAll('.btn:not(.btn-secondary):not(.btn-success):not(.btn-danger)').forEach(btn => {
-                btn.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
-                btn.style.color = colors.accent;
-            });
-            
-            document.querySelectorAll('.btn-secondary').forEach(btn => {
-                btn.style.background = adjustBrightness(colors.nav, -10);
-                btn.style.color = getContrastColor(adjustBrightness(colors.nav, -10));
-            });
-            
-            document.querySelectorAll('.btn-success').forEach(btn => {
-                btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
-                btn.style.color = '#ffffff';
-            });
-            
-            document.querySelectorAll('.delete-btn, .btn-danger').forEach(btn => {
-                btn.style.background = `linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%)`;
-                btn.style.color = '#ffffff';
-            });
-            
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
-                btn.style.color = colors.accent;
-            });
-            
-            // Update status messages
-            document.querySelectorAll('.status-success').forEach(status => {
-                status.style.background = colors.success;
-                status.style.color = '#ffffff';
-                status.style.border = `2px solid ${adjustBrightness(colors.success, -20)}`;
-            });
-            
-            document.querySelectorAll('.status-warning').forEach(status => {
-                status.style.background = adjustBrightness(colors.card, 20);
-                status.style.color = getContrastColor(colors.card);
-                status.style.border = `2px solid ${colors.primary}`;
-            });
-            
-            document.querySelectorAll('.status-error').forEach(status => {
-                status.style.background = colors.danger;
-                status.style.color = '#ffffff';
-                status.style.border = `2px solid ${adjustBrightness(colors.danger, -20)}`;
-            });
-            
-            // Update chart bars
-            document.querySelectorAll('.chart-bar').forEach(bar => {
-                bar.style.background = adjustBrightness(colors.card, -5);
-            });
-            
-            document.querySelectorAll('.chart-fill').forEach(fill => {
-                fill.style.background = `linear-gradient(90deg, ${colors.primary}, ${colors.accent})`;
-            });
-            
-            // Update inputs and selects
-            document.querySelectorAll('input:not([type="color"]):not([type="file"]), select, textarea').forEach(input => {
-                input.style.borderColor = adjustBrightness(colors.card, -20);
-                input.style.background = '#ffffff';
-            });
-            
-            // Update PR badges
-            document.querySelectorAll('.pr-badge').forEach(badge => {
-                badge.style.background = colors.accent;
-                badge.style.color = colors.primary;
-            });
-            
-            // Update calendar view buttons
-            document.querySelectorAll('.view-btn').forEach(btn => {
-                btn.style.background = colors.nav;
-                btn.style.border = `2px solid ${adjustBrightness(colors.nav, -20)}`;
-                btn.style.color = colors.navText;
-            });
-            
-            document.querySelectorAll('.view-btn.active').forEach(btn => {
-                btn.style.background = colors.primary;
-                btn.style.color = colors.accent;
-                btn.style.borderColor = colors.primary;
-            });
-            
-            // Update calendar day headers
-            document.querySelectorAll('.calendar-day-header').forEach(header => {
-                header.style.background = colors.nav;
-                header.style.color = colors.navText;
-            });
-            
-            // Update calendar month/year display
-            const calendarMonthYear = document.getElementById('calendarMonthYear');
-            if (calendarMonthYear) {
-                calendarMonthYear.style.color = textColor;
-            }
-            
-            // Update calendar day cells
-            document.querySelectorAll('.calendar-day').forEach(day => {
-                day.style.background = colors.card;
-                day.style.color = getContrastColor(colors.card);
-                day.style.borderColor = adjustBrightness(colors.card, -30);
-            });
-            
-            document.querySelectorAll('.calendar-day:hover').forEach(day => {
-                day.style.borderColor = colors.primary;
-            });
-            
-            document.querySelectorAll('.calendar-day.today').forEach(day => {
-                day.style.borderColor = colors.accent;
-                day.style.background = adjustBrightness(colors.card, 10);
-            });
-            
-            document.querySelectorAll('.calendar-day.has-workout').forEach(day => {
-                day.style.background = colors.success;
-                day.style.borderColor = adjustBrightness(colors.success, -20);
-                day.style.color = '#ffffff';
-            });
-            
-            document.querySelectorAll('.calendar-day.rest-day').forEach(day => {
-                day.style.background = adjustBrightness(colors.card, 20);
-                day.style.borderColor = colors.primary;
-                day.style.color = getContrastColor(colors.card);
-            });
-            
-            // Update day numbers in calendar
-            document.querySelectorAll('.day-number').forEach(num => {
-                num.style.color = 'inherit';
-            });
-            
-           // Update buttons inside recommendation cards
-            document.querySelectorAll('.recommendation-card .btn').forEach(btn => {
-                btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
-                btn.style.color = '#ffffff';
-            });
-            
-            // Update modal close buttons - keep red square for visibility, CSS handles hover effects
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                // Keep the red background for visibility across all themes
-                btn.style.background = '#dc3545';
-                btn.style.color = '#ffffff';
-            });
-            
-            // White outline borders already handled in the isDarkMode block above
+    // Calculate contrasting text color for the main background (usually dark gray)
+    const textColor = getContrastColor(colors.background);
+    
+    // Apply colors using CSS variables
+    document.documentElement.style.setProperty('--primary-color', colors.primary);
+    document.documentElement.style.setProperty('--accent-color', colors.accent);
+    document.documentElement.style.setProperty('--bg-color', colors.background);
+    document.documentElement.style.setProperty('--success-color', colors.success);
+    document.documentElement.style.setProperty('--danger-color', colors.danger);
+    document.documentElement.style.setProperty('--card-color', colors.card);
+    document.documentElement.style.setProperty('--nav-color', colors.nav);
+    document.documentElement.style.setProperty('--nav-text-color', colors.navText);
+    
+    // --- 1. HEADER FIXES ---
+    // Update body gradient
+    document.body.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
+    
+    // Update header
+    const header = document.querySelector('.header');
+    if (header) {
+        header.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
+        header.style.color = colors.accent;
+        header.style.borderBottomColor = colors.accent;
+        const h1 = header.querySelector('h1');
+        const p = header.querySelector('p');
+        if (h1) h1.style.color = colors.accent;
+        if (p) {
+            p.style.color = colors.accent;
+            p.style.opacity = '1';
         }
+    }
+    
+    // Update container
+    const container = document.querySelector('.container');
+    if (container) {
+        container.style.background = colors.background;
+        container.style.borderColor = adjustBrightness(colors.nav, -20);
+    }
+    
+    // Update ALL navigation styling
+    const nav = document.querySelector('.nav');
+    if (nav) {
+        nav.style.background = colors.nav;
+        nav.style.borderBottomColor = adjustBrightness(colors.nav, -20);
+    }
+    
+    // Update nav buttons
+    document.querySelectorAll('.nav-btn:not(.active)').forEach(btn => {
+        btn.style.color = colors.navText;
+        btn.style.background = 'none';
+        btn.style.borderBottom = 'none';
+    });
+    document.querySelectorAll('.nav-btn.active').forEach(btn => {
+        btn.style.background = colors.background;
+        btn.style.color = getContrastColor(colors.background);
+        btn.style.borderBottomColor = colors.accent;
+    });
+    
+    // Update all text in content areas
+    document.querySelectorAll('.content, .section').forEach(el => {
+        el.style.color = textColor;
+    });
+    document.querySelectorAll('label, h2, h3, h4, h5, h6, p, span, small, .form-group label').forEach(el => {
+        if (!el.closest('.nav') && !el.closest('.header')) {
+            el.style.color = textColor;
+        }
+    });
+    
+    // --- 2. WORKOUT TIMER FIX ---
+    document.querySelectorAll('.workout-timer').forEach(timer => {
+        timer.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
+        timer.style.color = getContrastColor(colors.primary);
+        timer.style.borderColor = colors.accent;
+        const h3 = timer.querySelector('h3');
+        if (h3) h3.style.color = getContrastColor(colors.primary);
+    });
+    
+    // Update specific settings text elements
+    document.querySelectorAll('.color-setting-card label').forEach(label => {
+        label.style.color = textColor;
+    });
+    document.querySelectorAll('.color-setting-card small').forEach(small => {
+        small.style.color = textColor;
+        small.style.opacity = '0.7';
+    });
+
+    // *** START FIX FOR EXERCISES TAB ***
+    // This section now correctly styles all elements on the Exercises tab.
+    document.querySelectorAll('#exercises .exercise-card').forEach(card => {
+        card.style.background = colors.card;
+        card.style.borderLeft = `4px solid ${colors.primary}`;
+        card.style.borderRadius = '12px';
+        card.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
+        card.style.borderLeft = `4px solid ${colors.primary}`;
+        
+        // Fix text colors inside the card
+        const exerciseName = card.querySelector('.exercise-name');
+        if (exerciseName) exerciseName.style.color = getContrastColor(colors.card);
+        
+        const equipment = card.querySelector('.exercise-equipment');
+        if (equipment) equipment.style.color = adjustBrightness(getContrastColor(colors.card), -30);
+    });
+
+    document.querySelectorAll('#exercises .exercise-not-found').forEach(el => {
+        el.style.color = getContrastColor(colors.background);
+    });
+    // *** END FIX FOR EXERCISES TAB ***
+    
+    // Update stat cards
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
+        card.style.borderColor = colors.accent;
+        card.style.border = `2px solid ${colors.accent}`;
+        card.style.color = colors.accent;
+        card.style.borderRadius = '12px';
+        const statNumber = card.querySelector('.stat-number');
+        const statLabel = card.querySelector('.stat-label');
+        if (statNumber) statNumber.style.color = colors.accent;
+        if (statLabel) statLabel.style.color = getContrastColor(colors.primary);
+    });
+    
+    // Update progress charts
+    document.querySelectorAll('.progress-chart').forEach(chart => {
+        chart.style.background = colors.card;
+        chart.style.borderColor = adjustBrightness(colors.card, -20);
+        chart.style.border = `2px solid ${adjustBrightness(colors.card, -20)}`;
+        chart.style.color = getContrastColor(colors.card);
+        chart.style.borderRadius = '12px';
+        const titles = chart.querySelectorAll('.chart-title');
+        titles.forEach(title => title.style.color = getContrastColor(colors.card));
+        const fills = chart.querySelectorAll('.chart-fill');
+        fills.forEach(fill => fill.style.background = `linear-gradient(90deg, ${colors.primary}, ${colors.accent})`);
+        const values = chart.querySelectorAll('.chart-value');
+        values.forEach(value => value.style.color = getContrastColor(colors.card));
+    });
+    
+    // Update history items
+    document.querySelectorAll('.history-item').forEach(item => {
+        item.style.background = colors.card;
+        item.style.borderLeft = `4px solid ${colors.primary}`;
+        item.style.borderRadius = '10px';
+        item.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
+        item.style.borderLeft = `4px solid ${colors.primary}`;
+        item.style.color = getContrastColor(colors.card);
+        const historyDate = item.querySelector('.history-date');
+        if (historyDate) historyDate.style.color = getContrastColor(colors.card);
+        const historyType = item.querySelector('.history-type');
+        if (historyType) historyType.style.color = colors.primary;
+        const duration = item.querySelector('.history-duration');
+        if (duration) duration.style.color = getContrastColor(colors.card);
+        item.querySelectorAll('.history-exercise-name').forEach(name => name.style.color = getContrastColor(colors.card));
+        item.querySelectorAll('.history-exercise-stats').forEach(stat => stat.style.color = adjustBrightness(getContrastColor(colors.card), -30));
+        const exercisesSummary = item.querySelector('.history-exercises');
+        if (exercisesSummary) exercisesSummary.style.color = adjustBrightness(getContrastColor(colors.card), -30);
+        const notes = item.querySelector('.history-notes');
+        if (notes) notes.style.color = getContrastColor(colors.card);
+        const detailsBody = item.querySelector('.history-details-body');
+        if (detailsBody) detailsBody.style.borderTopColor = adjustBrightness(colors.card, -20);
+        const statsBox = item.querySelector('[style*="background: #e3f2fd"]');
+        if (statsBox) {
+            statsBox.style.background = adjustBrightness(colors.card, 15) + ' !important';
+            statsBox.style.color = getContrastColor(colors.card);
+        }
+    });
+    
+    // Update measurement cards
+    document.querySelectorAll('.measurement-card').forEach(card => {
+        card.style.background = colors.card;
+        card.style.borderLeft = `4px solid ${colors.primary}`;
+        card.style.borderRadius = '12px';
+        card.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
+        card.style.borderLeft = `4px solid ${colors.primary}`;
+        card.style.color = getContrastColor(colors.card);
+        const label = card.querySelector('.measurement-label');
+        if (label) label.style.color = getContrastColor(colors.card);
+        const value = card.querySelector('.measurement-value');
+        if (value) value.style.color = colors.primary;
+        const trend = card.querySelector('.measurement-trend');
+        if (trend) trend.style.color = getContrastColor(colors.card);
+    });
+    
+    // Update trend colors
+    document.querySelectorAll('.trend-up').forEach(el => el.style.color = colors.success);
+    document.querySelectorAll('.trend-down').forEach(el => el.style.color = colors.danger);
+    
+    // Dark mode borders
+    const isDarkMode = colors.background === '#1e1e1e' || colors.primary === '#1a1a1a';
+    if (isDarkMode) {
+        document.querySelectorAll('.btn, .info-box, .modal-content, .exercise-card, .stat-card, .workout-history-item, .measurement-card').forEach(el => {
+            el.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+        });
+    } else {
+        document.querySelectorAll('.btn, .info-box, .modal-content, .exercise-card, .stat-card, .workout-history-item, .measurement-card').forEach(el => {
+            if (el.style.border && el.style.border.includes('rgba(255, 255, 255')) {
+                el.style.border = '';
+            }
+        });
+    }
+    
+    // Update info boxes
+    document.querySelectorAll('.info-box').forEach(box => {
+        box.style.background = adjustBrightness(colors.card, 10);
+        box.style.borderLeftColor = colors.primary;
+        box.style.color = getContrastColor(colors.card);
+    });
+    
+    // Update color setting cards
+    document.querySelectorAll('.color-setting-card').forEach(card => {
+        card.style.background = colors.card;
+        card.style.borderLeftColor = colors.primary;
+        card.style.color = getContrastColor(colors.card);
+    });
+
+    // Update recommendation cards
+    document.querySelectorAll('.recommendation-card').forEach(card => {
+        card.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
+        card.style.color = colors.accent;
+        card.style.border = `2px solid ${colors.accent}`;
+         const p = card.querySelector('p');
+         const h3 = card.querySelector('h3');
+         if(p) p.style.color = getContrastColor(colors.primary); 
+         if(h3) h3.style.color = colors.accent;
+    });
+    
+    // Update chat messages box
+    document.querySelectorAll('.chat-messages-box').forEach(box => {
+        box.style.background = colors.card;
+        box.style.border = `2px solid ${adjustBrightness(colors.card, -20)}`;
+        box.style.color = getContrastColor(colors.card);
+    });
+    
+    // Update modals
+    document.querySelectorAll('.modal-content').forEach(modal => {
+        modal.style.background = colors.background;
+        modal.style.borderColor = colors.primary;
+    });
+    document.querySelectorAll('.modal-header').forEach(header => {
+        header.style.background = adjustBrightness(colors.card, -5);
+        header.style.borderBottomColor = colors.primary;
+    });
+    
+    // Update buttons
+    document.querySelectorAll('.btn:not(.btn-secondary):not(.btn-success):not(.btn-danger)').forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
+        btn.style.color = colors.accent;
+    });
+    document.querySelectorAll('.btn-secondary').forEach(btn => {
+        btn.style.background = adjustBrightness(colors.nav, -10);
+        btn.style.color = getContrastColor(adjustBrightness(colors.nav, -10));
+    });
+    document.querySelectorAll('.btn-success').forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
+        btn.style.color = '#ffffff';
+    });
+    document.querySelectorAll('.delete-btn, .btn-danger').forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%)`;
+        btn.style.color = '#ffffff';
+    });
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%)`;
+        btn.style.color = colors.accent;
+    });
+    
+    // Update status messages
+    document.querySelectorAll('.status-success').forEach(status => {
+        status.style.background = colors.success;
+        status.style.color = '#ffffff';
+        status.style.border = `2px solid ${adjustBrightness(colors.success, -20)}`;
+    });
+    document.querySelectorAll('.status-warning').forEach(status => {
+        status.style.background = adjustBrightness(colors.card, 20);
+        status.style.color = getContrastColor(colors.card);
+        status.style.border = `2px solid ${colors.primary}`;
+    });
+    document.querySelectorAll('.status-error').forEach(status => {
+        status.style.background = colors.danger;
+        status.style.color = '#ffffff';
+        status.style.border = `2px solid ${adjustBrightness(colors.danger, -20)}`;
+    });
+    
+    // Update chart elements
+    document.querySelectorAll('.chart-bar').forEach(bar => bar.style.background = adjustBrightness(colors.card, -5));
+    document.querySelectorAll('.chart-fill').forEach(fill => fill.style.background = `linear-gradient(90deg, ${colors.primary}, ${colors.accent})`);
+    
+    // Update inputs and selects
+    document.querySelectorAll('input:not([type="color"]):not([type="file"]), select, textarea').forEach(input => {
+        input.style.borderColor = adjustBrightness(colors.card, -20);
+        input.style.background = '#ffffff';
+    });
+    
+    // Update PR badges
+    document.querySelectorAll('.pr-badge').forEach(badge => {
+        badge.style.background = colors.accent;
+        badge.style.color = colors.primary;
+    });
+    
+    // Update calendar elements
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.style.background = colors.nav;
+        btn.style.border = `2px solid ${adjustBrightness(colors.nav, -20)}`;
+        btn.style.color = colors.navText;
+    });
+    document.querySelectorAll('.view-btn.active').forEach(btn => {
+        btn.style.background = colors.primary;
+        btn.style.color = colors.accent;
+        btn.style.borderColor = colors.primary;
+    });
+    document.querySelectorAll('.calendar-day-header').forEach(header => {
+        header.style.background = colors.nav;
+        header.style.color = colors.navText;
+    });
+    const calendarMonthYear = document.getElementById('calendarMonthYear');
+    if (calendarMonthYear) calendarMonthYear.style.color = textColor;
+    document.querySelectorAll('.calendar-day').forEach(day => {
+        day.style.background = colors.card;
+        day.style.color = getContrastColor(colors.card);
+        day.style.borderColor = adjustBrightness(colors.card, -30);
+    });
+    document.querySelectorAll('.calendar-day.today').forEach(day => {
+        day.style.borderColor = colors.accent;
+        day.style.background = adjustBrightness(colors.card, 10);
+    });
+    document.querySelectorAll('.calendar-day.has-workout').forEach(day => {
+        day.style.background = colors.success;
+        day.style.borderColor = adjustBrightness(colors.success, -20);
+        day.style.color = '#ffffff';
+    });
+    document.querySelectorAll('.calendar-day.rest-day').forEach(day => {
+        day.style.background = adjustBrightness(colors.card, 20);
+        day.style.borderColor = colors.primary;
+        day.style.color = getContrastColor(colors.card);
+    });
+    document.querySelectorAll('.day-number').forEach(num => num.style.color = 'inherit');
+    
+    // Update recommendation buttons
+    document.querySelectorAll('.recommendation-card .btn').forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%)`;
+        btn.style.color = '#ffffff';
+    });
+    
+    // Update modal close buttons
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.style.background = '#dc3545';
+        btn.style.color = '#ffffff';
+    });
+}
         
         function getContrastColor(hexColor) {
             // Convert hex to RGB
