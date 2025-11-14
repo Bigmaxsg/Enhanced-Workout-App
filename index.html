@@ -7087,13 +7087,15 @@ User's request: ${msg}`;
                      color: ${textColor};
                 }
         
-                /* === CARD STYLING (FROSTED GLASS EFFECT) === */
+                 /* === CARD STYLING (FROSTED GLASS EFFECT) === */
                 .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box {
                     /* MODIFICATION: Use RGBA for card transparency */
-                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.4);
+                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
                     border: 1px solid rgba(255, 255, 255, 0.3);
                     border-left: 4px solid ${colors.primary};
                     color: ${cardTextColor};
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
                 }
                 .info-box p, .info-box strong {
                     color: ${cardTextColor} !important;
@@ -7511,6 +7513,9 @@ function loadBackgroundImage() {
             loadCustomWorkoutsIntoDropdown();
             loadSavedColors();
             loadBackgroundImage();
+            
+            // Load the initial tab's background image (workout tab is active by default)
+            showSection('workout');
         });
        
     </script>
