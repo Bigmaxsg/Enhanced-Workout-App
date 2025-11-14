@@ -50,11 +50,13 @@
             max-width: 800px;
             margin: 0 auto;
             /* background: rgba(245, 245, 220, 0.85); /* 85% opaque beige */
-            background: none; /* We will let the script handle this for theming */
+            background: rgba(255, 255, 255, 0.85); /* 85% opaque white for better visibility */
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
+            overflow-y: auto; /* Allow scrolling within container */
+            overflow-x: hidden;
             border: 3px solid #8b7355;
+            position: relative;
         }
 
         .header {
@@ -109,8 +111,10 @@
         .content {
             padding: 15px;
             min-height: 400px;
+            background: transparent; /* Ensure content background is transparent */
+            position: relative;
+            z-index: 1;
         }
-
         .section {
             display: none;
         }
@@ -7404,12 +7408,13 @@ User's request: ${msg}`;
             const primaryColor = document.getElementById('primaryColor').value || '#000000';
             const overlayColor = hexToRgb(primaryColor);
             
-            if (overlayColor) {
-                // This creates a layered background: a semi-transparent color gradient on top of the image
-                document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.6)), url('${imageData}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundAttachment = 'fixed';
-                document.body.style.backgroundPosition = 'center';
+           if (overlayColor) {
+            // This creates a layered background: a semi-transparent color gradient on top of the image
+            document.body.style.backgroundImage = `linear-gradient(rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.2), rgba(${overlayColor.r}, ${overlayColor.g}, ${overlayColor.b}, 0.2)), url('${imageData}')`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundAttachment = 'fixed';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundRepeat = 'no-repeat';
             }
         }
 
