@@ -2363,6 +2363,7 @@
             });
         
             // === NEW LOGIC: Set background image based on the active tab ===
+            // === NEW LOGIC: Set background image based on the active tab ===
             const newBgUrl = tabBackgrounds[sectionId];
             if (newBgUrl) {
                 // If a specific background is defined for this tab, use it
@@ -2370,6 +2371,7 @@
             } else {
                 // Otherwise, fall back to the theme's default gradient
                 document.body.style.backgroundImage = ''; // Clear any layered image
+                document.body.style.background = ''; // Clear background too
                 updateColors(); // This will re-apply the theme's gradient
             }
 
@@ -7411,8 +7413,15 @@ User's request: ${msg}`;
             document.body.style.backgroundAttachment = 'fixed';
             document.body.style.backgroundPosition = 'center';
             document.body.style.backgroundRepeat = 'no-repeat';
-            document.body.style.background = 'none'; // Remove any gradient background
-            }    
+            
+            // Make container more transparent to show the background image
+            const container = document.querySelector('.container');
+            if (container) {
+                container.style.background = 'rgba(255, 255, 255, 0.3)';
+                container.style.backdropFilter = 'blur(5px)';
+                container.style.webkitBackdropFilter = 'blur(5px)';
+            }
+        }   
 
 function removeBackgroundImage() {
     if (!confirm('Are you sure you want to remove the custom background image?')) return;
