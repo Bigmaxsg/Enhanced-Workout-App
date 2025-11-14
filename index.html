@@ -2952,6 +2952,11 @@
             exerciseListDiv.innerHTML = html;
         }
 
+        function removeExerciseFromCustom(index) {
+            currentWorkout.splice(index, 1);
+            updateCustomExerciseList();
+        }
+
         function addExerciseToCustomWorkout() {
             const exerciseList = Object.keys(exerciseDatabase);
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
