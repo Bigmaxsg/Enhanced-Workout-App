@@ -322,7 +322,8 @@
             background: #e8dcc4;
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 15px;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
             border-left: 4px solid #003d5c;
         }
 
@@ -5957,8 +5958,7 @@ User's request: ${msg}`;
 
                 html += `
                         </div>
-                       </div>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
                             <button class="btn btn-secondary" onclick="editWorkoutStats(${index})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
                                 ✏️ Edit Stats
                             </button>
@@ -5979,11 +5979,12 @@ User's request: ${msg}`;
             currentEditingWorkoutIndex = index;
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             const workout = history[index];
-            
+
             const isoString = workout.date;
             const datePart = isoString.substring(0, 10); // YYYY-MM-DD
-            const timePart = new Date(isoString).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: false}); // HH:MM
-        
+            // Extract time directly from ISO string to avoid timezone conversion issues
+            const timePart = isoString.substring(11, 16); // HH:MM from "YYYY-MM-DDTHH:MM:SS.sssZ"
+
             // Populate the new date/time fields
             document.getElementById('editWorkoutDate').value = datePart;
             document.getElementById('editWorkoutTime').value = timePart; 
@@ -6015,17 +6016,18 @@ User's request: ${msg}`;
 
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             const workout = history[currentEditingWorkoutIndex];
-            // NEW: Get Date and Time and update the workout.date ISO string
+
+            // Get Date and Time and update the workout.date ISO string
             const newDate = document.getElementById('editWorkoutDate').value; // YYYY-MM-DD
             const newTime = document.getElementById('editWorkoutTime').value; // HH:MM
-            
+
             if (newDate && newTime) {
-                 // Create a local date object from the user's date and time
-                 const localDateTimeString = `${newDate}T${newTime}:00`; 
-                 const newWorkoutDate = new Date(localDateTimeString);
-                 if (!isNaN(newWorkoutDate)) {
-                     workout.date = newWorkoutDate.toISOString(); // Save as new ISO string
-                 }
+                 // Preserve the original seconds and milliseconds from the existing date
+                 const oldIsoString = workout.date;
+                 const oldSeconds = oldIsoString.substring(17, 23); // :SS.sssZ or just Z
+
+                 // Reconstruct ISO string directly to avoid timezone conversion
+                 workout.date = `${newDate}T${newTime}${oldSeconds}`;
             }
             workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
             
