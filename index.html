@@ -7084,28 +7084,62 @@ User's request: ${msg}`;
                 small.style.opacity = '0.7';
             });
             
-            // Update exercise cards
+            // Update exercise cards with proper borders
             document.querySelectorAll('.exercise-card').forEach(card => {
                 card.style.background = colors.card;
-                card.style.borderLeftColor = colors.primary;
+                card.style.borderLeft = `4px solid ${colors.primary}`;
+                card.style.borderRadius = '12px';
+                card.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
+                card.style.borderLeft = `4px solid ${colors.primary}`;
                 card.style.color = getContrastColor(colors.card);
             });
             
-           // Update stat cards
+            // Update stat cards with gradient and proper theme colors
             document.querySelectorAll('.stat-card').forEach(card => {
-                card.style.background = colors.card;
-                card.style.borderLeftColor = colors.primary;
-                card.style.color = getContrastColor(colors.card);
+                card.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%)`;
+                card.style.borderColor = colors.accent;
+                card.style.border = `2px solid ${colors.accent}`;
+                card.style.color = colors.accent;
+                card.style.borderRadius = '12px';
                 const statNumber = card.querySelector('.stat-number');
                 const statLabel = card.querySelector('.stat-label');
-                if (statNumber) statNumber.style.color = getContrastColor(colors.card);
-                if (statLabel) statLabel.style.color = getContrastColor(colors.card);
+                if (statNumber) statNumber.style.color = colors.accent;
+                if (statLabel) statLabel.style.color = getContrastColor(colors.primary);
+            });
+            
+            // Update progress charts
+            document.querySelectorAll('.progress-chart').forEach(chart => {
+                chart.style.background = colors.card;
+                chart.style.borderColor = adjustBrightness(colors.card, -20);
+                chart.style.border = `2px solid ${adjustBrightness(colors.card, -20)}`;
+                chart.style.color = getContrastColor(colors.card);
+                chart.style.borderRadius = '12px';
+                
+                // Update chart titles
+                const titles = chart.querySelectorAll('.chart-title');
+                titles.forEach(title => {
+                    title.style.color = getContrastColor(colors.card);
+                });
+                
+                // Update chart fill/progress bars
+                const fills = chart.querySelectorAll('.chart-fill');
+                fills.forEach(fill => {
+                    fill.style.background = `linear-gradient(90deg, ${colors.primary}, ${colors.accent})`;
+                });
+                
+                // Update chart values
+                const values = chart.querySelectorAll('.chart-value');
+                values.forEach(value => {
+                    value.style.color = getContrastColor(colors.card);
+                });
             });
             
             // Update history items
             document.querySelectorAll('.history-item').forEach(item => {
                 item.style.background = colors.card;
-                item.style.borderLeftColor = colors.primary;
+                item.style.borderLeft = `4px solid ${colors.primary}`;
+                item.style.border = `1px solid ${adjustBrightness(colors.card, -20)}`;
+                item.style.borderLeft = `4px solid ${colors.primary}`;
                 item.style.color = getContrastColor(colors.card);
             });
             
