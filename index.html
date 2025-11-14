@@ -5959,7 +5959,7 @@ User's request: ${msg}`;
                             <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
                         </div>
                         ${workout.heartRate || workout.calories || workout.distance ? `
-                            <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px;">
+                            <div class="history-stats-box">
                                 ${workout.heartRate ? `💓 Avg HR: <strong>${workout.heartRate} BPM</strong> &nbsp;|&nbsp; ` : ''}
                                 ${workout.calories ? `🔥 Calories: <strong>${workout.calories}</strong> &nbsp;|&nbsp; ` : ''}
                                 ${workout.distance ? `📏 Distance: <strong>${workout.distance} ${workout.distanceUnit}</strong>` : ''}
@@ -7105,7 +7105,17 @@ User's request: ${msg}`;
             border-left-color: ${colors.primary};
         }
         .info-box p { color: ${cardTextColor}; }
-
+        .history-stats-box {
+            background: ${adjustBrightness(colors.card, -10)};
+            color: ${getContrastColor(adjustBrightness(colors.card, -10))};
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .history-stats-box strong {
+            color: ${getContrastColor(adjustBrightness(colors.card, -10))};
+        }
         .chart-fill {
             background: linear-gradient(90deg, ${colors.primary}, ${colors.accent});
         }
