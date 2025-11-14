@@ -7090,6 +7090,9 @@ User's request: ${msg}`;
                     border-left: 4px solid ${colors.primary};
                     color: ${cardTextColor};
                 }
+                .info-box p, .info-box strong {
+                    color: ${cardTextColor} !important;
+                }
                 .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title {
                     color: ${cardTextColor};
                 }
@@ -7415,11 +7418,11 @@ User's request: ${msg}`;
         
         function applyBackgroundImage(imageData) {
             // Remove the overlay completely and just show the image
-            document.body.style.backgroundImage = `url('${imageData}')`;
-            document.body.style.backgroundSize = 'cover';
-            document.body.style.backgroundAttachment = 'fixed';
-            document.body.style.backgroundPosition = 'center';
-            document.body.style.backgroundRepeat = 'no-repeat';
+            document.body.style.setProperty('background-image', `url('${imageData}')`, 'important');
+            document.body.style.setProperty('background-size', 'cover', 'important');
+            document.body.style.setProperty('background-attachment', 'fixed', 'important');
+            document.body.style.setProperty('background-position', 'center', 'important');
+            document.body.style.setProperty('background-repeat', 'no-repeat', 'important');
             
             // Make container more transparent to show the background image
             const container = document.querySelector('.container');
@@ -7428,7 +7431,7 @@ User's request: ${msg}`;
                 container.style.backdropFilter = 'blur(5px)';
                 container.style.webkitBackdropFilter = 'blur(5px)';
             }
-        }   
+        } 
 
 function removeBackgroundImage() {
     if (!confirm('Are you sure you want to remove the custom background image?')) return;
