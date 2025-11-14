@@ -7471,37 +7471,6 @@ User's request: ${msg}`;
                 this.style.backgroundColor = 'none';
                 this.style.color = colors.primary;
             };
-            
-            // Add white outline borders in dark mode for better visibility
-            const isDarkMode = colors.background === '#1e1e1e' || colors.primary === '#1a1a1a';
-            if (isDarkMode) {
-                // Add white border to all buttons
-                document.querySelectorAll('.btn').forEach(btn => {
-                    btn.style.border = '1px solid rgba(255, 255, 255, 0.4)';
-                });
-                
-                // Add white border to info boxes
-                document.querySelectorAll('.info-box').forEach(box => {
-                    box.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                });
-                
-                // Add white border to modal content
-                document.querySelectorAll('.modal-content').forEach(modal => {
-                    modal.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-                });
-                
-                // Add white border to cards
-                document.querySelectorAll('.exercise-card, .stat-card, .workout-history-item').forEach(card => {
-                    card.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                });
-            } else {
-                // Light mode - no extra borders needed
-                document.querySelectorAll('.btn, .info-box, .modal-content, .exercise-card, .stat-card, .workout-history-item').forEach(el => {
-                    if (el.style.border && el.style.border.includes('rgba(255, 255, 255')) {
-                        el.style.border = '';
-                    }
-                });
-            }
         }
         
         function getContrastColor(hexColor) {
