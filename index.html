@@ -2059,6 +2059,9 @@
     </div>
 
     <script>
+        // ==================== GLOBAL THEME VARIABLES ====================
+        let currentCardTextColor = '#333'; // Default text color for cards
+
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
         const exerciseDatabase = {
             
@@ -5868,7 +5871,7 @@ User's request: ${msg}`;
             container.innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <div style="font-size: 32px; font-weight: bold; color: ${varietyColor};">${varietyRating}</div>
-                    <div style="font-size: 48px; margin-top: 10px; font-weight: bold; color: #003d5c;">${varietyCount}</div>
+                    <div style="font-size: 48px; margin-top: 10px; font-weight: bold; color: ${currentCardTextColor};">${varietyCount}</div>
                     <p style="margin-top: 10px; color: #6c757d;">Unique exercises performed (${varietyPercentage}% of available)</p>
                 </div>
             `;
@@ -5917,7 +5920,7 @@ User's request: ${msg}`;
 
             container.innerHTML = `
                 <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 48px; font-weight: bold; color: #003d5c;">${avgRest}</div>
+                    <div style="font-size: 48px; font-weight: bold; color: ${currentCardTextColor};">${avgRest}</div>
                     <p style="margin-top: 10px; color: #6c757d;">Average days between workouts</p>
                     <div style="font-size: 20px; margin-top: 10px; font-weight: bold; color: ${restColor};">${restRating}</div>
                 </div>
@@ -7010,6 +7013,8 @@ User's request: ${msg}`;
         
             const textColor = getContrastColor(colors.background);
             const cardTextColor = getContrastColor(colors.card);
+            // Store the card text color globally for use in dynamically rendered components
+            currentCardTextColor = cardTextColor;
             const fadedCardTextColor = adjustBrightness(cardTextColor, -30);
             const primaryContrast = getContrastColor(colors.primary);
 
