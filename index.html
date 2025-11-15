@@ -4400,6 +4400,28 @@ function cancelQuickCardio() {
             document.getElementById('exerciseModal').classList.remove('active');
         }
 
+        // =================================================================
+        // <<< --- ADD THIS NEW HELPER FUNCTION HERE --- >>>
+        // =================================================================
+        function showModalById(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.error(`Modal with ID "${modalId}" not found.`);
+                return;
+            }
+
+            // Add the class to make it visible
+            modal.classList.add('active');
+            
+            // Add the class to the body to prevent background scrolling
+            document.body.classList.add('modal-open');
+
+            // *** THIS IS THE CRITICAL FIX ***
+            // Reset the scroll position of the modal overlay to the very top.
+            // This ensures the content is centered in the user's current view.
+            modal.scrollTop = 0;
+        }
+
 
         // ==================== CUSTOM EXERCISES ====================
         function openAddExerciseModal(isNew = true) {
@@ -4420,19 +4442,10 @@ function cancelQuickCardio() {
                 document.getElementById('newExerciseReps').value = 12;
             }
 
-            const modal = document.getElementById('addExerciseModal');
-            document.body.classList.add('modal-open'); // Lock the background
-            modal.classList.add('active');
-            
-            // Reset modal scroll position to top
-            modal.scrollTop = 0;
-            
-            // Ensure modal content is also scrolled to top
-            const modalContent = modal.querySelector('.modal-content');
-            if (modalContent) {
-                modalContent.scrollTop = 0;
-            }
+            // Simply call the new helper function
+            showModalById('addExerciseModal');
         }
+        
         function editCustomExercise(exerciseName) {
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
             const exercise = customExercises[exerciseName];
