@@ -2060,7 +2060,7 @@
             </div>
         </div>
     </div>
-    ```html
+
     <script>
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
         const exerciseDatabase = {
@@ -6172,6 +6172,7 @@ User's request: ${msg}`;
             renderCalendar();
 
             closeModal(document.getElementById('editStatsModal'));
+            currentEditingWorkoutIndex = null;
             alert('✅ Workout stats updated successfully!');
         }
 
