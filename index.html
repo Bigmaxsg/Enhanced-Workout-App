@@ -2061,7 +2061,6 @@
         </div>
     </div>
     ```html
-    ```html
     <script>
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
         const exerciseDatabase = {
@@ -2344,7 +2343,7 @@
             // Get current colors
             const colors = {
                 primary: document.getElementById('primaryColor')?.value || '#001f3f',
-                accent: document.getElementById('accentColor')?.value || '#d4af3f',
+                accent: document.getElementById('accentColor')?.value || '#d4af37',
                 background: document.getElementById('backgroundColor')?.value || '#f5f5dc',
                 nav: document.getElementById('navColor')?.value || '#d9c7a5',
                 navText: document.getElementById('navTextColor')?.value || '#3e3024'
@@ -6877,7 +6876,7 @@ User's request: ${msg}`;
                     });
                 }
                 
-                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
+                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || '{}');
                 let newName = title;
                 let counter = 1;
                 while (savedCustomWorkouts[newName]) {
@@ -7399,7 +7398,7 @@ User's request: ${msg}`;
             document.getElementById('accentColor').value = theme.accent;
             document.getElementById('backgroundColor').value = theme.background;
             document.getElementById('successColor').value = theme.success;
-            document.getElementById('dangerColor').value = theme.danger;
+            document.getElementById('dangerColor.value = theme.danger;
             document.getElementById('cardColor').value = theme.card;
             document.getElementById('navColor').value = theme.nav;
             document.getElementById('navTextColor').value = theme.navText;
@@ -7527,5 +7526,4 @@ function loadBackgroundImage() {
         });
        
     </script>
-</body>
-</html>
+    
