@@ -634,6 +634,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .modal.active {
@@ -652,6 +653,7 @@
             position: relative;
             z-index: 10001;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin: auto;
         }
 
         .modal-header {
@@ -4411,7 +4413,17 @@ function cancelQuickCardio() {
                 document.getElementById('newExerciseReps').value = 12;
             }
 
-            document.getElementById('addExerciseModal').classList.add('active');
+            const modal = document.getElementById('addExerciseModal');
+            modal.classList.add('active');
+            
+            // Reset modal scroll position to top
+            modal.scrollTop = 0;
+            
+            // Ensure modal content is also scrolled to top
+            const modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.scrollTop = 0;
+            }
         }
 
         function editCustomExercise(exerciseName) {
