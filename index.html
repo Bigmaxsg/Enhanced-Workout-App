@@ -46,7 +46,7 @@
             padding: 10px;
         }
         body.modal-open {
-            overflow: hidden;
+            overflow: auto;
         }
         .container {
             max-width: 800px;
@@ -633,8 +633,6 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.7);
             z-index: 10000;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
             overflow-y: auto;
         }
@@ -642,6 +640,8 @@
         .modal.active {
             display: flex !important;
             flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             overflow-y: auto;
         }
 
@@ -651,13 +651,12 @@
             padding: 20px;
             max-width: 500px;
             width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
+            margin: 20px auto;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             z-index: 10001;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            margin: auto;
+            overflow-y: auto;
         }
 
         .modal-header {
