@@ -6315,19 +6315,11 @@ User's request: ${msg}`;
                 const isToday = date.toDateString() === new Date().toDateString();
 
                 let classes = 'week-day-card';
-                let style = ''; // This will hold our border style override
-
-                if (workoutCount > 0) {
-                    classes += ' has-workout';
-                    style = `style="border-left-color: ${colors.success};"`;
-                }
-                if (isRestDay && workoutCount === 0) {
-                    classes += ' rest-day';
-                    style = `style="border-left-color: ${colors.accent};"`;
-                }
+                if (workoutCount > 0) classes += ' has-workout';
+                if (isRestDay && workoutCount === 0) classes += ' rest-day';```
 
                 html += `
-                    <div class="${classes}" ${style} onclick="showDayDetail('${dateString}')">
+                     <div class="${classes}" onclick="showDayDetail('${dateString}')">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <div style="font-weight: 700; font-size: 16px; color: #333;">
@@ -7112,7 +7104,7 @@ User's request: ${msg}`;
                      display: inline-block;
                 }
         
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card /* NEW: Added .week-day-card */ {
+                ..exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card /* NEW: Added .week-day-card */ {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
                     border: 1px solid rgba(255, 255, 255, 0.3);
                     border-left: 4px solid ${colors.primary};
@@ -7120,6 +7112,15 @@ User's request: ${msg}`;
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
                 }
+
+                /* ----- ADD THE NEW RULES RIGHT HERE ----- */
+                .week-day-card.has-workout {
+                    border-left-color: ${colors.success};
+                }
+                .week-day-card.rest-day {
+                    border-left-color: ${colors.accent};
+                }
+                /* ----- END OF NEW RULES ----- */
                 
                 /* NEW: Specific styles for monthly calendar days for readability */
                 .calendar-day, .calendar-day-header {
