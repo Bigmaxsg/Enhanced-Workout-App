@@ -1881,7 +1881,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="modalExerciseName"></h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
             </div>
             <div id="modalExerciseContent"></div>
         </div>
@@ -1892,7 +1892,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="addExerciseModalTitle">➕ Add Custom Exercise</h3>
-                <button class="modal-close" onclick="closeAddExerciseModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
             </div>
             <div>
                 <input type="hidden" id="originalExerciseName">
@@ -1945,7 +1945,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="measurementModalTitle">Update Measurement</h3>
-                <button class="modal-close" onclick="closeMeasurementModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
             </div>
             <div>
                 <input type="hidden" id="measurementType">
@@ -1966,7 +1966,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">🔥 Configure Calorie Tracking</h3>
-                <button class="modal-close" onclick="closeCalorieModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
             </div>
             <div>
                 <div class="info-box" style="margin-bottom: 20px;">
@@ -2011,7 +2011,7 @@
         <div class="modal-content">
             <div class="modal-header">
             <h3 class="modal-title">✏️ Edit Workout Stats</h3>
-            <button class="modal-close" onclick="closeEditStatsModal()">&times;</button>
+            <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
             </div>
                 <!-- NEW DATE/TIME FIELDS ADDED HERE -->
                 <div class="form-group">
@@ -2060,6 +2060,7 @@
             </div>
         </div>
     </div>
+    ```html
     <script>
         // ==================== EXERCISE DATABASE (FROM WORKING FILE) ====================
         const exerciseDatabase = {
@@ -4386,14 +4387,7 @@ function cancelQuickCardio() {
             // It now correctly uses our new master function
             showModalById('exerciseModal');
         }
-       
-        function closeModal() {
-            document.getElementById('exerciseModal').classList.remove('active');
-        }
 
-        // =================================================================
-        // <<< --- ADD THIS NEW HELPER FUNCTION HERE --- >>>
-        // =================================================================
         function showModalById(modalId) {
             const modal = document.getElementById(modalId);
             if (!modal) {
@@ -4401,16 +4395,22 @@ function cancelQuickCardio() {
                 return;
             }
 
-            // Add the class to make it visible
             modal.classList.add('active');
-            
-            // Add the class to the body to prevent background scrolling
             document.body.classList.add('modal-open');
 
-            // *** THIS IS THE CRITICAL FIX ***
-            // Reset the scroll position of the modal overlay to the very top.
-            // This ensures the content is centered in the user's current view.
-            modal.scrollTop = 0;
+            // FIX: Use setTimeout to delay the scroll reset. This gives the
+            // browser a moment to render the modal before we try to scroll it,
+            // fixing the "invisible modal" bug.
+            setTimeout(() => {
+                modal.scrollTop = 0;
+            }, 0);
+        }
+
+        function closeModal(modalElement) {
+            if (modalElement) {
+                modalElement.classList.remove('active');
+                document.body.classList.remove('modal-open');
+            }
         }
 
 
@@ -4479,11 +4479,6 @@ function cancelQuickCardio() {
             renderExerciseList();
         }
 
-        function closeAddExerciseModal() {
-            document.getElementById('addExerciseModal').classList.remove('active');
-            document.body.classList.remove('modal-open'); // Unlock the background
-        }
-
         function saveNewExercise() {
             const originalName = document.getElementById('originalExerciseName').value;
             const name = document.getElementById('newExerciseName').value.trim();
@@ -4532,7 +4527,7 @@ function cancelQuickCardio() {
             }
 
             alert(originalName ? 'Exercise updated successfully!' : 'Exercise added successfully!');
-            closeAddExerciseModal();
+            closeModal(document.getElementById('addExerciseModal'));
             renderExerciseList();
         }
 
@@ -5266,7 +5261,7 @@ User's request: ${msg}`;
                         <p>${recommendation.message}</p>
                         ${recommendation.reasoning ? `<p class="info-box" style="margin-top: 10px; font-size: 14px;"><strong>💡 Why?</strong> ${recommendation.reasoning}</p>` : ''}
                         ${recommendation.workoutType ? `
-                            <button class="btn" onclick="document.querySelector('.nav-btn[onclick*=\\'workout\\']').click(); document.getElementById('workoutType').value='${recommendation.workoutType}'; loadWorkout();">
+                            <button class="btn" onclick="document.querySelector('.nav-btn[onclick*=\'workout\']').click(); document.getElementById('workoutType').value='${recommendation.workoutType}'; loadWorkout();">
                                 Load ${recommendation.workoutName} Workout
                             </button>
                         ` : `
@@ -5935,7 +5930,6 @@ User's request: ${msg}`;
         // ==================== CALORIE MODAL FUNCTIONS ====================
         
         function openCalorieModal() {
-            const modal = document.getElementById('calorieModal');
             const settings = JSON.parse(localStorage.getItem('calorieSettings') || '{"method": "automatic", "multiplier": 1.0}');
             
             document.getElementById('calorieTrackingMethod').value = settings.method || 'automatic';
@@ -5944,25 +5938,7 @@ User's request: ${msg}`;
             toggleCalorieInputMethod();
             showModalById('calorieModal');
         }
-
-        function closeCalorieModal() {
-            document.getElementById('calorieModal').style.display = 'none';
-        }
-
-        function toggleCalorieInputMethod() {
-            const method = document.getElementById('calorieTrackingMethod').value;
-            const automaticDiv = document.getElementById('automaticCalorieInfo');
-            const manualDiv = document.getElementById('manualCalorieInfo');
-            
-            if (method === 'automatic') {
-                automaticDiv.style.display = 'block';
-                manualDiv.style.display = 'none';
-            } else {
-                automaticDiv.style.display = 'none';
-                manualDiv.style.display = 'block';
-            }
-        }
-
+        
         function saveCalorieSettings() {
             const method = document.getElementById('calorieTrackingMethod').value;
             const multiplier = document.getElementById('calorieMultiplier').value;
@@ -5974,18 +5950,10 @@ User's request: ${msg}`;
             
             localStorage.setItem('calorieSettings', JSON.stringify(settings));
             alert('Calorie tracking settings saved!');
-            closeCalorieModal();
+            closeModal(document.getElementById('calorieModal'));
             updateProgress(); // Refresh the progress display
         }
 
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const calorieModal = document.getElementById('calorieModal');
-            if (event.target === calorieModal) {
-                closeCalorieModal();
-            }
-        };
-        
         // ==================== WORKOUT HISTORY ====================
         function loadHistory() {
             const container = document.getElementById('historyContainer');
@@ -6098,7 +6066,7 @@ User's request: ${msg}`;
 
             container.innerHTML = html;
         }
- // ==================== EDIT WORKOUT STATS ====================
+        // ==================== EDIT WORKOUT STATS ====================
         let currentEditingWorkoutIndex = null;
 
         function editWorkoutStats(index) {
@@ -6108,19 +6076,15 @@ User's request: ${msg}`;
 
             const isoString = workout.date;
             const datePart = isoString.substring(0, 10); // YYYY-MM-DD
-            // Extract time directly from ISO string to avoid timezone conversion issues
             const timePart = isoString.substring(11, 16); // HH:MM from "YYYY-MM-DDTHH:MM:SS.sssZ"
 
-            // Populate the new date/time fields
             document.getElementById('editWorkoutDate').value = datePart;
             document.getElementById('editWorkoutTime').value = timePart; 
-            // Populate the form with existing data
             document.getElementById('editWorkoutName').value = workout.workoutName || '';
             
-            // NEW: Duration in minutes
             const durationInMinutes = Math.round((workout.duration || 0) / 60);
             
-            document.getElementById('editDurationMinutes').value = durationInMinutes || ''; // Use the new ID
+            document.getElementById('editDurationMinutes').value = durationInMinutes || '';
             
             document.getElementById('editHeartRate').value = workout.heartRate || '';
             document.getElementById('editCalories').value = workout.calories || '';
@@ -6128,13 +6092,7 @@ User's request: ${msg}`;
             document.getElementById('editDistanceUnit').value = workout.distanceUnit || '';
             document.getElementById('editWorkoutNotes').value = workout.notes || '';
 
-            // Show the modal
             showModalById('editStatsModal');
-        }
-
-        function closeEditStatsModal() {
-            document.getElementById('editStatsModal').style.display = 'none';
-            currentEditingWorkoutIndex = null;
         }
 
         function saveWorkoutStats() {
@@ -6143,27 +6101,22 @@ User's request: ${msg}`;
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
             const workout = history[currentEditingWorkoutIndex];
 
-            // Get Date and Time and update the workout.date ISO string
-            const newDate = document.getElementById('editWorkoutDate').value; // YYYY-MM-DD
-            const newTime = document.getElementById('editWorkoutTime').value; // HH:MM
+            const newDate = document.getElementById('editWorkoutDate').value;
+            const newTime = document.getElementById('editWorkoutTime').value;
 
             if (newDate && newTime) {
-                 // Preserve the original seconds and milliseconds from the existing date
                  const oldIsoString = workout.date;
-                 const oldSeconds = oldIsoString.substring(17, 23); // :SS.sssZ or just Z
-
-                 // Reconstruct ISO string directly to avoid timezone conversion
+                 const oldSeconds = oldIsoString.substring(17, 23);
                  workout.date = `${newDate}T${newTime}${oldSeconds}`;
             }
             workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
             
             const durationMinutes = parseInt(document.getElementById('editDurationMinutes').value);
             if (!isNaN(durationMinutes) && durationMinutes > 0) {
-                workout.duration = durationMinutes * 60; // Convert minutes to seconds
+                workout.duration = durationMinutes * 60;
             } else {
                 workout.duration = 0;
             }
-             // Update workout with new stats
             workout.heartRate = parseInt(document.getElementById('editHeartRate').value) || null;
             workout.calories = parseInt(document.getElementById('editCalories').value) || null;
             
@@ -6174,10 +6127,8 @@ User's request: ${msg}`;
                 workout.distance = distance;
                 workout.distanceUnit = distanceUnit;
                 
-                // SYNC: Update distance in exercise objects as well (for cardio exercises)
                 if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
                     workout.exercises.forEach(exercise => {
-                        // Only update if this exercise has a distance property (cardio)
                         if (exercise.distance !== undefined) {
                             exercise.distance = distance;
                             exercise.distanceUnit = distanceUnit;
@@ -6188,7 +6139,6 @@ User's request: ${msg}`;
                 workout.distance = null;
                 workout.distanceUnit = null;
                 
-                // SYNC: Remove distance from exercise objects as well
                 if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
                     workout.exercises.forEach(exercise => {
                         if (exercise.distance !== undefined) {
@@ -6201,29 +6151,16 @@ User's request: ${msg}`;
             
             workout.notes = document.getElementById('editWorkoutNotes').value.trim() || '';
 
-            // Save back to localStorage
             localStorage.setItem('workoutHistory', JSON.stringify(history));
-
-            // Update the global workoutHistory variable
             workoutHistory = history;
 
-            // Refresh displays
             loadHistory();
             renderCalendar();
 
-            // Close modal
-            closeEditStatsModal();
-
+            closeModal(document.getElementById('editStatsModal'));
             alert('✅ Workout stats updated successfully!');
         }
 
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('editStatsModal');
-            if (event.target === modal) {
-                closeEditStatsModal();
-            }
-        });
         function deleteWorkout(index) {
             if (!confirm('Are you sure you want to delete this workout? This cannot be undone.')) {
                 return;
@@ -6269,20 +6206,17 @@ User's request: ${msg}`;
 
             let html = '<div class="calendar-grid">';
             
-            // Day headers
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             dayNames.forEach(day => {
                 html += `<div class="calendar-day-header">${day}</div>`;
             });
 
-            // Previous month's trailing days
             const prevMonthLastDay = new Date(year, month, 0).getDate();
             for (let i = startingDayOfWeek - 1; i >= 0; i--) {
                 const day = prevMonthLastDay - i;
                 html += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
             }
 
-            // Current month's days
             const today = new Date();
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(year, month, day);
@@ -6305,7 +6239,6 @@ User's request: ${msg}`;
                 `;
             }
 
-            // Next month's leading days
             const remainingCells = 42 - (startingDayOfWeek + daysInMonth);
             for (let day = 1; day <= remainingCells; day++) {
                 html += `<div class="calendar-day other-month"><div class="day-number">${day}</div></div>`;
@@ -6659,7 +6592,7 @@ User's request: ${msg}`;
         }
 
         function openMeasurementModal(type) {
-            showModalById('measurementModal');
+            document.getElementById('measurementType').value = type;
             
             const labels = {
                 weight: 'Body Weight (lbs)',
@@ -6681,13 +6614,9 @@ User's request: ${msg}`;
             document.getElementById('measurementValue').value = '';
             document.getElementById('measurementDate').value = new Date().toISOString().split('T')[0];
 
-            document.getElementById('measurementModal').classList.add('active');
+            showModalById('measurementModal');
         }
-
-        function closeMeasurementModal() {
-            document.getElementById('measurementModal').classList.remove('active');
-        }
-
+        
         function saveMeasurement() {
             const type = document.getElementById('measurementType').value;
             const value = parseFloat(document.getElementById('measurementValue').value);
@@ -6715,7 +6644,7 @@ User's request: ${msg}`;
             localStorage.setItem('bodyMeasurements', JSON.stringify(measurements));
 
             alert('Measurement saved successfully!');
-            closeMeasurementModal();
+            closeModal(document.getElementById('measurementModal'));
             loadBodyStats();
         }
 
@@ -7512,7 +7441,7 @@ User's request: ${msg}`;
                         height: 100%;
                         background-image: url('${imageData}');
                         background-size: cover;
-                        background-position: center;
+                        background-position: center
                         background-repeat: no-repeat;
                         z-index: -1;
                     }
