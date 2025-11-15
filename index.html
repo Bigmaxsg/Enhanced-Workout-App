@@ -6668,7 +6668,7 @@ User's request: ${msg}`;
             const select = document.getElementById('qrShareWorkoutSelect');
             if (!select) return;
             select.innerHTML = '<option value="">-- Choose a workout --</option>';
-            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || '{}';
+            const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
             Object.keys(savedCustomWorkouts).forEach(workoutName => {
                 const option = document.createElement('option');
                 option.value = workoutName;
@@ -6877,7 +6877,7 @@ User's request: ${msg}`;
                     });
                 }
                 
-                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || '{}');
+                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
                 let newName = title;
                 let counter = 1;
                 while (savedCustomWorkouts[newName]) {
