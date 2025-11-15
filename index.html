@@ -7079,8 +7079,8 @@ User's request: ${msg}`;
                     /* MODIFICATION: Use RGBA for transparency - reduced opacity to show background better */
                     background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.05);
                     border-color: ${adjustBrightness(colors.nav, -20)};
-                    -webkit-backdrop-filter: blur(1px);
-                    backdrop-filter: blur(1px);
+                    -webkit-backdrop-filter: blur(.25px);
+                    backdrop-filter: blur(.25px);
                 }
                 .header {
                     background: rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.75);
