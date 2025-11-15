@@ -7225,10 +7225,8 @@ User's request: ${msg}`;
             // Return black or white based on luminance - pure white for dark themes
             return luminance > 0.5 ? '#333333' : '#ffffff';
         }
-        
-        function adjustBrightness(hex, percent) {
-            
-// Convert hex to RGB
+            // Convert hex to RGB
+        function adjustBrightness(hex, percent) {            
             const num = parseInt(hex.replace('#', ''), 16);
             const r = (num >> 16) + percent;
             const g = ((num >> 8) & 0x00FF) + percent;
