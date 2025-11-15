@@ -45,7 +45,9 @@
             min-height: 100vh;
             padding: 10px;
         }
-
+        body.modal-open {
+            overflow: hidden;
+        }
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -4414,11 +4416,12 @@ function cancelQuickCardio() {
                 document.getElementById('newExerciseImage').value = '';
                 document.getElementById('newExerciseYouTubeLink').value = '';
                 document.getElementById('newExerciseWeight').value = 25;
-                document.getElementById('newExerciseSets').value = 3;
+                document.getElementById('newExerciseSody.modal-open {ets').value = 3;
                 document.getElementById('newExerciseReps').value = 12;
             }
 
             const modal = document.getElementById('addExerciseModal');
+            document.body.classList.add('modal-open'); // <-- ADD THIS LINE
             modal.classList.add('active');
             
             // Reset modal scroll position to top
@@ -4475,6 +4478,7 @@ function cancelQuickCardio() {
 
         function closeAddExerciseModal() {
             document.getElementById('addExerciseModal').classList.remove('active');
+            document.body.classList.remove('modal-open'); // <-- ADD THIS LINE
         }
 
         function saveNewExercise() {
