@@ -629,15 +629,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
 
         .modal.active {
-            display: flex;
+            display: flex !important;
         }
 
         .modal-content {
@@ -649,6 +649,9 @@
             max-height: 80vh;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 10001;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         .modal-header {
@@ -7207,10 +7210,12 @@ User's request: ${msg}`;
                     z-index: 10000 !important;
                 }
                 .modal-content {
-                    background: ${colors.background} !important;
-                    border-color: ${colors.primary};
+                    background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.98) !important;
+                    border: 2px solid ${colors.primary};
                     opacity: 1 !important;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
                 }
                 .modal-content label,
                 .modal-content h3,
