@@ -4416,12 +4416,12 @@ function cancelQuickCardio() {
                 document.getElementById('newExerciseImage').value = '';
                 document.getElementById('newExerciseYouTubeLink').value = '';
                 document.getElementById('newExerciseWeight').value = 25;
-                document.getElementById('newExerciseSody.modal-open {ets').value = 3;
+                document.getElementById('newExerciseSets').value = 3;
                 document.getElementById('newExerciseReps').value = 12;
             }
 
             const modal = document.getElementById('addExerciseModal');
-            document.body.classList.add('modal-open'); // <-- ADD THIS LINE
+            document.body.classList.add('modal-open'); // Lock the background
             modal.classList.add('active');
             
             // Reset modal scroll position to top
@@ -4432,7 +4432,6 @@ function cancelQuickCardio() {
             if (modalContent) {
                 modalContent.scrollTop = 0;
             }
-        }
 
         function editCustomExercise(exerciseName) {
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
@@ -4478,7 +4477,7 @@ function cancelQuickCardio() {
 
         function closeAddExerciseModal() {
             document.getElementById('addExerciseModal').classList.remove('active');
-            document.body.classList.remove('modal-open'); // <-- ADD THIS LINE
+            document.body.classList.remove('modal-open'); // Unlock the background
         }
 
         function saveNewExercise() {
