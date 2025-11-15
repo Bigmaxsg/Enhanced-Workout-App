@@ -6876,7 +6876,7 @@ User's request: ${msg}`;
                     });
                 }
                 
-                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || '{}');
+                const savedCustomWorkouts = JSON.parse(localStorage.getItem('customWorkouts')) || {};
                 let newName = title;
                 let counter = 1;
                 while (savedCustomWorkouts[newName]) {
