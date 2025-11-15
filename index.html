@@ -4432,7 +4432,7 @@ function cancelQuickCardio() {
             if (modalContent) {
                 modalContent.scrollTop = 0;
             }
-
+        }
         function editCustomExercise(exerciseName) {
             const customExercises = JSON.parse(localStorage.getItem('customExercises') || '{}');
             const exercise = customExercises[exerciseName];
