@@ -881,7 +881,37 @@
             gap: 5px;
             margin-top: 15px;
         }
+        /* FIX: Unified style for all calendar components */
+        #calendarContent .calendar-day,
+        #calendarContent .calendar-day-header,
+        .week-day-card {
+        /* Use the main card color variable with transparency */
+        background: rgba(var(--card-rgb), 0.75); /* Assuming --card-rgb is defined */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
 
+            /* Text color for readability */
+            color: var(--card-text-color, #333);
+            
+            /* Standard border to match exercise cards */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 4px solid var(--primary-color, #003d5c);
+            border-radius: 10px;
+        }
+        
+        /* Ensure text inside the day is readable */
+        #calendarContent .day-number,
+        #calendarContent .day-workout-count,
+        #calendarContent .rest-indicator {
+            color: var(--card-text-color, #333);
+            font-weight: 600;
+        }
+        
+        /* Styling for Today's Date */
+        #calendarContent .calendar-day.today {
+            border-color: var(--accent-color, #d4af37);
+            box-shadow: 0 0 10px var(--accent-color, #d4af37);
+        }
         .calendar-day-header {
             text-align: center;
             font-weight: 600;
@@ -6285,11 +6315,19 @@ User's request: ${msg}`;
                 const isToday = date.toDateString() === new Date().toDateString();
 
                 let classes = 'week-day-card';
-                if (workoutCount > 0) classes += ' has-workout';
-                if (isRestDay && workoutCount === 0) classes += ' rest-day';
+                let style = ''; // This will hold our border style override
+
+                if (workoutCount > 0) {
+                    classes += ' has-workout';
+                    style = `style="border-left-color: ${colors.success};"`;
+                }
+                if (isRestDay && workoutCount === 0) {
+                    classes += ' rest-day';
+                    style = `style="border-left-color: ${colors.accent};"`;
+                }
 
                 html += `
-                    <div class="${classes}" onclick="showDayDetail('${dateString}')">
+                    <div class="${classes}" ${style} onclick="showDayDetail('${dateString}')">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <div style="font-weight: 700; font-size: 16px; color: #333;">
@@ -7001,8 +7039,7 @@ User's request: ${msg}`;
             // Save to localStorage
             localStorage.setItem('customColors', JSON.stringify(colors));
         }
-        
-       function updateColorStyles(colors) {
+        function updateColorStyles(colors) {
             // Get or create the style tag
             let themeStyle = document.getElementById('theme-styles');
             if (!themeStyle) {
@@ -7013,23 +7050,19 @@ User's request: ${msg}`;
         
             const textColor = getContrastColor(colors.background);
             const cardTextColor = getContrastColor(colors.card);
-            // Store the card text color globally for use in dynamically rendered components
             currentCardTextColor = cardTextColor;
             const fadedCardTextColor = adjustBrightness(cardTextColor, -30);
             const primaryContrast = getContrastColor(colors.primary);
 
-            // Convert hex colors to RGB for transparency
             const backgroundRgb = hexToRgb(colors.background);
             const cardRgb = hexToRgb(colors.card);
             const primaryRgb = hexToRgb(colors.primary);
             const navRgb = hexToRgb(colors.nav);
             const css = `
                 body {
-                    /* The background is now handled by the showSection function */
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
                 }
                 .container {
-                    /* This area is now fully transparent to show the background image */
                     background: transparent;
                     border-color: ${adjustBrightness(colors.nav, -20)};
                     -webkit-backdrop-filter: none;
@@ -7042,18 +7075,14 @@ User's request: ${msg}`;
                     backdrop-filter: blur(10px);
                     -webkit-backdrop-filter: blur(10px);
                 }
-                .header h1, .header p {
-                    color: ${colors.accent};
-                }
+                .header h1, .header p { color: ${colors.accent}; }
                 .nav {
                     background: rgba(${navRgb.r}, ${navRgb.g}, ${navRgb.b}, 0.80);
                     border-bottom-color: ${adjustBrightness(colors.nav, -20)};
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
                 }
-                .nav-btn {
-                    color: ${colors.navText};
-                }
+                .nav-btn { color: ${colors.navText}; }
                 .nav-btn.active {
                     background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
                     color: ${textColor};
@@ -7083,9 +7112,7 @@ User's request: ${msg}`;
                      display: inline-block;
                 }
         
-                 /* === CARD STYLING (FROSTED GLASS EFFECT) === */
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card {
-                    /* MODIFICATION: Use RGBA for card transparency */
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card /* NEW: Added .week-day-card */ {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
                     border: 1px solid rgba(255, 255, 255, 0.3);
                     border-left: 4px solid ${colors.primary};
@@ -7093,23 +7120,28 @@ User's request: ${msg}`;
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
                 }
-                .info-box p, .info-box strong {
-                    color: ${cardTextColor} !important;
-                }
-                .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title {
+                
+                /* NEW: Specific styles for monthly calendar days for readability */
+                .calendar-day, .calendar-day-header {
+                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.85); /* Slightly less transparent */
                     color: ${cardTextColor};
+                    border-radius: 6px;
+                    border: 1px solid rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.3);
                 }
-                .exercise-equipment, .history-exercises, .history-exercise-stats {
-                    color: ${fadedCardTextColor};
+                .calendar-day.today {
+                    border: 2px solid ${colors.accent};
+                    box-shadow: 0 0 5px ${colors.accent};
                 }
-                .history-type, .history-duration { color: ${colors.primary}; }
-                .measurement-value { color: ${colors.primary}; }
+                
+                .info-box p, .info-box strong { color: ${cardTextColor} !important; }
+                .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title { color: ${cardTextColor}; }
+                .exercise-equipment, .history-exercises, .history-exercise-stats, .day-workout-count, .rest-indicator { color: ${fadedCardTextColor}; }
+                .history-type, .history-duration, .measurement-value { color: ${colors.primary}; }
                 .exercise-not-found { color: ${textColor}; }
                 #exercises .exercise-card {
                     border: 1px solid rgba(255, 255, 255, 0.2);
                     border-left: 4px solid ${colors.primary};
                 }
-                /* BUTTONS */
                 .btn {
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
                     color: ${colors.accent};
@@ -7136,8 +7168,6 @@ User's request: ${msg}`;
                     color: ${colors.accent};
                     border-color: ${colors.accent};
                 }
-        
-                /* OTHER COMPONENTS */
                 .workout-timer {
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
                     color: ${primaryContrast};
@@ -7145,7 +7175,6 @@ User's request: ${msg}`;
                 }
                 .workout-timer h3 { color: ${primaryContrast}; }
                 .timer-display { color: ${colors.accent}; }
-        
                  .stat-card {
                     background: rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.50);
                     border-color: ${colors.accent};
@@ -7154,31 +7183,16 @@ User's request: ${msg}`;
                 }
                 .stat-number { color: ${colors.accent}; }
                 .stat-label { color: ${primaryContrast}; }
-        
                 .history-stats-box {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.4);
                     color: ${getContrastColor(adjustBrightness(colors.card, -10))};
-                    padding: 10px;
-                    border-radius: 5px;
-                    margin: 10px 0;
-                    font-size: 14px;
+                    padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px;
                 }
-                .history-stats-box strong {
-                    color: ${getContrastColor(adjustBrightness(colors.card, -10))};
-                }
-                .chart-fill {
-                    background: linear-gradient(90deg, ${colors.primary}, ${colors.accent});
-                }
-                .chart-value {
-                     color: ${getContrastColor(colors.primary)};
-                }
-                .pr-badge {
-                    background: ${colors.accent};
-                    color: ${colors.primary};
-                }
-                .modal {
-                    z-index: 10000 !important;
-                }
+                .history-stats-box strong { color: ${getContrastColor(adjustBrightness(colors.card, -10))}; }
+                .chart-fill { background: linear-gradient(90deg, ${colors.primary}, ${colors.accent}); }
+                .chart-value { color: ${getContrastColor(colors.primary)}; }
+                .pr-badge { background: ${colors.accent}; color: ${colors.primary}; }
+                .modal { z-index: 10000 !important; }
                 .modal-content {
                     background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.98) !important;
                     border: 2px solid ${colors.primary};
@@ -7187,30 +7201,21 @@ User's request: ${msg}`;
                     backdrop-filter: blur(10px);
                     -webkit-backdrop-filter: blur(10px);
                 }
-                .modal-content label,
-                .modal-content h3,
-                .modal-content input,
-                .modal-content textarea,
-                .modal-content select {
+                .modal-content label, .modal-content h3, .modal-content input, .modal-content textarea, .modal-content select {
                     color: ${textColor} !important;
                     opacity: 1 !important;
                 }
             `;
              themeStyle.innerHTML = css;
              
-               // Special override for GYMPAK theme to create the "frosted glass" effect
                 if (colors.background === '#000000' && colors.accent === '#dfff00') {
                     const glassCSS = `
-                        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box {
+                        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .week-day-card {
                             background: rgba(42, 42, 42, 0.75);
                             border: 1px solid rgba(255, 255, 255, 0.2);
                         }
-                        .btn-success {
-                            color: #000000; /* Black text on lime button */
-                        }
-                        .nav-btn.active {
-                            background: #2a2a2a; /* Card color for active tab */
-                        }
+                        .btn-success { color: #000000; }
+                        .nav-btn.active { background: #2a2a2a; }
                     `;
                     themeStyle.innerHTML += glassCSS;
                 }
