@@ -4388,11 +4388,16 @@ function cancelQuickCardio() {
             `;
 
             modal.classList.add('active');
+            
+            // Fix: Reset scroll position to ensure modal appears in the current view
+            modal.scrollTop = 0;
+            modal.querySelector('.modal-content').scrollTop = 0;
         }
        
         function closeModal() {
             document.getElementById('exerciseModal').classList.remove('active');
         }
+
 
         // ==================== CUSTOM EXERCISES ====================
         function openAddExerciseModal(isNew = true) {
