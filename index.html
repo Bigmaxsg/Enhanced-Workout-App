@@ -4346,8 +4346,7 @@ function cancelQuickCardio() {
                 alert('Exercise not found!');
                 return;
             }
-
-            const modal = document.getElementById('exerciseModal');
+            
             const modalName = document.getElementById('modalExerciseName');
             const modalContent = document.getElementById('modalExerciseContent');
 
@@ -4355,7 +4354,6 @@ function cancelQuickCardio() {
 
             const imageUrl = getExerciseImageUrl(exerciseName);
             
-            // --- YouTube Link Logic ---
             const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
             let youtubeLink = customYouTubeLinks[exerciseName] || youtubeVideoLinks[exerciseName];
             if (!youtubeLink) {
@@ -4366,22 +4364,18 @@ function cancelQuickCardio() {
 
             modalContent.innerHTML = `
                 <p><strong>Equipment:</strong> ${exercise.equipment}</p>
-                
                 <div class="exercise-image">
                     <img src="${imageUrl}" 
                          alt="${exerciseName}" 
                          onerror="this.parentElement.innerHTML='<div class=\\'exercise-image-fallback\\'>${exercise.image || 'Image not found'}<br><small>Image preview not available</small></div>'">
                 </div>
-
                 <div style="margin-top: 15px;">
                     <strong>[TIP] Detailed Instructions</strong>
                     <p style="line-height: 1.6; margin-top: 10px;">${displayInstructions}</p>
                 </div>
-
                 <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                     <strong>Suggested:</strong> ${exercise.sets} sets, ${exercise.reps} reps @ ${exercise.weight} lbs
                 </div>
-
                 <div style="margin-top: 15px;">
                     <a href="${youtubeLink}" target="_blank" class="btn" style="display: block; text-align: center; text-decoration: none; margin-top: 0;">
                         [VIDEO] Watch Video
@@ -4389,11 +4383,8 @@ function cancelQuickCardio() {
                 </div>
             `;
 
-            modal.classList.add('active');
-            
-            // Fix: Reset scroll position to ensure modal appears in the current view
-            modal.scrollTop = 0;
-            modal.querySelector('.modal-content').scrollTop = 0;
+            // It now correctly uses our new master function
+            showModalById('exerciseModal');
         }
        
         function closeModal() {
@@ -5951,7 +5942,7 @@ User's request: ${msg}`;
             document.getElementById('calorieMultiplier').value = settings.multiplier || 1.0;
             
             toggleCalorieInputMethod();
-            modal.style.display = 'block';
+            showModalById('calorieModal');
         }
 
         function closeCalorieModal() {
@@ -6138,7 +6129,7 @@ User's request: ${msg}`;
             document.getElementById('editWorkoutNotes').value = workout.notes || '';
 
             // Show the modal
-            document.getElementById('editStatsModal').style.display = 'block';
+            showModalById('editStatsModal');
         }
 
         function closeEditStatsModal() {
@@ -6668,7 +6659,7 @@ User's request: ${msg}`;
         }
 
         function openMeasurementModal(type) {
-            document.getElementById('measurementType').value = type;
+            showModalById('measurementModal');
             
             const labels = {
                 weight: 'Body Weight (lbs)',
