@@ -2315,6 +2315,15 @@
 
         // ==================== NAVIGATION ====================
         function showSection(sectionId) {
+            // *** THE FIX STARTS HERE ***
+            // Before changing tabs, check if the currently active tab is the 'share-workout' tab.
+            const currentActiveSection = document.querySelector('.section.active');
+            if (currentActiveSection && currentActiveSection.id === 'share-workout') {
+                // If we are navigating away from the share tab, reset its view.
+                resetShareTabView();
+            }
+            // *** THE FIX ENDS HERE ***
+
             // Get current colors
             const colors = {
                 primary: document.getElementById('primaryColor')?.value || '#001f3f',
@@ -2350,20 +2359,15 @@
                 }
             });
         
-            // === NEW LOGIC: Set background image based on the active tab ===
-            // === NEW LOGIC: Set background image based on the active tab ===
             const newBgUrl = tabBackgrounds[sectionId];
             if (newBgUrl) {
-                // If a specific background is defined for this tab, use it
                 applyBackgroundImage(newBgUrl);
             } else {
-                // Otherwise, fall back to the theme's default gradient
-                document.body.style.backgroundImage = ''; // Clear any layered image
-                document.body.style.background = ''; // Clear background too
-                updateColors(); // This will re-apply the theme's gradient
+                document.body.style.backgroundImage = ''; 
+                document.body.style.background = ''; 
+                updateColors(); 
             }
 
-            // --- Original logic for loading section-specific data ---
             if (sectionId === 'exercises') {
                 renderExerciseList();
             } else if (sectionId === 'recommend') {
@@ -2380,7 +2384,22 @@
                 loadBodyStats();
             }
         }
-
+        function resetShareTabView() {
+                    const qrContainer = document.getElementById('qrCodeContainer');
+                    if (qrContainer) {
+                        qrContainer.style.display = 'none';
+                    }
+        
+                    const qrCodeOutput = document.getElementById('qrCodeOutput');
+                    if (qrCodeOutput) {
+                        qrCodeOutput.innerHTML = '';
+                    }
+        
+                    const shareSelect = document.getElementById('qrShareWorkoutSelect');
+                    if (shareSelect) {
+                        shareSelect.value = '';
+                    }
+                }
         // ==================== TIMER FUNCTIONS ====================
         function startTimer() {
             // Check if it's for starting a HIIT workout
