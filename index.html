@@ -2365,9 +2365,7 @@
             }
 
             // --- Original logic for loading section-specific data ---
-            if (sectionId === 'workout') {
-                document.querySelector('.workout-timer').style.display = 'none'; // <-- ADD THIS LINE
-            } else if (sectionId === 'exercises') {
+            if (sectionId === 'exercises') {
                 renderExerciseList();
             } else if (sectionId === 'recommend') {
                 loadRecommendation();
