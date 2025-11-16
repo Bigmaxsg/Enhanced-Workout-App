@@ -3928,42 +3928,43 @@ function cancelQuickCardio() {
         }
 
         function startHiitWorkout() {
-            // This now sources the parameters directly from the UI/state
             if (!currentWorkout || currentWorkout.length === 0) {
                 alert("No HIIT exercises are loaded. Please create or load a custom HIIT workout first.");
                 return;
             }
-
-            // Initialize audio context on user interaction (required for beeps to work)
+        
+            // This is the user interaction needed for sound.
+            // We prepare everything but wait for the user to click the main timer's start button.
             if (!window.audioCtx) {
                 try {
                     window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    console.log("Audio context initialized");
+                    console.log("Audio context initialized by HIIT start button.");
                 } catch (e) {
                     console.log("Could not initialize audio context:", e);
                 }
             }
-
+        
             hiitWorkoutParams.exercises = currentWorkout.map(ex => ex.name);
-            // Parameters are already set in hiitWorkoutParams by the load function or pre-workout adjustments
-
+        
             hiitCurrentRound = 1;
             hiitCurrentExerciseIndex = 0;
-            hiitCurrentMode = 'countdown'; // Start with countdown
+            hiitCurrentMode = 'countdown';
             hiitIsPaused = false;
-
+        
+            // Show the necessary UI components
             document.getElementById('workoutSetup').style.display = 'none';
             document.getElementById('guidedWorkoutMode').style.display = 'none';
             document.getElementById('hiitWorkoutMode').style.display = 'block';
-            document.querySelector('.nav').style.display = 'none'; // Hide nav bar
-
+            document.querySelector('.nav').style.display = 'none';
+            document.querySelector('.workout-timer').style.display = 'block'; // <-- KEY CHANGE: Show the main timer
+        
+            // Prepare the HIIT screen
             document.getElementById('hiitCountdownScreen').style.display = 'block';
             document.getElementById('hiitActiveScreen').style.display = 'none';
             document.getElementById('hiitPauseResumeBtn').textContent = 'Pause Exercise';
-
-            // Show message to user to press Start button
-            alert("HIIT Workout ready! Now click the 'Start' button on the Workout Timer above to begin your workout.");
-        }
+        
+            // DO NOT call startTimer() here. We wait for the user.
+            }
 
         function startHiitCountdown() {
             let hiitCountdown = 5;
