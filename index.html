@@ -3817,47 +3817,32 @@ function cancelQuickCardio() {
         function finishWorkout() {
             pauseTimer();
             const workoutDuration = timerSeconds;
-            
+
             const workoutData = {
-                    date: new Date().toISOString(),
-                    exercises: currentWorkout,
-                    duration: workoutDuration,
-                    type: workoutStyle === 'hiit' && currentWorkout[0] && exerciseDatabase[currentWorkout[0].name]?.exerciseType === 'cardio' ? 'Interval Cardio' : workoutStyle,
-                    workoutName: document.getElementById('workoutType').value || 'Custom',
-                    notes: document.getElementById('workoutNotes')?.value || ''
-                };
-            
-                let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-                history.unshift(workoutData);
-                localStorage.setItem('workoutHistory', JSON.stringify(history));
-            
-                updatePersonalRecords(currentWorkout);
-            
-                // Check if this was interval cardio - prompt for stats
-                if (workoutData.type === 'Interval Cardio') {
-                    promptForCardioStats(workoutData);
-                } else {
-                    alert(`🎉 Workout Complete!\n\nDuration: ${Math.floor(workoutDuration / 60)} minutes ${workoutDuration % 60} seconds\n\nGreat job!`);
-                }
-            
-                resetTimer();
-                document.getElementById('guidedWorkoutMode').style.display = 'none';
-                document.getElementById('hiitWorkoutMode').style.display = 'none';
-                document.getElementById('workoutSetup').style.display = 'block';
-                document.getElementById('workoutType').value = '';
-                document.getElementById('workoutContainer').innerHTML = '';
-                document.getElementById('workoutModeSelection').style.display = 'none';
-                if (document.getElementById('workoutNotes')) {
-                    document.getElementById('workoutNotes').value = '';
-                }
-            
-                updateProgress();
-                loadHistory();
-                renderCalendar();
-                
-                // Navigate to history tab to show the completed workout
-                showSection('history');
+                date: new Date().toISOString(),
+                exercises: currentWorkout,
+                duration: workoutDuration,
+                type: workoutStyle === 'hiit' && currentWorkout[0] && exerciseDatabase[currentWorkout[0].name]?.exerciseType === 'cardio' ? 'Interval Cardio' : workoutStyle,
+                workoutName: document.getElementById('workoutType').value || 'Custom',
+                notes: document.getElementById('workoutNotes')?.value || ''
+            };
+
+            let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+            history.unshift(workoutData);
+            localStorage.setItem('workoutHistory', JSON.stringify(history));
+
+            updatePersonalRecords(currentWorkout);
+
+            // Check for interval cardio stats, otherwise show the standard completion message
+            if (workoutData.type === 'Interval Cardio') {
+                promptForCardioStats(workoutData);
+            } else {
+                alert(`🎉 Workout Complete!\n\nDuration: ${Math.floor(workoutDuration / 60)} minutes ${workoutDuration % 60} seconds\n\nGreat job!`);
             }
+
+            // *** THE FIX: Call the central reset function to properly clean up the UI ***
+            resetWorkoutState();
+        }
             
             function promptForCardioStats(workoutData) {
                 const distance = prompt('📏 Distance (leave blank to skip):\n\nEnter distance completed:');
