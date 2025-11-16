@@ -7053,7 +7053,7 @@ User's request: ${msg}`;
              display: inline-block;
         }
 
-        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card, .stat-card {
+        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card {
             background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
             border: 2px solid ${colors.accent};
             border-left: 4px solid ${colors.primary};
@@ -7062,7 +7062,14 @@ User's request: ${msg}`;
             -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-
+        .stat-card {
+            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+            border: 2px solid ${colors.accent};
+            color: ${primaryContrast};
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
         .week-day-card.has-workout {
             border-left-color: ${colors.success};
         }
