@@ -422,7 +422,6 @@
             border-radius: 12px;
             padding: 20px;
             text-align: center;
-            border: 2px solid #8b7355;
         }
 
         .stat-number {
@@ -2567,7 +2566,7 @@
                         ${currentWorkout.map(ex => `
                           <div class="exercise-card">
                             <div class="exercise-name">${ex.name}</div>
-                            <div style="font-size: 12px; color: #6c757d; margin: 5px 0;">${ex.equipment || 'Bodyweight'}</div>
+                            <div class="exercise-equipment">${ex.equipment || 'Bodyweight'}</div>
                              <button class="btn btn-secondary" onclick="showExerciseInfo('${ex.name.replace(/'/g, "\\'")}')" style="margin-top: 12px; padding: 8px; font-size: 14px;">
                                 View Instructions
                              </button>
@@ -7051,7 +7050,7 @@ User's request: ${msg}`;
         
                 .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
-                    border: 1px solid ${colors.accent}; /* <-- CHANGED: Now uses the theme's accent color and is slightly thicker */
+                    border: 1px solid ${colors.accent}; /* <-- CHANGED: Now uses the theme's accent color */
                     border-left: 4px solid ${colors.primary};
                     color: ${cardTextColor};
                     backdrop-filter: blur(8px);
