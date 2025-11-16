@@ -774,7 +774,6 @@
 
         #hiitCountdownScreen {
             text-align: center;
-            color: #d4af37;
         }
 
         #hiitCountdownDisplay {
@@ -1363,9 +1362,9 @@
 
                 <!-- HIIT Workout Mode -->
                 <div id="hiitWorkoutMode"
-                    style="display:none; background: linear-gradient(135deg, #001f3f 0%, #003d5c 100%); padding: 12px; border-radius: 12px;">
+                    style="display:none; padding: 12px; border-radius: 12px;">
                     <div id="hiitCountdownScreen">
-                        <h2 style="color: #f5f5dc;">Get Ready!</h2>
+                        <h2>Get Ready!</h2>
                         <div id="hiitCountdownDisplay">5</div>
                     </div>
                     <div id="hiitActiveScreen" style="display: none;">
@@ -6982,195 +6981,200 @@ User's request: ${msg}`;
             localStorage.setItem('customColors', JSON.stringify(colors));
         }
         function updateColorStyles(colors) {
-            // Get or create the style tag
-            let themeStyle = document.getElementById('theme-styles');
-            if (!themeStyle) {
-                themeStyle = document.createElement('style');
-                themeStyle.id = 'theme-styles';
-                document.head.appendChild(themeStyle);
-            }
-        
-            const textColor = getContrastColor(colors.background);
-            const cardTextColor = getContrastColor(colors.card);
-            currentCardTextColor = cardTextColor;
-            const fadedCardTextColor = adjustBrightness(cardTextColor, -30);
-            const primaryContrast = getContrastColor(colors.primary);
+    // Get or create the style tag
+    let themeStyle = document.getElementById('theme-styles');
+    if (!themeStyle) {
+        themeStyle = document.createElement('style');
+        themeStyle.id = 'theme-styles';
+        document.head.appendChild(themeStyle);
+    }
 
-            const backgroundRgb = hexToRgb(colors.background);
-            const cardRgb = hexToRgb(colors.card);
-            const primaryRgb = hexToRgb(colors.primary);
-            const navRgb = hexToRgb(colors.nav);
-            const css = `
-                body {
-                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
-                }
-                .container {
-                    background: transparent;
-                    border-color: ${adjustBrightness(colors.nav, -20)};
-                    -webkit-backdrop-filter: none;
-                    backdrop-filter: none;
-                }
-                .header {
-                    background: rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.75);
-                    color: ${colors.accent};
-                    border-bottom-color: ${colors.accent};
-                    backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);
-                }
-                .header h1, .header p { color: ${colors.accent}; }
-                .nav {
-                    background: rgba(${navRgb.r}, ${navRgb.g}, ${navRgb.b}, 0.80);
-                    border-bottom-color: ${adjustBrightness(colors.nav, -20)};
-                    backdrop-filter: blur(8px);
-                    -webkit-backdrop-filter: blur(8px);
-                }
-                .nav-btn { color: ${colors.navText}; }
-                .nav-btn.active {
-                    background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
-                    color: ${textColor};
-                    border-bottom-color: ${colors.accent};
-                }
-                .content, h2, h3, h4, label {
-                     color: ${textColor} !important;
-                     opacity: 1 !important;
-                     font-weight: 600 !important;
-                }
-                h2 {
-                     font-size: 26px !important;
-                     font-weight: 800 !important;
-                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-                     padding: 10px;
-                     background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.9);
-                     border-radius: 8px;
-                     margin-bottom: 15px;
-                }
-                label {
-                     font-weight: 800 !important;
-                     font-size: 16px !important;
-                     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
-                     padding: 5px 8px;
-                     background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
-                     border-radius: 5px;
-                     display: inline-block;
-                }
+    const textColor = getContrastColor(colors.background);
+    const cardTextColor = getContrastColor(colors.card);
+    currentCardTextColor = cardTextColor;
+    const fadedCardTextColor = adjustBrightness(cardTextColor, -30);
+    const primaryContrast = getContrastColor(colors.primary);
+
+    const backgroundRgb = hexToRgb(colors.background);
+    const cardRgb = hexToRgb(colors.card);
+    const primaryRgb = hexToRgb(colors.primary);
+    const navRgb = hexToRgb(colors.nav);
+    const css = `
+        body {
+            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+        }
+        .container {
+            background: transparent;
+            border-color: ${adjustBrightness(colors.nav, -20)};
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+        }
+        .header {
+            background: rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.75);
+            color: ${colors.accent};
+            border-bottom-color: ${colors.accent};
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header h1, .header p { color: ${colors.accent}; }
+        .nav {
+            background: rgba(${navRgb.r}, ${navRgb.g}, ${navRgb.b}, 0.80);
+            border-bottom-color: ${adjustBrightness(colors.nav, -20)};
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .nav-btn { color: ${colors.navText}; }
+        .nav-btn.active {
+            background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
+            color: ${textColor};
+            border-bottom-color: ${colors.accent};
+        }
+        .content, h2, h3, h4, label {
+             color: ${textColor} !important;
+             opacity: 1 !important;
+             font-weight: 600 !important;
+        }
+        h2 {
+             font-size: 26px !important;
+             font-weight: 800 !important;
+             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+             padding: 10px;
+             background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.9);
+             border-radius: 8px;
+             margin-bottom: 15px;
+        }
+        label {
+             font-weight: 800 !important;
+             font-size: 16px !important;
+             text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+             padding: 5px 8px;
+             background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
+             border-radius: 5px;
+             display: inline-block;
+        }
+
+        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card, .stat-card {
+            background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
+            border: 2px solid ${colors.accent};
+            border-left: 4px solid ${colors.primary};
+            color: ${cardTextColor};
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .week-day-card.has-workout {
+            border-left-color: ${colors.success};
+        }
+
+        .calendar-day, .calendar-day-header {
+            background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.85);
+            color: ${cardTextColor};
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 4px solid ${colors.primary};
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .calendar-day.today {
+            border: 2px solid ${colors.accent};
+            box-shadow: 0 0 5px ${colors.accent};
+        }
         
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card, .stat-card { /* <-- ADDED .stat-card HERE */
-                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
-                    border: 2px solid ${colors.accent}; 
-                    border-left: 4px solid ${colors.primary};
-                    color: ${cardTextColor};
-                    backdrop-filter: blur(8px);
-                    -webkit-backdrop-filter: blur(8px);
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                }
-                /* ----- ADD THE NEW RULES RIGHT HERE ----- */
-                .week-day-card.has-workout {
-                    border-left-color: ${colors.success};
-                
-                }
-                /* ----- END OF NEW RULES ----- */
-                
-                /* NEW: Specific styles for monthly calendar days for readability */
-                .calendar-day, .calendar-day-header {
-                background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.85); /* 85% opacity */
-                color: ${cardTextColor}; /* Correct dynamic text color */
-                border-radius: 6px;
-                border: 1px solid rgba(255, 255, 255, 0.2); /* Consistent border */
-                border-left: 4px solid ${colors.primary}; /* Consistent accent border */
-                backdrop-filter: blur(8px); /* Adds the "glass" effect */
-                -webkit-backdrop-filter: blur(8px);
-            }
-                .calendar-day.today {
-                    border: 2px solid ${colors.accent};
-                    box-shadow: 0 0 5px ${colors.accent};
-                }
-                
-                .info-box p, .info-box strong { color: ${cardTextColor} !important; }
-                .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title { color: ${cardTextColor}; }
-                .exercise-equipment, .history-exercises, .history-exercise-stats, .day-workout-count, .rest-indicator { color: ${fadedCardTextColor}; }
-                .exercise-not-found { color: ${textColor}; }
-                #exercises .exercise-card {
+        .info-box p, .info-box strong { color: ${cardTextColor} !important; }
+        .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title { color: ${cardTextColor}; }
+        .exercise-equipment, .history-exercises, .history-exercise-stats, .day-workout-count, .rest-indicator { color: ${fadedCardTextColor}; }
+        .exercise-not-found { color: ${textColor}; }
+        #exercises .exercise-card {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 4px solid ${colors.primary};
+        }
+        .btn {
+            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+            color: ${colors.accent};
+        }
+        .btn-secondary {
+            background: ${adjustBrightness(colors.nav, -10)};
+            color: ${getContrastColor(adjustBrightness(colors.nav, -10))};
+        }
+        .btn-success {
+            background: linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%);
+            color: #ffffff;
+        }
+        .btn-danger, .delete-btn {
+            background: linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .edit-btn {
+            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
+            color: ${colors.accent};
+            border: 1px solid ${colors.accent};
+        }
+        .timer-btn {
+            color: ${colors.accent};
+            border-color: ${colors.accent};
+        }
+        .workout-timer {
+            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
+            color: ${primaryContrast};
+            border-color: ${colors.accent};
+        }
+        .workout-timer h3 { color: ${primaryContrast}; }
+        .timer-display { color: ${colors.accent}; }
+
+        /* START: HIIT Theme Rules */
+        #hiitWorkoutMode {
+            background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
+            color: ${primaryContrast};
+        }
+        #hiitWorkoutMode h2, #hiitWorkoutMode p, #hiitWorkoutMode #hiitRoundDisplay, #hiitModeDisplay, #hiitExerciseName, #hiitNextExerciseName {
+            color: ${primaryContrast} !important; /* Use !important to override any lingering static styles */
+        }
+        #hiitTimerDisplay, #hiitCountdownDisplay { 
+            color: ${colors.accent} !important; 
+        }
+        /* END: HIIT Theme Rules */
+
+        .stat-number { color: ${colors.accent}; }
+        .stat-label { color: ${primaryContrast}; }
+        .history-stats-box {
+            background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.4);
+            color: ${getContrastColor(adjustBrightness(colors.card, -10))};
+            padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px;
+        }
+        .history-stats-box strong { color: ${getContrastColor(adjustBrightness(colors.card, -10))}; }
+        .chart-fill { background: linear-gradient(90deg, ${colors.primary}, ${colors.accent}); }
+        .chart-value { color: ${getContrastColor(colors.primary)}; }
+        .pr-badge { background: ${colors.accent}; color: ${colors.primary}; }
+        .modal { z-index: 10000 !important; }
+        .modal-content {
+            background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.98) !important;
+            border: 2px solid ${colors.primary};
+            opacity: 1 !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .modal-content label, .modal-content h3, .modal-content input, .modal-content textarea, .modal-content select {
+            color: ${textColor} !important;
+            opacity: 1 !important;
+        }
+    `;
+     themeStyle.innerHTML = css;
+     
+        if (colors.background === '#000000' && colors.accent === '#dfff00') {
+            const glassCSS = `
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .week-day-card, .stat-card {
+                    background: rgba(42, 42, 42, 0.75);
                     border: 1px solid rgba(255, 255, 255, 0.2);
-                    border-left: 4px solid ${colors.primary};
                 }
-                .btn {
-                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
-                    color: ${colors.accent};
-                }
-                .btn-secondary {
-                    background: ${adjustBrightness(colors.nav, -10)};
-                    color: ${getContrastColor(adjustBrightness(colors.nav, -10))};
-                }
-                .btn-success {
-                    background: linear-gradient(135deg, ${colors.success} 0%, ${adjustBrightness(colors.success, 15)} 100%);
-                    color: #ffffff;
-                }
-                .btn-danger, .delete-btn {
-                    background: linear-gradient(135deg, ${colors.danger} 0%, ${adjustBrightness(colors.danger, 20)} 100%);
-                    color: #ffffff;
-                    border: 1px solid rgba(255, 255, 255, 0.6);
-                }
-                .edit-btn {
-                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
-                    color: ${colors.accent};
-                    border: 1px solid ${colors.accent};
-                }
-                .timer-btn {
-                    color: ${colors.accent};
-                    border-color: ${colors.accent};
-                }
-                .workout-timer {
-                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 25)} 100%);
-                    color: ${primaryContrast};
-                    border-color: ${colors.accent};
-                }
-                .workout-timer h3 { color: ${primaryContrast}; }
-                .timer-display { color: ${colors.accent}; }
-                 .stat-card {
-                    background: rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.50);
-                    border-color: ${colors.accent};
-                    backdrop-filter: blur(5px);
-                    -webkit-backdrop-filter: blur(5px);
-                }
-                .stat-number { color: ${colors.accent}; }
-                .stat-label { color: ${primaryContrast}; }
-                .history-stats-box {
-                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.4);
-                    color: ${getContrastColor(adjustBrightness(colors.card, -10))};
-                    padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 14px;
-                }
-                .history-stats-box strong { color: ${getContrastColor(adjustBrightness(colors.card, -10))}; }
-                .chart-fill { background: linear-gradient(90deg, ${colors.primary}, ${colors.accent}); }
-                .chart-value { color: ${getContrastColor(colors.primary)}; }
-                .pr-badge { background: ${colors.accent}; color: ${colors.primary}; }
-                .modal { z-index: 10000 !important; }
-                .modal-content {
-                    background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.98) !important;
-                    border: 2px solid ${colors.primary};
-                    opacity: 1 !important;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
-                    backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);
-                }
-                .modal-content label, .modal-content h3, .modal-content input, .modal-content textarea, .modal-content select {
-                    color: ${textColor} !important;
-                    opacity: 1 !important;
-                }
+                .btn-success { color: #000000; }
+                .nav-btn.active { background: #2a2a2a; }
             `;
-             themeStyle.innerHTML = css;
-             
-                if (colors.background === '#000000' && colors.accent === '#dfff00') {
-                    const glassCSS = `
-                        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .week-day-card {
-                            background: rgba(42, 42, 42, 0.75);
-                            border: 1px solid rgba(255, 255, 255, 0.2);
-                        }
-                        .btn-success { color: #000000; }
-                        .nav-btn.active { background: #2a2a2a; }
-                    `;
-                    themeStyle.innerHTML += glassCSS;
-                }
-            }
+            themeStyle.innerHTML += glassCSS;
+        }
+    }
         function getContrastColor(hexColor) {
             // Convert hex to RGB
             const r = parseInt(hexColor.substr(1, 2), 16);
