@@ -7061,16 +7061,15 @@ User's request: ${msg}`;
                      display: inline-block;
                 }
         
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card {
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card, .stat-card { /* <-- ADDED .stat-card HERE */
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
-                    border: 1px solid ${colors.accent}; /* <-- CHANGED: Now uses the theme's accent color */
+                    border: 2px solid ${colors.accent}; 
                     border-left: 4px solid ${colors.primary};
                     color: ${cardTextColor};
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for depth */
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 }
-
                 /* ----- ADD THE NEW RULES RIGHT HERE ----- */
                 .week-day-card.has-workout {
                     border-left-color: ${colors.success};
