@@ -1191,15 +1191,7 @@
 
             <!-- Workout Section -->
             <div id="workout" class="section active">
-                <div class="workout-timer">
-                    <h3>⏱️ Workout Duration Timer</h3>
-                    <div class="timer-display" id="timerDisplay">00:00</div>
-                    <div class="timer-controls">
-                        <button class="timer-btn" onclick="startTimer()">▶️ Start</button>
-                        <button class="timer-btn" onclick="pauseTimer()">⏸️ Pause</button>
-                        <button class="timer-btn" onclick="resetTimer()">🔄 Reset</button>
-                    </div>
-                </div>
+                <div class="workout-timer">                    
                 <div id="workoutSetup">
                     <div class="form-group">
                         <label>Select Workout Type</label>
@@ -7058,13 +7050,14 @@ User's request: ${msg}`;
                      display: inline-block;
                 }
         
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card /* NEW: Added .week-day-card */ {
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border: 2px solid ${colors.accent}; /* <-- CHANGED: Now uses the theme's accent color and is slightly thicker */
                     border-left: 4px solid ${colors.primary};
                     color: ${cardTextColor};
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for depth */
                 }
 
                 /* ----- ADD THE NEW RULES RIGHT HERE ----- */
