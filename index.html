@@ -2373,7 +2373,9 @@
             }
 
             // --- Original logic for loading section-specific data ---
-            if (sectionId === 'exercises') {
+            if (sectionId === 'workout') {
+                document.querySelector('.workout-timer').style.display = 'none'; // <-- ADD THIS LINE
+            } else if (sectionId === 'exercises') {
                 renderExerciseList();
             } else if (sectionId === 'recommend') {
                 loadRecommendation();
@@ -4218,8 +4220,7 @@ function cancelQuickCardio() {
             }, 1500);
         }
         function resetWorkoutState() {
-            // Reset flags and UI
-            document.querySelector('.workout-timer').style.display = 'none'; 
+            // Reset flags and UI 
             guidedMode = false;
             window.hiitActive = false;
             document.getElementById('workoutSetup').style.display = 'block';
