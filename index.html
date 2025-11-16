@@ -582,6 +582,7 @@
             text-align: center;
             margin-bottom: 15px;
             border: 2px solid #d4af37;
+            display: none; 
         }
 
         .timer-display {
@@ -1189,6 +1190,15 @@
             </div>
 
             <!-- Workout Section -->
+            <div class="workout-timer">
+                <h3>⏱️ Workout Duration Timer</h3>
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn" onclick="startTimer()">▶️ Start</button>
+                    <button class="timer-btn" onclick="pauseTimer()">⏸️ Pause</button>
+                    <button class="timer-btn" onclick="resetTimer()">🔄 Reset</button>
+                </div>
+            </div>
             <div id="workout" class="section active">                    
                 <div id="workoutSetup">
                     <div class="form-group">
@@ -3651,6 +3661,7 @@ function cancelQuickCardio() {
 }
        // ==================== GUIDED WORKOUT MODE ====================
         function startGuidedWorkout(mode) {
+            document.querySelector('.workout-timer').style.display = 'block';
             if (currentWorkout.length === 0 || !currentWorkout[0].name) {
                 alert('Please select or create a workout first!');
                 return;
@@ -4208,6 +4219,7 @@ function cancelQuickCardio() {
         }
         function resetWorkoutState() {
             // Reset flags and UI
+            document.querySelector('.workout-timer').style.display = 'none'; 
             guidedMode = false;
             window.hiitActive = false;
             document.getElementById('workoutSetup').style.display = 'block';
