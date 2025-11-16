@@ -7053,20 +7053,15 @@ User's request: ${msg}`;
                      display: inline-block;
                 }
 
+                /* ==================== FIX STARTS HERE ==================== */
+                /* This single rule now applies a uniform accent border to ALL card types */
                 .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
-                    border: 2px solid ${colors.accent};
-                    border-left: 4px solid ${colors.primary};
+                    border: 3px solid ${colors.accent}; /* UNIFORM BORDER */
                     color: ${cardTextColor};
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                }
-
-                /* ==================== FIX STARTS HERE ==================== */
-                /* This new, more specific rule ensures the guided workout card has a uniform border */
-                #currentExerciseCard {
-                    border: 3px solid ${colors.accent};
                 }
                 /* ===================== FIX ENDS HERE ===================== */
 
@@ -7079,15 +7074,14 @@ User's request: ${msg}`;
                     text-align: center;
                 }
                 .week-day-card.has-workout {
-                    border-left-color: ${colors.success};
+                    border-color: ${colors.success}; /* Changed from border-left-color to affect the whole border */
                 }
 
                 .calendar-day, .calendar-day-header {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.85);
                     color: ${cardTextColor};
                     border-radius: 6px;
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    border-left: 4px solid ${colors.primary};
+                    border: 1px solid ${colors.accent};
                     backdrop-filter: blur(8px);
                     -webkit-backdrop-filter: blur(8px);
                 }
@@ -7100,10 +7094,7 @@ User's request: ${msg}`;
                 .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title { color: ${cardTextColor}; }
                 .exercise-equipment, .history-exercises, .history-exercise-stats, .day-workout-count, .rest-indicator { color: ${fadedCardTextColor}; }
                 .exercise-not-found { color: ${textColor}; }
-                #exercises .exercise-card {
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                    border-left: 4px solid ${colors.primary};
-                }
+                
                 .btn {
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
                     color: ${colors.accent};
@@ -7144,7 +7135,7 @@ User's request: ${msg}`;
                     color: ${primaryContrast};
                 }
                 #hiitWorkoutMode h2, #hiitWorkoutMode p, #hiitWorkoutMode #hiitRoundDisplay, #hiitModeDisplay, #hiitExerciseName, #hiitNextExerciseName {
-                    color: ${primaryContrast} !important; /* Use !important to override any lingering static styles */
+                    color: ${primaryContrast} !important;
                 }
                 #hiitTimerDisplay, #hiitCountdownDisplay { 
                     color: ${colors.accent} !important; 
@@ -7180,13 +7171,9 @@ User's request: ${msg}`;
              
                 if (colors.background === '#000000' && colors.accent === '#dfff00') {
                     const glassCSS = `
-                        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .week-day-card, .stat-card {
+                        .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .week-day-card, .stat-card, #currentExerciseCard {
                             background: rgba(42, 42, 42, 0.75);
-                            border: 1px solid rgba(255, 255, 255, 0.2);
-                        }
-                        /* Also apply the main fix here for the glass theme */
-                        #currentExerciseCard {
-                            border: 2px solid ${colors.accent};
+                            border: 2px solid ${colors.accent}; /* Ensure uniform border for glass theme too */
                         }
                         .btn-success { color: #000000; }
                         .nav-btn.active { background: #2a2a2a; }
