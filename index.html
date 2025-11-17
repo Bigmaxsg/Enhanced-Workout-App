@@ -616,10 +616,8 @@
 
         .modal.active {
             display: flex !important;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Vertically centers the content */
-            overflow-y: auto;
+            justify-content: center; /* Horizontally center */
+            align-items: center;     /* Vertically center */
         }
 
         .modal-content {
@@ -628,7 +626,6 @@
             padding: 20px;
             max-width: 500px;
             width: 100%;
-            margin: 20px auto;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             z-index: 10001;
