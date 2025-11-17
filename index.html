@@ -3224,20 +3224,20 @@
                         </select>
                     </div>
                     
-                    <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin: 15px 0;">
-                        <h4 style="margin-bottom: 15px; color: #856404;">⏱️ Interval Settings</h4>
-                        
+                    <div class="interval-settings-box" style="padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4 style="margin-bottom: 15px;">⏱️ Interval Settings</h4>
+
                         <div class="form-group">
                             <label>Work Time (seconds)</label>
                             <input type="number" id="intervalWorkTime" value="240" step="15" placeholder="e.g., 240 for 4 minutes">
-                            <small style="color: #6c757d;">Tip: 60s = 1min, 120s = 2min, 240s = 4min</small>
+                            <small>Tip: 60s = 1min, 120s = 2min, 240s = 4min</small>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Rest Time (seconds)</label>
                             <input type="number" id="intervalRestTime" value="120" step="15" placeholder="e.g., 120 for 2 minutes">
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Number of Rounds</label>
                             <input type="number" id="intervalRounds" value="5" min="1" placeholder="e.g., 5">
@@ -6898,7 +6898,7 @@ User's request: ${msg}`;
 
                 /* ==================== FIX STARTS HERE ==================== */
                 /* This single rule now applies a uniform accent border to ALL card types */
-                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card {
+                .exercise-card, .history-item, .measurement-card, .progress-chart, .color-setting-card, .chat-messages-box, .info-box, .recommendation-card, .week-day-card, .interval-settings-box {
                     background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.75);
                     border: 3px solid ${colors.accent}; /* UNIFORM BORDER */
                     color: ${cardTextColor};
