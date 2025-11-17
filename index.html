@@ -6996,9 +6996,13 @@ User's request: ${msg}`;
                     backdrop-filter: blur(10px);
                     -webkit-backdrop-filter: blur(10px);
                 }
-                .modal-content label, .modal-content h3, .modal-content input, .modal-content textarea, .modal-content select {
+                .modal-content, .modal-content label, .modal-content h3, .modal-content p, .modal-content strong, .modal-content div, .modal-content input, .modal-content textarea, .modal-content select, .modal-content a {
                     color: ${textColor} !important;
                     opacity: 1 !important;
+                }
+                .modal-content a {
+                    color: ${colors.primary} !important;
+                    text-decoration: underline;
                 }
             `;
              themeStyle.innerHTML = css;
