@@ -7013,6 +7013,11 @@ User's request: ${msg}`;
                     color: ${colors.primary} !important;
                     text-decoration: underline;
                 }
+                .modal-content .btn {
+                    color: ${colors.accent} !important;
+                    text-decoration: none !important;
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%) !important;
+                }
             `;
              themeStyle.innerHTML = css;
              
