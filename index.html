@@ -264,18 +264,20 @@
         .detail-input {
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
-
         .detail-input label {
             font-size: 12px;
             margin-bottom: 5px;
         }
 
-         .detail-input input {
+         .detail-input input,
+        .detail-input select {
             padding: 8px;
             font-size: 14px;
             width: 100%;
             min-height: 40px;
+            box-sizing: border-box;
         }
 
         .exercise-image {
