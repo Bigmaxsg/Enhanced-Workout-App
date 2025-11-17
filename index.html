@@ -7164,9 +7164,9 @@ User's request: ${msg}`;
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%) !important;
                 }
                 .modal-content input, .modal-content textarea, .modal-content select {
-                    background: ${adjustBrightness(backgroundRgb.r > 128 ? '#000000' : '#ffffff', 20)} !important;
-                    color: ${textColor} !important;
-                    border-color: ${colors.primary} !important;
+                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.85) !important;
+                    color: ${cardTextColor} !important;
+                    border: 2px solid ${colors.accent} !important;
                 }
             `;
              themeStyle.innerHTML = css;
