@@ -3265,43 +3265,72 @@
             }
             
             function startIntervalCardio() {
-                const activity = document.getElementById('intervalCardioActivity').value;
-                const workTime = parseInt(document.getElementById('intervalWorkTime').value);
-                const restTime = parseInt(document.getElementById('intervalRestTime').value);
-                const rounds = parseInt(document.getElementById('intervalRounds').value);
-                
-                if (!activity) {
-                    alert('Please select a cardio activity!');
-                    return;
-                }
-                
-                if (workTime < 15 || restTime < 10 || rounds < 1) {
-                    alert('Please set valid interval times (work ≥15s, rest ≥10s, rounds ≥1)');
-                    return;
-                }
-                
-                // Set up as HIIT workout with single exercise
-                currentWorkout = [{
-                    name: activity,
-                    duration: 0,
-                    distance: 0,
-                    distanceUnit: 'miles'
-                }];
-                
-                hiitWorkoutParams = {
-                    workTime: workTime,
-                    restTime: restTime,
-                    totalRounds: rounds
-                };
-                
-                workoutStyle = 'hiit';
-                
-                // Start the main workout timer
-                startTimer();
-                
-                // Start HIIT mode
-                startHiitWorkout();
-} 
+    const activity = document.getElementById('intervalCardioActivity').value;
+    const workTime = parseInt(document.getElementById('intervalWorkTime').value);
+    const restTime = parseInt(document.getElementById('intervalRestTime').value);
+    const rounds = parseInt(document.getElementById('intervalRounds').value);
+    
+    if (!activity) {
+        alert('Please select a cardio activity!');
+        return;
+    }
+    
+    if (workTime < 15 || restTime < 10 || rounds < 1) {
+        alert('Please set valid interval times (work ≥15s, rest ≥10s, rounds ≥1)');
+        return;
+    }
+    
+    // Set up as HIIT workout with single exercise
+    currentWorkout = [{
+        name: activity,
+        duration: 0,
+        distance: 0,
+        distanceUnit: 'miles'
+    }];
+    
+    hiitWorkoutParams = {
+        workTime: workTime,
+        restTime: restTime,
+        totalRounds: rounds,
+        exercises: [activity]
+    };
+    
+    workoutStyle = 'hiit';
+    
+    // Hide workout setup and show HIIT mode
+    document.getElementById('workoutSetup').style.display = 'none';
+    document.getElementById('guidedWorkoutMode').style.display = 'none';
+    document.getElementById('hiitWorkoutMode').style.display = 'block';
+    document.querySelector('.nav').style.display = 'none';
+    document.querySelector('.workout-timer').style.display = 'block';
+    
+    // Initialize HIIT state
+    hiitCurrentRound = 1;
+    hiitCurrentExerciseIndex = 0;
+    hiitCurrentMode = 'countdown';
+    hiitIsPaused = false;
+    
+    // Show countdown screen
+    document.getElementById('hiitCountdownScreen').style.display = 'block';
+    document.getElementById('hiitActiveScreen').style.display = 'none';
+    document.getElementById('hiitPauseResumeBtn').textContent = 'Pause Exercise';
+    
+    // Initialize audio context if needed
+    if (!window.audioCtx) {
+        try {
+            window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            console.log("Audio context initialized for interval cardio.");
+        } catch (e) {
+            console.log("Could not initialize audio context:", e);
+        }
+    }
+    
+    // Start the main workout timer
+    startTimer();
+    
+    // Start HIIT countdown
+    startHiitCountdown();
+}
         // ==================== QUICK CARDIO LOGGER ====================
 function showQuickCardioLogger() {
     const container = document.getElementById('workoutContainer');
