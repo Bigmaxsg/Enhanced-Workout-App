@@ -4271,6 +4271,7 @@ function cancelQuickCardio() {
 
         function closeModal(modalElement) {
             if (modalElement) {
+                modalElement.style.display = 'none';
                 modalElement.classList.remove('active');
                 document.body.classList.remove('modal-open');
             }
@@ -7161,6 +7162,11 @@ User's request: ${msg}`;
                     color: ${colors.accent} !important;
                     text-decoration: none !important;
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%) !important;
+                }
+                .modal-content input, .modal-content textarea, .modal-content select {
+                    background: ${adjustBrightness(backgroundRgb.r > 128 ? '#000000' : '#ffffff', 20)} !important;
+                    color: ${textColor} !important;
+                    border-color: ${colors.primary} !important;
                 }
             `;
              themeStyle.innerHTML = css;
