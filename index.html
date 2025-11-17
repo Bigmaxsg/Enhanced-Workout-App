@@ -4185,7 +4185,7 @@ function cancelQuickCardio() {
             
             const displayInstructions = exerciseDescriptions[exerciseName] || exercise.instructions;
 
-            modalContent.innerHTML = `
+           modalContent.innerHTML = `
                 <p><strong>Equipment:</strong> ${exercise.equipment}</p>
                 <div class="exercise-image">
                     <img src="${imageUrl}" 
@@ -4196,11 +4196,11 @@ function cancelQuickCardio() {
                     <strong>[TIP] Detailed Instructions</strong>
                     <p style="line-height: 1.6; margin-top: 10px;">${displayInstructions}</p>
                 </div>
-               <div style="margin-top: 15px; padding: 15px; background: rgba(var(--card-bg-rgb, 232, 220, 196), 0.6); border-radius: 8px; border: 1px solid var(--accent-color, #d4af37); color: var(--text-color, #333);">
-                    <strong style="color: var(--text-color, #333);">Suggested:</strong> <span style="color: var(--text-color, #333);">${exercise.sets} sets, ${exercise.reps} reps @ ${exercise.weight} lbs</span>
+                <div class="exercise-card" style="margin-top: 15px; margin-bottom: 15px;">
+                    <strong>Suggested:</strong> ${exercise.sets} sets, ${exercise.reps} reps @ ${exercise.weight} lbs
                 </div>
                 <div style="margin-top: 15px;">
-                    <a href="${youtubeLink}" target="_blank" class="btn" style="display: block; text-align: center; text-decoration: none; margin-top: 0; background: linear-gradient(135deg, var(--primary-color, #001f3f) 0%, var(--primary-color-light, #003d5c) 100%); color: var(--accent-color, #d4af37);">
+                    <a href="${youtubeLink}" target="_blank" class="btn" style="display: block; text-align: center; text-decoration: none; margin-top: 0;">
                         [VIDEO] Watch Video
                     </a>
                 </div>
