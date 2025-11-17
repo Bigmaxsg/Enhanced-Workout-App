@@ -606,8 +606,7 @@
             display: flex !important;
         }
         .modal {
-            display: none; /* Modals are HIDDEN by default */
-            position: fixed;
+            position: fixed !important;
             top: 0;
             left: 0;
             right: 0;
@@ -615,13 +614,16 @@
             background: rgba(0, 0, 0, 0.7);
             z-index: 10000;
             padding: 20px;
-            
-            /* Flexbox properties for when it becomes active */
+            display: none;
             justify-content: center;
             align-items: center;
+            overflow-y: auto;
+            overscroll-behavior: contain;
         }
-
-        .modal-content {
+            .modal.active {
+            display: flex !important;
+        }
+            .modal-content {
             background: white;
             border-radius: 16px;
             padding: 20px;
@@ -631,8 +633,9 @@
             position: relative;
             z-index: 10001;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-height: calc(100vh - 40px);
             overflow-y: auto;
-            max-height: calc(100vh - 40px); /* Add this line */
+            margin: auto; /* ensure perfect viewport centering */
         }
 
         .modal-header {
