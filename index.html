@@ -7499,6 +7499,16 @@ function loadBackgroundImage() {
             </div>
         </div>
     </div>
-        </body>
+        <script>
+        // Move modals out of scrolling container so they center on screen correctly
+        document.addEventListener('DOMContentLoaded', () => {
+          document.querySelectorAll('.modal').forEach(modal => {
+            if (modal.parentElement !== document.body) {
+              document.body.appendChild(modal);
+            }
+          });
+        });
+        </script>
+    </body>
 </html>
     
