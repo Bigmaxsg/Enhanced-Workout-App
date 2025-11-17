@@ -797,6 +797,10 @@
             text-align: center;
         }
 
+        .hiit-adjust-params {
+            background: rgba(var(--card-color-rgb), 0.3) !important;
+        }
+
         #hiitTimerDisplay {
             font-size: 80px;
             font-weight: bold;
@@ -1389,8 +1393,8 @@
                             style="margin-bottom: 10px; margin-top: 10px;">
                             📋 View Form Instructions
                         </button>
-                        <div
-                            style="margin: 10px -12px 0 -12px; background: rgba(212,175,55,0.2); padding: 8px 12px; border-radius: 0;">
+                        <div class="hiit-adjust-params"
+                            style="margin: 10px -12px 0 -12px; padding: 8px 12px; border-radius: 0;">
                             <div style="font-size: 10px; color: #f5f5dc; margin-bottom: 6px; text-align: center;">Adjust
                                 Parameters:</div>
                             <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
@@ -6879,6 +6883,10 @@ User's request: ${msg}`;
             const cardRgb = hexToRgb(colors.card);
             const primaryRgb = hexToRgb(colors.primary);
             const navRgb = hexToRgb(colors.nav);
+            
+            // Set CSS variables for RGB card color
+            document.documentElement.style.setProperty('--card-color-rgb', `${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}`);
+            
             const css = `
                 body {
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
@@ -7546,4 +7554,3 @@ function loadBackgroundImage() {
         </script>
     </body>
 </html>
-    
