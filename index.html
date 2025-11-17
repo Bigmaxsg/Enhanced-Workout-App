@@ -1382,6 +1382,10 @@
                         <h3 id="hiitExerciseName">Jumping Jacks</h3>
                         <p id="hiitNextExerciseName">Next Up: Rest</p>
                         <div id="hiitRoundDisplay">Round 1 of 4</div>
+                        <button class="btn btn-secondary" onclick="showCurrentHiitExerciseInfo()"
+                            style="margin-bottom: 10px; margin-top: 10px;">
+                            📋 View Form Instructions
+                        </button>
                         <div
                             style="margin: 10px -12px 0 -12px; background: rgba(212,175,55,0.2); padding: 8px 12px; border-radius: 0;">
                             <div style="font-size: 10px; color: #f5f5dc; margin-bottom: 6px; text-align: center;">Adjust
@@ -3655,6 +3659,13 @@ function cancelQuickCardio() {
         function showCurrentExerciseInfo() {
             const exercise = currentWorkout[currentExerciseIndex];
             showExerciseInfo(exercise.name);
+        }
+
+        function showCurrentHiitExerciseInfo() {
+            const exerciseName = hiitWorkoutParams.exercises[hiitCurrentExerciseIndex];
+            if (exerciseName && hiitCurrentMode === 'work') {
+                showExerciseInfo(exerciseName);
+            }
         }
 
         function endWorkout() {
