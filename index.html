@@ -1848,188 +1848,6 @@
                     </div>
                 </div>
             </div>
-
-    <!-- Exercise Info Modal -->
-    <div id="exerciseModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modalExerciseName"></h3>
-                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
-            </div>
-            <div id="modalExerciseContent"></div>
-        </div>
-    </div>
-
-    <!-- Add/Edit Custom Exercise Modal -->
-    <div id="addExerciseModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="addExerciseModalTitle">➕ Add Custom Exercise</h3>
-                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
-            </div>
-            <input type="hidden" id="originalExerciseName">
-            <div class="form-group">
-                <label>Exercise Name *</label>
-                <input type="text" id="newExerciseName" placeholder="e.g., Dumbbell Chest Fly">
-            </div>
-            <button class="btn btn-secondary" onclick="generateExerciseDetailsWithAI()" id="aiGenerateBtn"
-                style="width: auto; padding: 10px 15px; font-size: 14px; margin-bottom: 20px;">
-                🤖 Generate with AI
-            </button>
-            <div class="form-group">
-                <label>Equipment *</label>
-                <input type="text" id="newExerciseEquipment" placeholder="e.g., Dumbbells">
-            </div>
-            <div class="form-group">
-                <label>Instructions *</label>
-                <textarea id="newExerciseInstructions" rows="4"
-                    placeholder="Describe how to perform this exercise..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Target Muscles/Description</label>
-                <input type="text" id="newExerciseImage" placeholder="e.g., Targets: Chest, Shoulders">
-            </div>
-            <div class="form-group">
-                <label>YouTube Video Link (optional)</label>
-                <input type="url" id="newExerciseYouTubeLink" placeholder="e.g., https://www.youtube.com/watch?v=...">
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-                <div class="form-group">
-                    <label>Default Weight (lbs)</label>
-                    <input type="number" id="newExerciseWeight" value="25">
-                </div>
-                <div class="form-group">
-                    <label>Default Sets</label>
-                    <input type="number" id="newExerciseSets" value="3">
-                </div>
-                <div class="form-group">
-                    <label>Default Reps</label>
-                    <input type="number" id="newExerciseReps" value="12">
-                </div>
-            </div>
-            <button class="btn" id="saveExerciseBtn" onclick="saveNewExercise()">💾 Add Exercise to Database</button>
-        </div>
-    </div>
-
-    <!-- Measurement Update Modal -->
-    <div id="measurementModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="measurementModalTitle">Update Measurement</h3>
-                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
-            </div>
-            <input type="hidden" id="measurementType">
-            <div class="form-group">
-                <label id="measurementLabel">Value</label>
-                <input type="number" step="0.1" id="measurementValue" placeholder="Enter value">
-            </div>
-            <div class="form-group">
-                <label>Date (optional)</label>
-                <input type="date" id="measurementDate">
-            </div>
-            <button class="btn" onclick="saveMeasurement()">💾 Save Measurement</button>
-        </div>
-    </div>
-<!-- Calorie Tracking Modal -->
-    <div id="calorieModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">🔥 Configure Calorie Tracking</h3>
-                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
-            </div>
-            <div>
-                <div class="info-box" style="margin-bottom: 20px;">
-                    <p><strong>How it works:</strong> Choose between automatic estimation based on workout data or manual input from your fitness tracker.</p>
-                </div>
-                
-                <div class="form-group">
-                    <label>Tracking Method</label>
-                    <select id="calorieTrackingMethod" onchange="toggleCalorieInputMethod()">
-                        <option value="automatic">Automatic Estimation</option>
-                        <option value="manual">Manual Input from Tracker</option>
-                    </select>
-                </div>
-
-                <div id="automaticCalorieInfo" style="display: block;">
-                    <div class="info-box">
-                        <p><strong>Automatic Estimation Formula:</strong></p>
-                        <p>• Strength Training: ~5 calories per minute</p>
-                        <p>• HIIT Training: ~10 calories per minute</p>
-                        <p>Adjust the multiplier based on your intensity level:</p>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Intensity Multiplier (0.5 - 2.0)</label>
-                        <input type="number" id="calorieMultiplier" step="0.1" min="0.5" max="2.0" value="1.0" placeholder="1.0 = Average">
-                        <small style="color: #6c757d;">Lower intensity: 0.5-0.8 | Average: 1.0 | High intensity: 1.2-2.0</small>
-                    </div>
-                </div>
-
-                <div id="manualCalorieInfo" style="display: none;">
-                    <div class="info-box">
-                        <p><strong>Manual Entry:</strong> After each workout, you'll be prompted to enter calories burned from your fitness tracker.</p>
-                    </div>
-                </div>
-
-                <button class="btn" onclick="saveCalorieSettings()">💾 Save Settings</button>
-            </div>
-        </div>
-    </div>
-  <!-- Edit Workout Stats Modal -->
-    <div id="editStatsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h3 class="modal-title">✏️ Edit Workout Stats</h3>
-            <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
-            </div>
-                <!-- NEW DATE/TIME FIELDS ADDED HERE -->
-                <div class="form-group">
-                    <label>📅 Workout Date</label>
-                    <input type="date" id="editWorkoutDate">
-                </div>
-                <div class="form-group">
-                    <label>⏱️ Workout Time (HH:MM)</label>
-                    <input type="time" id="editWorkoutTime">
-                </div>
-                <div class="form-group">
-                    <label>Workout Name</label>
-                    <input type="text" id="editWorkoutName" placeholder="e.g., Morning Run">
-                </div>
-                <div class="form-group">
-                    <label>💓 Average Heart Rate (BPM)</label>
-                    <input type="number" id="editHeartRate" placeholder="e.g., 145">
-                </div>
-                <div class="form-group">
-                    <label>🔥 Total Calories Burned</label>
-                    <input type="number" id="editCalories" placeholder="e.g., 350">
-                </div>
-                <div class="form-group">
-                    <label>⏱️ Duration (Minutes)</label>
-                    <input type="number" id="editDurationMinutes" placeholder="e.g., 60">
-                    <small style="color: #6c757d;">Primary workout length in minutes.</small>
-                </div>
-                <div class="form-group">
-                    <label>📏 Distance</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="number" id="editDistance" placeholder="0.0" step="0.1" style="flex: 2;">
-                        <select id="editDistanceUnit" style="flex: 1;">
-                            <option value="">-- Select Unit --</option>
-                            <option value="miles">Miles</option>
-                            <option value="km">Kilometers</option>
-                            <option value="meters">Meters</option>
-                        </select>
-                    </div>
-                    <small style="color: #6c757d;">Use miles for walks/runs, km for rows/bikes</small>
-                </div>
-                <div class="form-group">
-                    <label>📝 Notes (Optional)</label>
-                    <textarea id="editWorkoutNotes" rows="3" placeholder="How did you feel? Any achievements?"></textarea>
-                </div>
-                <button class="btn btn-success" onclick="saveWorkoutStats()">💾 Save Changes</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // ==================== GLOBAL THEME VARIABLES ====================
         let currentCardTextColor = '#333'; // Default text color for cards
@@ -7496,4 +7314,186 @@ function loadBackgroundImage() {
         });
        
     </script>
+             <!-- Exercise Info Modal -->
+    <div id="exerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalExerciseName"></h3>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
+            </div>
+            <div id="modalExerciseContent"></div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Custom Exercise Modal -->
+    <div id="addExerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="addExerciseModalTitle">➕ Add Custom Exercise</h3>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
+            </div>
+            <input type="hidden" id="originalExerciseName">
+            <div class="form-group">
+                <label>Exercise Name *</label>
+                <input type="text" id="newExerciseName" placeholder="e.g., Dumbbell Chest Fly">
+            </div>
+            <button class="btn btn-secondary" onclick="generateExerciseDetailsWithAI()" id="aiGenerateBtn"
+                style="width: auto; padding: 10px 15px; font-size: 14px; margin-bottom: 20px;">
+                🤖 Generate with AI
+            </button>
+            <div class="form-group">
+                <label>Equipment *</label>
+                <input type="text" id="newExerciseEquipment" placeholder="e.g., Dumbbells">
+            </div>
+            <div class="form-group">
+                <label>Instructions *</label>
+                <textarea id="newExerciseInstructions" rows="4"
+                    placeholder="Describe how to perform this exercise..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Target Muscles/Description</label>
+                <input type="text" id="newExerciseImage" placeholder="e.g., Targets: Chest, Shoulders">
+            </div>
+            <div class="form-group">
+                <label>YouTube Video Link (optional)</label>
+                <input type="url" id="newExerciseYouTubeLink" placeholder="e.g., https://www.youtube.com/watch?v=...">
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Default Weight (lbs)</label>
+                    <input type="number" id="newExerciseWeight" value="25">
+                </div>
+                <div class="form-group">
+                    <label>Default Sets</label>
+                    <input type="number" id="newExerciseSets" value="3">
+                </div>
+                <div class="form-group">
+                    <label>Default Reps</label>
+                    <input type="number" id="newExerciseReps" value="12">
+                </div>
+            </div>
+            <button class="btn" id="saveExerciseBtn" onclick="saveNewExercise()">💾 Add Exercise to Database</button>
+        </div>
+    </div>
+
+    <!-- Measurement Update Modal -->
+    <div id="measurementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="measurementModalTitle">Update Measurement</h3>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
+            </div>
+            <input type="hidden" id="measurementType">
+            <div class="form-group">
+                <label id="measurementLabel">Value</label>
+                <input type="number" step="0.1" id="measurementValue" placeholder="Enter value">
+            </div>
+            <div class="form-group">
+                <label>Date (optional)</label>
+                <input type="date" id="measurementDate">
+            </div>
+            <button class="btn" onclick="saveMeasurement()">💾 Save Measurement</button>
+        </div>
+    </div>
+<!-- Calorie Tracking Modal -->
+    <div id="calorieModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🔥 Configure Calorie Tracking</h3>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
+            </div>
+            <div>
+                <div class="info-box" style="margin-bottom: 20px;">
+                    <p><strong>How it works:</strong> Choose between automatic estimation based on workout data or manual input from your fitness tracker.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tracking Method</label>
+                    <select id="calorieTrackingMethod" onchange="toggleCalorieInputMethod()">
+                        <option value="automatic">Automatic Estimation</option>
+                        <option value="manual">Manual Input from Tracker</option>
+                    </select>
+                </div>
+
+                <div id="automaticCalorieInfo" style="display: block;">
+                    <div class="info-box">
+                        <p><strong>Automatic Estimation Formula:</strong></p>
+                        <p>• Strength Training: ~5 calories per minute</p>
+                        <p>• HIIT Training: ~10 calories per minute</p>
+                        <p>Adjust the multiplier based on your intensity level:</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Intensity Multiplier (0.5 - 2.0)</label>
+                        <input type="number" id="calorieMultiplier" step="0.1" min="0.5" max="2.0" value="1.0" placeholder="1.0 = Average">
+                        <small style="color: #6c757d;">Lower intensity: 0.5-0.8 | Average: 1.0 | High intensity: 1.2-2.0</small>
+                    </div>
+                </div>
+
+                <div id="manualCalorieInfo" style="display: none;">
+                    <div class="info-box">
+                        <p><strong>Manual Entry:</strong> After each workout, you'll be prompted to enter calories burned from your fitness tracker.</p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="saveCalorieSettings()">💾 Save Settings</button>
+            </div>
+        </div>
+    </div>
+  <!-- Edit Workout Stats Modal -->
+    <div id="editStatsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h3 class="modal-title">✏️ Edit Workout Stats</h3>
+            <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
+            </div>
+                <!-- NEW DATE/TIME FIELDS ADDED HERE -->
+                <div class="form-group">
+                    <label>📅 Workout Date</label>
+                    <input type="date" id="editWorkoutDate">
+                </div>
+                <div class="form-group">
+                    <label>⏱️ Workout Time (HH:MM)</label>
+                    <input type="time" id="editWorkoutTime">
+                </div>
+                <div class="form-group">
+                    <label>Workout Name</label>
+                    <input type="text" id="editWorkoutName" placeholder="e.g., Morning Run">
+                </div>
+                <div class="form-group">
+                    <label>💓 Average Heart Rate (BPM)</label>
+                    <input type="number" id="editHeartRate" placeholder="e.g., 145">
+                </div>
+                <div class="form-group">
+                    <label>🔥 Total Calories Burned</label>
+                    <input type="number" id="editCalories" placeholder="e.g., 350">
+                </div>
+                <div class="form-group">
+                    <label>⏱️ Duration (Minutes)</label>
+                    <input type="number" id="editDurationMinutes" placeholder="e.g., 60">
+                    <small style="color: #6c757d;">Primary workout length in minutes.</small>
+                </div>
+                <div class="form-group">
+                    <label>📏 Distance</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="editDistance" placeholder="0.0" step="0.1" style="flex: 2;">
+                        <select id="editDistanceUnit" style="flex: 1;">
+                            <option value="">-- Select Unit --</option>
+                            <option value="miles">Miles</option>
+                            <option value="km">Kilometers</option>
+                            <option value="meters">Meters</option>
+                        </select>
+                    </div>
+                    <small style="color: #6c757d;">Use miles for walks/runs, km for rows/bikes</small>
+                </div>
+                <div class="form-group">
+                    <label>📝 Notes (Optional)</label>
+                    <textarea id="editWorkoutNotes" rows="3" placeholder="How did you feel? Any achievements?"></textarea>
+                </div>
+                <button class="btn btn-success" onclick="saveWorkoutStats()">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
+        </body>
+</html>
     
