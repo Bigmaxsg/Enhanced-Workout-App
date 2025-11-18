@@ -2091,6 +2091,7 @@
 
         // App State
         let currentWorkout = [];
+        let isWorkoutModified = false; // <-- ADD THIS LINE
         let workoutHistory = JSON.parse(localStorage.getItem('workoutHistory')) || [];
         let timerInterval = null;
         let timerSeconds = 0;
@@ -2543,6 +2544,7 @@
         }
         
         function loadWorkout() {
+             isWorkoutModified = false; // <-- ADD THIS LINE
             const workoutType = document.getElementById('workoutType').value;
             const container = document.getElementById('workoutContainer');
 
@@ -2598,57 +2600,116 @@
         }
 
         function displayWorkout(isHiit = false) {
-            const container = document.getElementById('workoutContainer');
-            let html = '<h3>Today\'s Workout</h3>';
+    const container = document.getElementById('workoutContainer');
+    let html = '<h3>Today\'s Workout</h3>';
 
-            // If it's a HIIT workout, display it differently
-            if (isHiit) {
-                html += `<div class="info-box"><p><strong>HIIT Workout:</strong> ${hiitWorkoutParams.workTime}s Work / ${hiitWorkoutParams.restTime}s Rest / ${hiitWorkoutParams.totalRounds} Rounds</p></div>`;
-                currentWorkout.forEach(exercise => {
-                    html += `
-                        <div class="exercise-card">
-                            <div class="exercise-name">${exercise.name}</div>
+    if (isHiit) {
+        // This part for HIIT workouts remains mostly the same
+        html += `<div class="info-box"><p><strong>HIIT Workout:</strong> ${hiitWorkoutParams.workTime}s Work / ${hiitWorkoutParams.restTime}s Rest / ${hiitWorkoutParams.totalRounds} Rounds</p></div>`;
+        currentWorkout.forEach((exercise, index) => {
+            html += `
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <div class="exercise-name">${exercise.name}</div>
+                        <button class="delete-btn" onclick="removeExerciseFromCurrentWorkout(${index})">✖</button>
+                    </div>
+                </div>
+            `;
+        });
+    } else {
+        // This is the updated part for STRENGTH workouts
+        currentWorkout.forEach((exercise, index) => {
+            html += `
+                <div class="exercise-card">
+                    <div class="exercise-header">
+                        <div class="exercise-name">${exercise.name}</div>
+                        <button class="delete-btn" onclick="removeExerciseFromCurrentWorkout(${index})">✖</button>
+                    </div>
+                    <div class="exercise-details">
+                        <div class="detail-input">
+                            <label>Weight (lbs)</label>
+                            <input type="number" value="${exercise.weight || 0}" 
+                                onchange="updateExerciseValue(${index}, 'weight', this.value)">
                         </div>
-                    `;
-                });
-                // Show the HIIT adjustment controls
-                document.getElementById('hiitPreWorkoutAdjustments').style.display = 'block';
-            } else {
-                // This is the original logic for STRENGTH workouts
-                currentWorkout.forEach((exercise, index) => {
-                    html += `
-                        <div class="exercise-card">
-                            <div class="exercise-header">
-                                <div class="exercise-name">${exercise.name}</div>
-                            </div>
-                            <div class="exercise-details">
-                                <div class="detail-input">
-                                    <label>Weight (lbs)</label>
-                                    <input type="number" value="${exercise.weight || 0}" 
-                                        onchange="updateExerciseValue(${index}, 'weight', this.value)">
-                                </div>
-                                <div class="detail-input">
-                                    <label>Sets</label>
-                                    <input type="number" value="${exercise.sets || 3}" 
-                                        onchange="updateExerciseValue(${index}, 'sets', this.value)">
-                                </div>
-                                <div class="detail-input">
-                                    <label>Reps</label>
-                                    <input type="number" value="${exercise.reps || 12}" 
-                                        onchange="updateExerciseValue(${index}, 'reps', this.value)">
-                                </div>
-                            </div>
+                        <div class="detail-input">
+                            <label>Sets</label>
+                            <input type="number" value="${exercise.sets || 3}" 
+                                onchange="updateExerciseValue(${index}, 'sets', this.value)">
                         </div>
-                    `;
-                });
-                // Hide the HIIT adjustment controls for strength workouts
-                document.getElementById('hiitPreWorkoutAdjustments').style.display = 'none';
-            }
-            
-            container.innerHTML = html;
-            document.getElementById('workoutModeSelection').style.display = 'block';
-        }
+                        <div class="detail-input">
+                            <label>Reps</label>
+                            <input type="number" value="${exercise.reps || 12}" 
+                                onchange="updateExerciseValue(${index}, 'reps', this.value)">
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
 
+    // Add the "Add Exercise" button at the bottom
+    html += `<button class="add-exercise-btn" onclick="addExerciseToCurrentWorkout()">➕ Add Exercise to This Workout</button>`;
+
+    container.innerHTML = html;
+    document.getElementById('workoutModeSelection').style.display = 'block';
+    document.getElementById('hiitPreWorkoutAdjustments').style.display = isHiit ? 'block' : 'none';
+}
+        function removeExerciseFromCurrentWorkout(index) {
+    if (!confirm('Are you sure you want to remove this exercise from the workout?')) return;
+    currentWorkout.splice(index, 1);
+    isWorkoutModified = true;
+    displayWorkout(workoutStyle === 'hiit'); // Re-render the workout list
+}
+
+function addExerciseToCurrentWorkout() {
+    const allExercises = {
+        ...exerciseDatabase,
+        ...JSON.parse(localStorage.getItem('customExercises') || '{}')
+    };
+    const exerciseNames = Object.keys(allExercises).sort();
+
+    const exerciseName = prompt("Enter the name of the exercise to add:\n\n" + exerciseNames.slice(0, 15).join('\n') + "\n...");
+
+    if (exerciseName && allExercises[exerciseName]) {
+        const exerciseData = allExercises[exerciseName];
+        currentWorkout.push({
+            name: exerciseName,
+            weight: exerciseData.weight || 0,
+            sets: exerciseData.sets || 3,
+            reps: exerciseData.reps || 12
+        });
+        isWorkoutModified = true;
+        displayWorkout(workoutStyle === 'hiit'); // Re-render the workout list
+    } else if (exerciseName) {
+        alert('Exercise not found in the database.');
+    }
+}
+
+function promptToSaveModifiedWorkout(onSaveCallback) {
+    const defaultName = `My Custom Workout ${new Date().toLocaleDateString()}`;
+    const newName = prompt("You've modified this workout. Please enter a name to save it as a new custom workout:", defaultName);
+
+    if (!newName) {
+        alert("Save canceled. The workout was not started.");
+        return;
+    }
+
+    const customWorkouts = JSON.parse(localStorage.getItem('customWorkouts') || '{}');
+    if (customWorkouts[newName]) {
+        alert('A workout with this name already exists. Please choose a different name.');
+        return;
+    }
+
+    // Save the modified workout
+    customWorkouts[newName] = [...currentWorkout]; // Save a copy
+    localStorage.setItem('customWorkouts', JSON.stringify(customWorkouts));
+    
+    isWorkoutModified = false; // Reset the flag
+    loadCustomWorkoutsIntoDropdown(); // Update the dropdown lists
+    alert(`Workout "${newName}" saved successfully! Starting workout now...`);
+    
+    onSaveCallback(); // Proceed to start the workout
+}
         function updateExerciseValue(index, field, value) {
             currentWorkout[index][field] = parseInt(value);
             
@@ -3571,7 +3632,12 @@ function cancelQuickCardio() {
     }
 }
        // ==================== GUIDED WORKOUT MODE ====================
-        function startGuidedWorkout(mode) {
+        function startGuidedWorkout(mode, bypassSavePrompt = false) { // Add bypass flag
+            if (isWorkoutModified && !bypassSavePrompt) {
+                promptToSaveModifiedWorkout(() => startGuidedWorkout(mode, true));
+                return; // Stop here, the prompt will handle the rest
+            }
+        
             document.querySelector('.workout-timer').style.display = 'block';
             if (currentWorkout.length === 0 || !currentWorkout[0].name) {
                 alert('Please select or create a workout first!');
@@ -3835,7 +3901,11 @@ function cancelQuickCardio() {
             }
         }
 
-        function startHiitWorkout() {
+        function startHiitWorkout(bypassSavePrompt = false) { // Add bypass flag
+            if (isWorkoutModified && !bypassSavePrompt) {
+                promptToSaveModifiedWorkout(() => startHiitWorkout(true));
+                return; // Stop here
+            }
             if (!currentWorkout || currentWorkout.length === 0) {
                 alert("No HIIT exercises are loaded. Please create or load a custom HIIT workout first.");
                 return;
