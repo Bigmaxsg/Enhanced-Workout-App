@@ -3586,7 +3586,9 @@ function cancelQuickCardio() {
     }
 }
        // ==================== GUIDED WORKOUT MODE ====================
-        function startGuidedWorkout(mode, bypassSavePrompt = false) { // Add bypass flag
+        function startGuidedWorkout(mode, bypassSavePrompt = false) {
+            window.scrollTo(0, 0); // <-- ADD THIS LINE
+             document.querySelector('.nav').style.display = 'none'; // <-- ADD THIS LINE
             if (isWorkoutModified && !bypassSavePrompt) {
                 promptToSaveModifiedWorkout(() => startGuidedWorkout(mode, true));
                 return; // Stop here, the prompt will handle the rest
@@ -3855,7 +3857,9 @@ function cancelQuickCardio() {
             }
         }
 
-        function startHiitWorkout(bypassSavePrompt = false) { // Add bypass flag
+       function startHiitWorkout(bypassSavePrompt = false) {
+                window.scrollTo(0, 0); // <-- ADD THIS LINE
+                document.querySelector('.nav').style.display = 'none'; // <-- ADD THIS LINE
             if (isWorkoutModified && !bypassSavePrompt) {
                 promptToSaveModifiedWorkout(() => startHiitWorkout(true));
                 return; // Stop here
@@ -4179,7 +4183,11 @@ function cancelQuickCardio() {
                 loadRecommendation();
                 updateProgress();
                 loadHistory();
-                
+            
+                if (document.querySelector('.nav')) {
+                document.querySelector('.nav').style.display = 'flex'; // <-- ADD THIS
+            }
+
                 // Go to a neutral tab after workout completion
                 showSection('history');
             }
