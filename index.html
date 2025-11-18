@@ -1123,18 +1123,18 @@
             border-radius: 5px;
             animation: scan 2s infinite linear;
         }
-
-        @keyframes scan {
-            0% {
-                top: 5%;
-            }
-            50% {
-                top: 95%;
-            }
-            100% {
-                top: 5%;
-            }
+    }
+        @media (max-width: 400px) {
+        .header h1 {
+            font-size: 20px; /* Shrink the main title font size */
         }
+        .header p {
+            font-size: 12px; /* Shrink the subtitle font size */
+        }
+        .header button {
+            font-size: 24px; /* Slightly shrink the refresh icon */
+        }
+    }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
