@@ -2662,29 +2662,65 @@
 }
 
 function addExerciseToCurrentWorkout() {
+    populateModalExerciseList();
+    showModalById('selectExerciseModal');
+}
+function populateModalExerciseList() {
+    const modalList = document.getElementById('modalExerciseList');
     const allExercises = {
         ...exerciseDatabase,
         ...JSON.parse(localStorage.getItem('customExercises') || '{}')
     };
     const exerciseNames = Object.keys(allExercises).sort();
 
-    const exerciseName = prompt("Enter the name of the exercise to add:\n\n" + exerciseNames.slice(0, 15).join('\n') + "\n...");
+    let html = '';
+    exerciseNames.forEach(name => {
+        html += `
+            <div class="exercise-card modal-exercise-item" onclick="selectExerciseToAdd('${name.replace(/'/g, "\\'")}')" style="cursor: pointer; margin-bottom: 8px; padding: 12px;">
+                <div class="exercise-name">${name}</div>
+                <small style="color: #6c757d;">Equipment: ${allExercises[name].equipment}</small>
+            </div>
+        `;
+    });
+    modalList.innerHTML = html;
+    filterModalExerciseList(); // Ensure the search is cleared
+}
 
-    if (exerciseName && allExercises[exerciseName]) {
-        const exerciseData = allExercises[exerciseName];
+function filterModalExerciseList() {
+    const searchTerm = document.getElementById('modalExerciseSearch').value.toLowerCase();
+    const items = document.querySelectorAll('#modalExerciseList .modal-exercise-item');
+    items.forEach(item => {
+        const exerciseName = item.querySelector('.exercise-name').textContent.toLowerCase();
+        if (exerciseName.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function selectExerciseToAdd(exerciseName) {
+    const allExercises = {
+        ...exerciseDatabase,
+        ...JSON.parse(localStorage.getItem('customExercises') || '{}')
+    };
+    const exerciseData = allExercises[exerciseName];
+
+    if (exerciseData) {
         currentWorkout.push({
             name: exerciseName,
             weight: exerciseData.weight || 0,
             sets: exerciseData.sets || 3,
-            reps: exerciseData.reps || 12
+            reps: exerciseData.reps || 12,
+            equipment: exerciseData.equipment
         });
         isWorkoutModified = true;
         displayWorkout(workoutStyle === 'hiit'); // Re-render the workout list
-    } else if (exerciseName) {
-        alert('Exercise not found in the database.');
+        closeModal(document.getElementById('selectExerciseModal'));
+    } else {
+        alert('Error: Could not find selected exercise data.');
     }
 }
-
 function promptToSaveModifiedWorkout(onSaveCallback) {
     const defaultName = `My Custom Workout ${new Date().toLocaleDateString()}`;
     const newName = prompt("You've modified this workout. Please enter a name to save it as a new custom workout:", defaultName);
@@ -7607,6 +7643,21 @@ function loadBackgroundImage() {
         });
        
     </script>
+        <!-- Select Exercise Modal -->
+    <div id="selectExerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Exercise to Workout</h3>
+                <button class="modal-close" onclick="closeModal(this.closest('.modal'))">&times;</button>
+            </div>
+            <div class="form-group">
+                <input type="search" id="modalExerciseSearch" placeholder="🔍 Search exercises..." onkeyup="filterModalExerciseList()">
+            </div>
+            <div id="modalExerciseList" style="max-height: 40vh; overflow-y: auto;">
+                <!-- Exercise list will be populated here by JavaScript -->
+            </div>
+        </div>
+    </div>
              <!-- Exercise Info Modal -->
     <div id="exerciseModal" class="modal">
         <div class="modal-content">
