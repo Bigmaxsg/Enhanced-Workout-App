@@ -3714,6 +3714,7 @@ function cancelQuickCardio() {
             const workoutDuration = timerSeconds;
 
             const workoutData = {
+                id: Date.now(), // <-- ADD THIS LINE
                 date: new Date().toISOString(),
                 exercises: currentWorkout,
                 duration: workoutDuration,
@@ -4077,6 +4078,7 @@ function cancelQuickCardio() {
                 }
 
                 const workout = {
+                    id: Date.now(), // <-- ADD THIS LINE
                     date: new Date().toISOString(),
                     type: 'HIIT Workout',
                     exercises: hiitWorkoutParams.exercises,
@@ -5836,6 +5838,8 @@ User's request: ${msg}`;
         function loadHistory() {
             const container = document.getElementById('historyContainer');
             const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+            
+            history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (history.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #6c757d;">No workout history yet. Complete your first workout!</p>';
@@ -5931,12 +5935,12 @@ User's request: ${msg}`;
                 html += `
                         </div>
                         <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <button class="btn btn-secondary" onclick="editWorkoutStats(${index})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
-                                ✏️ Edit Stats
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteWorkout(${index})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
-                                🗑️ Delete
-                            </button>
+                            <button class="btn btn-secondary" onclick="editWorkoutStats(${workout.id})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
+                            ✏️ Edit Stats
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteWorkout(${workout.id})" style="flex: 1; padding: 12px 20px; margin-top: 0;">
+                            🗑️ Delete
+                        </button>
                         </div>
                     </div>
                 `;
@@ -5947,31 +5951,33 @@ User's request: ${msg}`;
         // ==================== EDIT WORKOUT STATS ====================
         let currentEditingWorkoutIndex = null;
 
-        function editWorkoutStats(index) {
-            currentEditingWorkoutIndex = index;
-            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-            const workout = history[index];
+        function editWorkoutStats(id) {
+    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+    const workoutIndex = history.findIndex(w => w.id === id);
+    if (workoutIndex === -1) {
+        alert('Workout not found!');
+        return;
+    }
+    currentEditingWorkoutIndex = workoutIndex; // Keep using index for saving
+    const workout = history[workoutIndex];
+    
+    // ... the rest of the function remains exactly the same
+    const isoString = workout.date;
+    const datePart = isoString.substring(0, 10);
+    const timePart = isoString.substring(11, 16);
+    document.getElementById('editWorkoutDate').value = datePart;
+    document.getElementById('editWorkoutTime').value = timePart; 
+    document.getElementById('editWorkoutName').value = workout.workoutName || '';
+    const durationInMinutes = Math.round((workout.duration || 0) / 60);
+    document.getElementById('editDurationMinutes').value = durationInMinutes || '';
+    document.getElementById('editHeartRate').value = workout.heartRate || '';
+    document.getElementById('editCalories').value = workout.calories || '';
+    document.getElementById('editDistance').value = workout.distance || '';
+    document.getElementById('editDistanceUnit').value = workout.distanceUnit || '';
+    document.getElementById('editWorkoutNotes').value = workout.notes || '';
 
-            const isoString = workout.date;
-            const datePart = isoString.substring(0, 10); // YYYY-MM-DD
-            const timePart = isoString.substring(11, 16); // HH:MM from "YYYY-MM-DDTHH:MM:SS.sssZ"
-
-            document.getElementById('editWorkoutDate').value = datePart;
-            document.getElementById('editWorkoutTime').value = timePart; 
-            document.getElementById('editWorkoutName').value = workout.workoutName || '';
-            
-            const durationInMinutes = Math.round((workout.duration || 0) / 60);
-            
-            document.getElementById('editDurationMinutes').value = durationInMinutes || '';
-            
-            document.getElementById('editHeartRate').value = workout.heartRate || '';
-            document.getElementById('editCalories').value = workout.calories || '';
-            document.getElementById('editDistance').value = workout.distance || '';
-            document.getElementById('editDistanceUnit').value = workout.distanceUnit || '';
-            document.getElementById('editWorkoutNotes').value = workout.notes || '';
-
-            showModalById('editStatsModal');
-        }
+    showModalById('editStatsModal');
+}
 
         function saveWorkoutStats() {
             if (currentEditingWorkoutIndex === null) return;
@@ -6110,6 +6116,7 @@ User's request: ${msg}`;
 
             // Create workout object
             const workoutData = {
+                id: Date.now(), // <-- ADD THIS LINE
                 date: workoutDate.toISOString(),
                 workoutName: name,
                 type: type,
@@ -6138,15 +6145,17 @@ User's request: ${msg}`;
             alert(`✅ "${name}" added to your workout history!\n\nDate: ${workoutDate.toLocaleDateString()}\nDuration: ${duration} minutes\nType: ${type}`);
         }
 
-        function deleteWorkout(index) {
+       function deleteWorkout(id) {
             if (!confirm('Are you sure you want to delete this workout? This cannot be undone.')) {
                 return;
             }
-
-            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-            history.splice(index, 1);
-            localStorage.setItem('workoutHistory', JSON.stringify(history));
-
+        
+            let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+            // Filter out the workout with the matching id
+            const updatedHistory = history.filter(workout => workout.id !== id);
+            localStorage.setItem('workoutHistory', JSON.stringify(updatedHistory));
+        
+            // Reload all relevant views
             loadHistory();
             updateProgress();
             renderCalendar();
