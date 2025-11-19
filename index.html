@@ -226,8 +226,32 @@
             padding: 15px;
             margin-bottom: 15px;
             border-left: 4px solid #003d5c;
+            cursor: move;
+            transition: all 0.2s ease;
         }
-        
+
+        .exercise-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .exercise-card.drag-over {
+            border-top: 3px solid #003d5c;
+            margin-top: 10px;
+        }
+
+        .drag-handle {
+            cursor: grab;
+            font-size: 18px;
+            color: #003d5c;
+            padding: 0 8px;
+            user-select: none;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
         .exercise-equipment {
             font-size: 13px;
             margin-top: 5px;
@@ -2731,8 +2755,12 @@
         html += `<div class="info-box"><p><strong>HIIT Workout:</strong> ${hiitWorkoutParams.workTime}s Work / ${hiitWorkoutParams.restTime}s Rest / ${hiitWorkoutParams.totalRounds} Rounds</p></div>`;
         currentWorkout.forEach((exercise, index) => {
             html += `
-                <div class="exercise-card">
+                <div class="exercise-card" draggable="true" data-index="${index}"
+                     ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
+                     ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
+                     ondragleave="handleDragLeave(event)">
                     <div class="exercise-header">
+                        <span class="drag-handle">☰</span>
                         <div class="exercise-name">${exercise.name}</div>
                         <button class="delete-btn" onclick="removeExerciseFromCurrentWorkout(${index})">✖</button>
                     </div>
@@ -2743,8 +2771,12 @@
         // This is the updated part for STRENGTH workouts
         currentWorkout.forEach((exercise, index) => {
             html += `
-                <div class="exercise-card">
+                <div class="exercise-card" draggable="true" data-index="${index}"
+                     ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
+                     ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
+                     ondragleave="handleDragLeave(event)">
                     <div class="exercise-header">
+                        <span class="drag-handle">☰</span>
                         <div class="exercise-name">${exercise.name}</div>
                         <button class="delete-btn" onclick="removeExerciseFromCurrentWorkout(${index})">✖</button>
                     </div>
@@ -2785,6 +2817,74 @@
     document.getElementById('traditionalRestAdjustments').style.display = isHiit ? 'none' : 'block';
     document.getElementById('circuitRestAdjustments').style.display = isHiit ? 'none' : 'block';
 }
+
+        // Drag and drop functions for exercise reordering
+        let draggedIndex = null;
+
+        function handleDragStart(event) {
+            draggedIndex = parseInt(event.target.dataset.index);
+            event.target.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(event) {
+            event.target.classList.remove('dragging');
+            // Remove drag-over class from all cards
+            document.querySelectorAll('.exercise-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+
+            const target = event.target.closest('.exercise-card');
+            if (target && !target.classList.contains('dragging')) {
+                target.classList.add('drag-over');
+            }
+            return false;
+        }
+
+        function handleDragLeave(event) {
+            const target = event.target.closest('.exercise-card');
+            if (target) {
+                target.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const target = event.target.closest('.exercise-card');
+            if (!target) return;
+
+            const dropIndex = parseInt(target.dataset.index);
+
+            if (draggedIndex !== null && draggedIndex !== dropIndex) {
+                // Reorder the currentWorkout array
+                const draggedExercise = currentWorkout[draggedIndex];
+                currentWorkout.splice(draggedIndex, 1);
+                currentWorkout.splice(dropIndex, 0, draggedExercise);
+
+                // Mark workout as modified
+                isWorkoutModified = true;
+
+                // Re-render the workout - detect which context we're in
+                if (document.getElementById('customExerciseList')) {
+                    // We're in the custom workout builder
+                    updateCustomExerciseList();
+                } else {
+                    // We're in the main workout display
+                    displayWorkout(workoutStyle === 'hiit');
+                }
+            }
+
+            draggedIndex = null;
+            return false;
+        }
+
         function removeExerciseFromCurrentWorkout(index) {
     if (!confirm('Are you sure you want to remove this exercise from the workout?')) return;
     currentWorkout.splice(index, 1);
@@ -3099,29 +3199,33 @@ function promptToSaveModifiedWorkout(onSaveCallback) {
         function updateCustomExerciseList() {
             const exerciseListDiv = document.getElementById('customExerciseList');
             if (!exerciseListDiv) return;
-            
+
             let html = '';
             currentWorkout.forEach((exercise, index) => {
                 html += `
-                    <div class="exercise-card">
+                    <div class="exercise-card" draggable="true" data-index="${index}"
+                         ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
+                         ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
+                         ondragleave="handleDragLeave(event)">
                         <div class="exercise-header">
+                            <span class="drag-handle">☰</span>
                             <div class="exercise-name">${exercise.name}</div>
                             <button class="delete-btn" onclick="removeExerciseFromCustom(${index})">✖</button>
                         </div>
                         <div class="exercise-details">
                             <div class="detail-input">
                                 <label>Weight (lbs)</label>
-                                <input type="number" value="${exercise.weight || 0}" 
+                                <input type="number" value="${exercise.weight || 0}"
                                     onchange="updateCustomExercise(${index}, 'weight', this.value)">
                             </div>
                             <div class="detail-input">
                                 <label>Sets</label>
-                                <input type="number" value="${exercise.sets || 3}" 
+                                <input type="number" value="${exercise.sets || 3}"
                                     onchange="updateCustomExercise(${index}, 'sets', this.value)">
                             </div>
                             <div class="detail-input">
                                 <label>Reps</label>
-                                <input type="number" value="${exercise.reps || 12}" 
+                                <input type="number" value="${exercise.reps || 12}"
                                     onchange="updateCustomExercise(${index}, 'reps', this.value)">
                             </div>
                         </div>
