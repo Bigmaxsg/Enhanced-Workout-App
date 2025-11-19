@@ -4906,6 +4906,7 @@ function cancelQuickCardio() {
                 document.getElementById('newExerciseWeight').value = 25;
                 document.getElementById('newExerciseSets').value = 3;
                 document.getElementById('newExerciseReps').value = 12;
+                document.getElementById('newExerciseIsUnilateral').checked = false;
             }
 
             // Simply call the new helper function
@@ -4926,13 +4927,14 @@ function cancelQuickCardio() {
             document.getElementById('newExerciseEquipment').value = exercise.equipment || '';
             document.getElementById('newExerciseInstructions').value = exercise.instructions || '';
             document.getElementById('newExerciseImage').value = exercise.image || '';
-            
+
             const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
             document.getElementById('newExerciseYouTubeLink').value = customYouTubeLinks[exerciseName] || '';
-            
+
             document.getElementById('newExerciseWeight').value = exercise.defaultWeight || 25;
             document.getElementById('newExerciseSets').value = exercise.defaultSets || 3;
             document.getElementById('newExerciseReps').value = exercise.defaultReps || 12;
+            document.getElementById('newExerciseIsUnilateral').checked = exercise.isUnilateral || false;
 
             openAddExerciseModal(false);
         }
@@ -4964,6 +4966,7 @@ function cancelQuickCardio() {
             const weight = parseInt(document.getElementById('newExerciseWeight').value);
             const sets = parseInt(document.getElementById('newExerciseSets').value);
             const reps = parseInt(document.getElementById('newExerciseReps').value);
+            const isUnilateral = document.getElementById('newExerciseIsUnilateral').checked;
 
             if (!name || !equipment || !instructions) {
                 alert('Please fill in all required fields (Name, Equipment, Instructions)');
@@ -4990,7 +4993,18 @@ function cancelQuickCardio() {
                 defaultReps: reps
             };
 
+            // Add isUnilateral flag if checked
+            if (isUnilateral) {
+                customExercises[name].isUnilateral = true;
+            }
+
             localStorage.setItem('customExercises', JSON.stringify(customExercises));
+
+            // Also update the runtime database so it's immediately available
+            exerciseDatabase[name] = customExercises[name];
+            if (originalName && originalName !== name) {
+                delete exerciseDatabase[originalName];
+            }
 
             if (youtubeLink) {
                 const customYouTubeLinks = JSON.parse(localStorage.getItem('customYouTubeLinks') || '{}');
@@ -8227,6 +8241,16 @@ function loadBackgroundImage() {
             <div class="form-group">
                 <label>YouTube Video Link (optional)</label>
                 <input type="url" id="newExerciseYouTubeLink" placeholder="e.g., https://www.youtube.com/watch?v=...">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="newExerciseIsUnilateral" style="width: auto; cursor: pointer;">
+                    <span>Unilateral Exercise (single-arm or single-leg)</span>
+                </label>
+                <p style="font-size: 12px; color: #6c757d; margin-top: 5px; margin-left: 24px;">
+                    Check this for exercises performed one side at a time (e.g., Single Arm Row, Bulgarian Split Squat).
+                    During workouts, you'll do left side then right side = 1 complete set.
+                </p>
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
                 <div class="form-group">
