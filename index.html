@@ -882,6 +882,9 @@
             grid-template-columns: repeat(7, 1fr);
             gap: 5px;
             margin-top: 15px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
         }
         /* Styling for Today's Date */
         #calendarContent .calendar-day.today {
@@ -894,6 +897,8 @@
             padding: 10px 5px;
             border-radius: 6px;
             font-size: 12px;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .calendar-day {
@@ -903,6 +908,9 @@
             border: 1px solid;
             cursor: pointer;
             transition: all 0.2s;
+            box-sizing: border-box;
+            width: 100%;
+            overflow: hidden;
         }
 
         .calendar-day:hover {
@@ -1014,6 +1022,32 @@
                 padding: 12px;
             }
 
+            #calendar.section {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .calendar-controls {
+                margin-left: 0;
+                margin-right: 0;
+                width: 100%;
+            }
+
+            #calendarMonthYear {
+                font-size: 16px !important;
+                padding: 8px 12px !important;
+            }
+
+            .calendar-view-buttons {
+                justify-content: center;
+                padding: 0 5px;
+            }
+
+            .view-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
             .chat-input-container {
                 flex-direction: column;
                 align-items: stretch;
@@ -1054,15 +1088,33 @@
 
             .calendar-grid {
                 gap: 3px;
+                margin-left: 0;
+                margin-right: 0;
+                padding: 0;
             }
 
             .calendar-day {
                 min-height: 60px;
-                padding: 5px;
+                padding: 4px;
+                font-size: 11px;
+            }
+
+            .calendar-day-header {
+                padding: 8px 2px;
+                font-size: 11px;
             }
 
             .day-number {
                 font-size: 12px;
+                margin-bottom: 2px;
+            }
+
+            .day-workout-count {
+                font-size: 10px;
+            }
+
+            .rest-indicator {
+                font-size: 10px;
             }
         }
 
@@ -1306,7 +1358,67 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Traditional/Circuit Rest Time Adjustments -->
+                        <div id="traditionalRestAdjustments" class="info-box" style="display:none;">
+                            <div style="font-weight: 600; margin-bottom: 10px; text-align: center;">
+                                Adjust Rest Times (seconds):</div>
+                            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 10px; margin-bottom: 6px;">Between Sets</div>
+                                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('setBetweenSets', -5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">-</button>
+                                        <span id="preWorkRestBetweenSetsDisplay"
+                                            style="min-width: 40px; text-align: center; font-weight: bold; font-size: 14px;">60</span>
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('setBetweenSets', 5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">+</button>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 10px; margin-bottom: 6px;">Between Exercises</div>
+                                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('setBetweenExercises', -5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">-</button>
+                                        <span id="preWorkRestBetweenExercisesDisplay"
+                                            style="min-width: 40px; text-align: center; font-weight: bold; font-size: 14px;">90</span>
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('setBetweenExercises', 5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Circuit Rest Time Adjustments -->
+                        <div id="circuitRestAdjustments" class="info-box" style="display:none;">
+                            <div style="font-weight: 600; margin-bottom: 10px; text-align: center;">
+                                Adjust Circuit Rest Times (seconds):</div>
+                            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 10px; margin-bottom: 6px;">Between Exercises</div>
+                                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('circuitBetweenExercises', -5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">-</button>
+                                        <span id="preWorkCircuitRestBetweenExercisesDisplay"
+                                            style="min-width: 40px; text-align: center; font-weight: bold; font-size: 14px;">30</span>
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('circuitBetweenExercises', 5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">+</button>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 10px; margin-bottom: 6px;">Between Rounds</div>
+                                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('circuitBetweenRounds', -5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">-</button>
+                                        <span id="preWorkCircuitRestBetweenRoundsDisplay"
+                                            style="min-width: 40px; text-align: center; font-weight: bold; font-size: 14px;">60</span>
+                                        <button class="btn btn-secondary" onclick="adjustRestParamPreWorkout('circuitBetweenRounds', 5)"
+                                            style="width: 36px; padding: 6px; margin: 0; font-size: 12px;">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Add workout notes field -->
                         <div class="form-group" style="margin-top: 15px;">
                             <label>📝 Workout Notes (Optional)</label>
@@ -1382,6 +1494,61 @@
                             🛑 End Workout Early
                         </button>
                     </div>
+
+                    <!-- Rest Time Adjustments During Workout -->
+                    <div id="activeWorkoutRestAdjustments" style="margin-top: 20px; padding: 12px; background: rgba(0, 61, 92, 0.1); border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 10px; text-align: center; font-size: 13px;">
+                            Adjust Rest Times (seconds):</div>
+                        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; margin-bottom: 4px;">Between Sets</div>
+                                <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                    <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('setBetweenSets', -5)"
+                                        style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">-</button>
+                                    <span id="activeRestBetweenSetsDisplay"
+                                        style="min-width: 35px; text-align: center; font-weight: bold; font-size: 13px;">60</span>
+                                    <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('setBetweenSets', 5)"
+                                        style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">+</button>
+                                </div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; margin-bottom: 4px;">Between Exercises</div>
+                                <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                    <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('setBetweenExercises', -5)"
+                                        style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">-</button>
+                                    <span id="activeRestBetweenExercisesDisplay"
+                                        style="min-width: 35px; text-align: center; font-weight: bold; font-size: 13px;">90</span>
+                                    <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('setBetweenExercises', 5)"
+                                        style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">+</button>
+                                </div>
+                            </div>
+                            <div id="activeCircuitRestControls" style="display: none;">
+                                <div style="text-align: center; margin-right: 12px;">
+                                    <div style="font-size: 10px; margin-bottom: 4px;">Circuit: Between Ex</div>
+                                    <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                        <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('circuitBetweenExercises', -5)"
+                                            style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">-</button>
+                                        <span id="activeCircuitRestBetweenExercisesDisplay"
+                                            style="min-width: 35px; text-align: center; font-weight: bold; font-size: 13px;">30</span>
+                                        <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('circuitBetweenExercises', 5)"
+                                            style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">+</button>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 10px; margin-bottom: 4px;">Circuit: Between Rounds</div>
+                                    <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                        <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('circuitBetweenRounds', -5)"
+                                            style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">-</button>
+                                        <span id="activeCircuitRestBetweenRoundsDisplay"
+                                            style="min-width: 35px; text-align: center; font-weight: bold; font-size: 13px;">60</span>
+                                        <button class="btn btn-secondary" onclick="adjustRestParamDuringWorkout('circuitBetweenRounds', 5)"
+                                            style="width: 32px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="progress-chart" style="margin-top: 20px;">
                         <h3 class="chart-title">📊 Workout Progress</h3>
                         <div id="workoutProgressList"></div>
@@ -2119,7 +2286,17 @@
             restTime: 15,
             totalRounds: 4
         };
-        
+
+        // Traditional/Circuit Workout Rest Time Parameters
+        // Load from localStorage or use defaults
+        let savedRestParams = JSON.parse(localStorage.getItem('workoutRestParams') || '{}');
+        let workoutRestParams = {
+            restBetweenSets: savedRestParams.restBetweenSets || 60,
+            restBetweenExercises: savedRestParams.restBetweenExercises || 90,
+            circuitRestBetweenExercises: savedRestParams.circuitRestBetweenExercises || 30,
+            circuitRestBetweenRounds: savedRestParams.circuitRestBetweenRounds || 60
+        };
+
         // Calendar & Body Stats State
         let currentCalendarDate = new Date();
         let currentCalendarView = 'month';
@@ -2461,6 +2638,21 @@
                 reps: ex.reps,
             };
         });
+
+        // Apply saved preferences (modifications made during previous workouts)
+        const preferences = JSON.parse(localStorage.getItem('workoutPreferences') || '{}');
+        const workoutKey = 'saved_' + workoutName;
+        if (preferences[workoutKey]) {
+            currentWorkout.forEach(exercise => {
+                const savedPrefs = preferences[workoutKey][exercise.name];
+                if (savedPrefs) {
+                    exercise.weight = savedPrefs.weight ?? exercise.weight;
+                    exercise.sets = savedPrefs.sets ?? exercise.sets;
+                    exercise.reps = savedPrefs.reps ?? exercise.reps;
+                }
+            });
+        }
+
         // Call the main display function, telling it this is NOT a HIIT workout
         displayWorkout(false);
     }
@@ -2576,6 +2768,9 @@
     container.innerHTML = html;
     document.getElementById('workoutModeSelection').style.display = 'block';
     document.getElementById('hiitPreWorkoutAdjustments').style.display = isHiit ? 'block' : 'none';
+    // Show traditional/circuit rest adjustments only for non-HIIT workouts
+    document.getElementById('traditionalRestAdjustments').style.display = isHiit ? 'none' : 'block';
+    document.getElementById('circuitRestAdjustments').style.display = isHiit ? 'none' : 'block';
 }
         function removeExerciseFromCurrentWorkout(index) {
     if (!confirm('Are you sure you want to remove this exercise from the workout?')) return;
@@ -3600,7 +3795,7 @@ function cancelQuickCardio() {
 }
        // ==================== GUIDED WORKOUT MODE ====================
         function startGuidedWorkout(mode, bypassSavePrompt = false) {
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
     // REMOVED: document.querySelector('.nav').style.display = 'none'; FROM HERE
 
     if (isWorkoutModified && !bypassSavePrompt) {
@@ -3609,13 +3804,13 @@ function cancelQuickCardio() {
     }
 
     // ADDED: Only hide nav if we proceed past the check
-    document.querySelector('.nav').style.display = 'none'; 
+    document.querySelector('.nav').style.display = 'none';
 
     document.querySelector('.workout-timer').style.display = 'block';
     if (currentWorkout.length === 0 || !currentWorkout[0].name) {
         alert('Please select or create a workout first!');
         // Restore nav if we error out here
-        document.querySelector('.nav').style.display = 'flex'; 
+        document.querySelector('.nav').style.display = 'flex';
         return;
     }
 
@@ -3635,6 +3830,21 @@ function cancelQuickCardio() {
     }
     if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume();
+    }
+
+    // Initialize rest time displays for active workout
+    document.getElementById('activeRestBetweenSetsDisplay').textContent = workoutRestParams.restBetweenSets;
+    document.getElementById('activeRestBetweenExercisesDisplay').textContent = workoutRestParams.restBetweenExercises;
+    document.getElementById('activeCircuitRestBetweenExercisesDisplay').textContent = workoutRestParams.circuitRestBetweenExercises;
+    document.getElementById('activeCircuitRestBetweenRoundsDisplay').textContent = workoutRestParams.circuitRestBetweenRounds;
+
+    // Show/hide circuit controls based on workout mode
+    const circuitControls = document.getElementById('activeCircuitRestControls');
+    if (mode === 'circuit') {
+        circuitControls.style.display = 'flex';
+        circuitControls.style.gap = '12px';
+    } else {
+        circuitControls.style.display = 'none';
     }
 
     document.getElementById('workoutSetup').style.display = 'none';
@@ -3672,7 +3882,7 @@ function cancelQuickCardio() {
                 if (currentSet < exercise.sets) {
                     currentSet++;
                     displayCurrentExercise();
-                    startRestTimer(60);
+                    startRestTimer(workoutRestParams.restBetweenSets);
                 } else {
                     moveToNextExercise();
                 }
@@ -3680,14 +3890,14 @@ function cancelQuickCardio() {
                 if (currentExerciseIndex < currentWorkout.length - 1) {
                     currentExerciseIndex++;
                     displayCurrentExercise();
-                    startRestTimer(30);
+                    startRestTimer(workoutRestParams.circuitRestBetweenExercises);
                 } else {
                     const totalSets = currentWorkout[0].sets;
                     if (currentSet < totalSets) {
                         currentSet++;
                         currentExerciseIndex = 0;
                         displayCurrentExercise();
-                        startRestTimer(60);
+                        startRestTimer(workoutRestParams.circuitRestBetweenRounds);
                     } else {
                         finishWorkout();
                     }
@@ -3700,7 +3910,7 @@ function cancelQuickCardio() {
                 currentExerciseIndex++;
                 currentSet = 1;
                 displayCurrentExercise();
-                startRestTimer(90);
+                startRestTimer(workoutRestParams.restBetweenExercises);
             } else {
                 finishWorkout();
             }
@@ -4082,6 +4292,52 @@ function cancelQuickCardio() {
                 document.getElementById('hiitRoundDisplay').textContent = `Round ${hiitCurrentRound} of ${hiitWorkoutParams.totalRounds}`;
                 console.log("Rounds adjusted to:", hiitWorkoutParams.totalRounds);
             }
+        }
+
+        // Adjust rest time parameters for Traditional/Circuit workouts (pre-workout)
+        function adjustRestParamPreWorkout(param, change) {
+            if (param === 'setBetweenSets') {
+                workoutRestParams.restBetweenSets = Math.max(5, workoutRestParams.restBetweenSets + change);
+                document.getElementById('preWorkRestBetweenSetsDisplay').textContent = workoutRestParams.restBetweenSets;
+                console.log("Pre-workout: Rest between sets adjusted to:", workoutRestParams.restBetweenSets);
+            } else if (param === 'setBetweenExercises') {
+                workoutRestParams.restBetweenExercises = Math.max(5, workoutRestParams.restBetweenExercises + change);
+                document.getElementById('preWorkRestBetweenExercisesDisplay').textContent = workoutRestParams.restBetweenExercises;
+                console.log("Pre-workout: Rest between exercises adjusted to:", workoutRestParams.restBetweenExercises);
+            } else if (param === 'circuitBetweenExercises') {
+                workoutRestParams.circuitRestBetweenExercises = Math.max(5, workoutRestParams.circuitRestBetweenExercises + change);
+                document.getElementById('preWorkCircuitRestBetweenExercisesDisplay').textContent = workoutRestParams.circuitRestBetweenExercises;
+                console.log("Pre-workout: Circuit rest between exercises adjusted to:", workoutRestParams.circuitRestBetweenExercises);
+            } else if (param === 'circuitBetweenRounds') {
+                workoutRestParams.circuitRestBetweenRounds = Math.max(5, workoutRestParams.circuitRestBetweenRounds + change);
+                document.getElementById('preWorkCircuitRestBetweenRoundsDisplay').textContent = workoutRestParams.circuitRestBetweenRounds;
+                console.log("Pre-workout: Circuit rest between rounds adjusted to:", workoutRestParams.circuitRestBetweenRounds);
+            }
+            // Save to localStorage
+            localStorage.setItem('workoutRestParams', JSON.stringify(workoutRestParams));
+        }
+
+        // Adjust rest time parameters during active Traditional/Circuit workout
+        function adjustRestParamDuringWorkout(param, change) {
+            if (param === 'setBetweenSets') {
+                workoutRestParams.restBetweenSets = Math.max(5, workoutRestParams.restBetweenSets + change);
+                document.getElementById('activeRestBetweenSetsDisplay').textContent = workoutRestParams.restBetweenSets;
+                console.log("During workout: Rest between sets adjusted to:", workoutRestParams.restBetweenSets);
+            } else if (param === 'setBetweenExercises') {
+                workoutRestParams.restBetweenExercises = Math.max(5, workoutRestParams.restBetweenExercises + change);
+                document.getElementById('activeRestBetweenExercisesDisplay').textContent = workoutRestParams.restBetweenExercises;
+                console.log("During workout: Rest between exercises adjusted to:", workoutRestParams.restBetweenExercises);
+            } else if (param === 'circuitBetweenExercises') {
+                workoutRestParams.circuitRestBetweenExercises = Math.max(5, workoutRestParams.circuitRestBetweenExercises + change);
+                document.getElementById('activeCircuitRestBetweenExercisesDisplay').textContent = workoutRestParams.circuitRestBetweenExercises;
+                console.log("During workout: Circuit rest between exercises adjusted to:", workoutRestParams.circuitRestBetweenExercises);
+            } else if (param === 'circuitBetweenRounds') {
+                workoutRestParams.circuitRestBetweenRounds = Math.max(5, workoutRestParams.circuitRestBetweenRounds + change);
+                document.getElementById('activeCircuitRestBetweenRoundsDisplay').textContent = workoutRestParams.circuitRestBetweenRounds;
+                console.log("During workout: Circuit rest between rounds adjusted to:", workoutRestParams.circuitRestBetweenRounds);
+            }
+            // Save to localStorage
+            localStorage.setItem('workoutRestParams', JSON.stringify(workoutRestParams));
         }
 
         function pauseResumeHiit() {
@@ -4555,7 +4811,7 @@ function cancelQuickCardio() {
             document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
         }
         // ==================== APPLE FITNESS IMPORT ====================
-       async function processAppleWorkoutImage(event) {
+      async function processAppleWorkoutImage(event) {
             const file = event.target.files[0];
             if (!file) return;
 
@@ -4570,37 +4826,36 @@ function cancelQuickCardio() {
             statusDiv.innerHTML = '<p style="color: #2196F3;">🔄 Analyzing workout image...</p>';
 
             try {
-                // Convert image to base64
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 
                 reader.onload = async () => {
                     try {
-                        const base64Data = reader.result.split(',')[1]; // Remove data:image/png;base64, prefix
+                        const base64Data = reader.result.split(',')[1];
 
-                        const prompt = `You are analyzing an Apple Fitness or workout screenshot. Extract ALL workout data visible in the image.
+                        // UPDATED PROMPT FOR ACCURACY
+                        const prompt = `You are analyzing an Apple Fitness or workout tracker screenshot. Extract data precisely.
 
-Respond with a JSON object in this EXACT format:
+SPECIFIC INSTRUCTIONS:
+1. **Date:** Look at the top (e.g., "Mon, Nov 17"). Convert to YYYY-MM-DD. Use the current year (2024 or 2025).
+2. **Time:** Look for the time range (e.g., "8:08 PM-8:37 PM"). Extract ONLY the START time (e.g., "8:08 PM").
+3. **Duration:** Look for "Workout Time" or duration (e.g., "0:28:40"). Calculate total minutes as a decimal. (Example: 28 mins + 40 secs = 28.67).
+4. **Calories:** strict rule: Look for "Total Calories" (e.g., 267CAL). If "Total Calories" exists, use it. Only use "Active Calories" if Total is missing.
+5. **Distance:** Extract the number and the unit separately (e.g. from "5.53KM", extract 5.53 and "km").
+
+Respond with this EXACT JSON structure (no markdown):
 {
-  "workoutName": "Exercise type (e.g., Outdoor Run, Strength Training, HIIT, etc.)",
-  "duration": "Duration in minutes as a number",
-  "calories": "Calories burned as a number",
-  "date": "Workout date in YYYY-MM-DD format (use today's date if not visible)",
-  "heartRate": "Average heart rate if visible, otherwise null",
-  "distance": "Distance if visible (for running/cycling), otherwise null",
-  "exercises": [
-    {
-      "name": "Exercise name if detailed workout shown",
-      "sets": 3,
-      "reps": 12,
-      "weight": 0
-    }
-  ]
-}
+  "workoutName": "Exercise type string",
+  "date": "YYYY-MM-DD",
+  "startTime": "HH:MM AM/PM",
+  "duration": 0,
+  "calories": 0,
+  "heartRate": 0,
+  "distance": 0,
+  "distanceUnit": "km",
+  "exercises": []
+}`;
 
-If this is just a summary screen (showing duration/calories only), leave exercises array empty. If detailed exercises are shown, populate the exercises array.`;
-
-                        // Use retry logic
                         const data = await apiCallWithRetry(
                             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
                             {
@@ -4610,12 +4865,7 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                                     contents: [{
                                         parts: [
                                             { text: prompt },
-                                            {
-                                                inline_data: {
-                                                    mime_type: file.type,
-                                                    data: base64Data
-                                                }
-                                            }
+                                            { inline_data: { mime_type: file.type, data: base64Data } }
                                         ]
                                     }]
                                 })
@@ -4625,11 +4875,12 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                         const resultText = data.candidates[0].content.parts[0].text;
                         const workoutData = JSON.parse(resultText.match(/\{[\s\S]*\}/)[0]);
 
-                        // Show extracted data
+                        // Show extracted data including the specific Start Time
                         statusDiv.innerHTML = `
                             <div class="status-success">
-                                ✅ Workout Detected: ${workoutData.workoutName}<br>
-                                Duration: ${workoutData.duration} min | Calories: ${workoutData.calories}
+                                <strong>✅ Workout Detected:</strong> ${workoutData.workoutName}<br>
+                                📅 ${workoutData.date} at ${workoutData.startTime}<br>
+                                ⏱️ ${workoutData.duration.toFixed(1)} min | 🔥 ${workoutData.calories} cal
                             </div>
                             <button class="btn btn-success" onclick='confirmAppleWorkoutImport(${JSON.stringify(workoutData).replace(/'/g, "&apos;")})'>
                                 ✅ Confirm & Add to History
@@ -4641,51 +4892,14 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                         
                     } catch (error) {
                         console.error('Error processing image:', error);
-                        
-                        // Check if it's a rate limit error
-                        if (error.message && (error.message.includes('429') || error.message.includes('Resource exhausted') || error.message.includes('quota'))) {
-                            statusDiv.innerHTML = `
-                                <div class="status-warning">
-                                    <p style="font-weight: bold; margin-bottom: 10px;">⚠️ API Rate Limit Reached</p>
-                                    <p style="margin-bottom: 10px;">The free Gemini API has usage limits. Please try one of these options:</p>
-                                    <ol style="margin-left: 20px; line-height: 1.6;">
-                                        <li><strong>Wait 1-2 minutes</strong> and try again</li>
-                                        <li><strong>Manually log the workout:</strong>
-                                            <ul style="margin-top: 5px; margin-left: 15px;">
-                                                <li>Go to Workout tab → Quick Log Cardio</li>
-                                                <li>Or add workout to History → Edit Stats</li>
-                                            </ul>
-                                        </li>
-                                        <li><strong>Upgrade API plan</strong> at <a href="https://ai.google.dev/" target="_blank">ai.google.dev</a> for higher limits</li>
-                                    </ol>
-                                </div>
-                            `;
-                        } else {
-                            // Other errors
-                            statusDiv.innerHTML = `
-                                <div class="status-error">
-                                    <p style="font-weight: bold; margin-bottom: 10px;">❌ Error Analyzing Image</p>
-                                    <p>Could not process the screenshot. Please check:</p>
-                                    <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.6;">
-                                        <li>Screenshot is clear and readable</li>
-                                        <li>It's from Apple Fitness app</li>
-                                        <li>API key is valid</li>
-                                    </ul>
-                                    <p style="margin-top: 10px;"><strong>Error details:</strong> ${error.message}</p>
-                                    <p style="margin-top: 10px;"><strong>Alternative:</strong> Manually log the workout using Quick Log Cardio or Edit Stats.</p>
-                                </div>
-                            `;
-                        }
+                        statusDiv.innerHTML = `<div class="status-error">❌ Error: ${error.message}</div>`;
                     }
                 };
-                
-                reader.onerror = () => {
-                    statusDiv.innerHTML = '<p style="color: #f44336;">❌ Error reading image file. Please try again.</p>';
-                };
+                reader.onerror = () => statusDiv.innerHTML = '<p style="color: #f44336;">❌ Error reading file.</p>';
 
             } catch (error) {
-                console.error('Error processing image:', error);
-                statusDiv.innerHTML = '<p style="color: #f44336;">❌ Error processing image. Please try again.</p>';
+                console.error('Error:', error);
+                statusDiv.innerHTML = '<p style="color: #f44336;">❌ Error processing image.</p>';
             }
         }
             // Helper function to get YYYY-MM-DD from a Date object without timezone shifting.
@@ -4698,115 +4912,124 @@ If this is just a summary screen (showing duration/calories only), leave exercis
             }
         
         function confirmAppleWorkoutImport(workoutData) {
-    
-    // --- NEW: USER PROMPT FOR DATE AND TIME (FRIENDLIER FORMAT) ---
-
-    const now = new Date();
-    // 1. Get Date from user (pre-fill with MM-DD-YYYY)
-    const defaultDate = now.toLocaleDateString('en-US').replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, '$1-$2-$3'); // MM-DD-YYYY or M-D-YYYY
-    const userDate = prompt('Please confirm the workout date (MM-DD-YYYY):', defaultDate);
-
-    if (!userDate) {
-        alert('Workout logging canceled.');
-        document.getElementById('imageProcessingStatus').style.display = 'none';
-        return;
-    }
-
-    // 2. Get Time from user (pre-fill with a common time, ask for HH:MM AM/PM)
-    const defaultTime = now.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: true});
-    const userTime = prompt('Please confirm the workout time (HH:MM AM/PM, e.g., 5:22 PM):', defaultTime);
-
-    if (!userTime) {
-        alert('Workout logging canceled.');
-        document.getElementById('imageProcessingStatus').style.display = 'none';
-        return;
-    }
-
-    // Combine user date and time into a correct local date string
-    // Example: "11/14/2023 5:22 PM"
-    const localDateTimeString = `${userDate.replace(/-/g, '/')} ${userTime}`;
-    
-    // The Date constructor correctly handles local time when given a full date string like "11/14/2023 5:22 PM"
-    const workoutDate = new Date(localDateTimeString);
-    
-    // Check for "Invalid Date"
-    if (isNaN(workoutDate)) {
-        alert('Invalid Date or Time entered. Workout logging canceled. Please use MM-DD-YYYY and HH:MM AM/PM format.');
-        document.getElementById('imageProcessingStatus').style.display = 'none';
-        return;
-    }
             
-            // ==================== DUPLICATE DETECTION ====================
-    // Check if a workout already exists within 5 minutes of this time
-    const existingWorkoutIndex = workoutHistory.findIndex(w => {
-        const existingDate = new Date(w.date);
-        const timeDiff = Math.abs(existingDate - workoutDate);
-        const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
-        
-        // Consider it a match if within 5 minutes and same workout name
-        return timeDiff < fiveMinutes && 
-               (w.workoutName === workoutData.workoutName || 
-                w.type === workoutData.workoutName);
-    });
-
-    if (existingWorkoutIndex !== -1) {
-        // Workout already exists - ASK USER what to do
-        const existingWorkout = workoutHistory[existingWorkoutIndex];
-        const existingTime = new Date(existingWorkout.date).toLocaleTimeString();
-        
-        if (confirm(`⚠️ Found existing workout:\n\n"${existingWorkout.workoutName || existingWorkout.type}" at ${existingTime}\n\nDo you want to UPDATE this workout with Fitness Tracker data?\n\n✅ Click OK to update existing workout\n❌ Click Cancel to create a new separate entry`)) {
-            // UPDATE existing workout with Fitness Tracker data
-            workoutHistory[existingWorkoutIndex].date = workoutDate.toISOString(); // FIX: Update date on the existing entry too!
-            workoutHistory[existingWorkoutIndex].heartRate = workoutData.heartRate || existingWorkout.heartRate;
-            workoutHistory[existingWorkoutIndex].calories = workoutData.calories || existingWorkout.calories;
-            workoutHistory[existingWorkoutIndex].distance = workoutData.distance || existingWorkout.distance;
-            workoutHistory[existingWorkoutIndex].distanceUnit = workoutData.distanceUnit || existingWorkout.distanceUnit;
+            // --- 1. PREPARE DEFAULTS (Use AI data if available, else defaults to Now) ---
+            const now = new Date();
             
-            // If Fitness Tracker has exercise details, add/update them
-            if (workoutData.exercises && workoutData.exercises.length > 0) {
-                 // ... (existing logic to update exercises remains unchanged)
+            // Default Date: Try to use AI's YYYY-MM-DD, convert to MM-DD-YYYY for prompt
+            let defaultDate = now.toLocaleDateString('en-US').replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, '$1-$2-$3');
+            if (workoutData.date) {
+                const parts = workoutData.date.split('-'); // YYYY-MM-DD
+                if (parts.length === 3) defaultDate = `${parts[1]}-${parts[2]}-${parts[0]}`;
             }
 
-            localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
-            
-            // ... (rest of update logic remains unchanged)
-            return;
-        }
-    }
+            // Default Time: Try to use AI's HH:MM AM/PM
+            let defaultTime = now.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: true});
+            if (workoutData.startTime) {
+                defaultTime = workoutData.startTime;
+            }
 
-    // ==================== CREATE NEW WORKOUT ====================
-    // Either no duplicate found, or user chose to create new entry
-    
-    const workoutEntry = {
-        id: Date.now(),
-        date: workoutDate.toISOString(), // FIX: Use the new correct local time ISO string
-        duration: (workoutData.duration || 0) * 60,
-        totalVolume: 0,
-        exercises: [],
-        workoutName: workoutData.workoutName,
-        type: workoutData.workoutName,
-        heartRate: workoutData.heartRate || null,
-        calories: workoutData.calories || null,
-        distance: workoutData.distance || null,
-        distanceUnit: workoutData.distanceUnit || null,
-        source: 'Fitness Tracker Import'
-    };
-            // Add exercises if available
+            // --- 2. PROMPT USER ---
+            const userDate = prompt('Please confirm the workout date (MM-DD-YYYY):', defaultDate);
+            if (!userDate) {
+                alert('Workout logging canceled.');
+                document.getElementById('imageProcessingStatus').style.display = 'none';
+                return;
+            }
+
+            const userTime = prompt('Please confirm the workout time (HH:MM AM/PM, e.g., 5:22 PM):', defaultTime);
+            if (!userTime) {
+                alert('Workout logging canceled.');
+                document.getElementById('imageProcessingStatus').style.display = 'none';
+                return;
+            }
+
+            // Combine and validate date
+            const localDateTimeString = `${userDate.replace(/-/g, '/')} ${userTime}`;
+            const workoutDate = new Date(localDateTimeString);
+            
+            if (isNaN(workoutDate)) {
+                alert('Invalid Date or Time entered. Workout logging canceled.');
+                document.getElementById('imageProcessingStatus').style.display = 'none';
+                return;
+            }
+            
+            // ==================== DUPLICATE DETECTION (RESTORED) ====================
+            // Check if a workout already exists within 5 minutes of this time
+            const existingWorkoutIndex = workoutHistory.findIndex(w => {
+                const existingDate = new Date(w.date);
+                const timeDiff = Math.abs(existingDate - workoutDate);
+                const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+                
+                // Consider it a match if within 5 minutes AND same workout name
+                return timeDiff < fiveMinutes && 
+                       (w.workoutName === workoutData.workoutName || 
+                        w.type === workoutData.workoutName);
+            });
+
+            if (existingWorkoutIndex !== -1) {
+                // Workout already exists - ASK USER what to do
+                const existingWorkout = workoutHistory[existingWorkoutIndex];
+                const existingTimeStr = new Date(existingWorkout.date).toLocaleTimeString();
+                
+                if (confirm(`⚠️ Found existing workout:\n\n"${existingWorkout.workoutName || existingWorkout.type}" at ${existingTimeStr}\n\nDo you want to UPDATE this workout with Fitness Tracker data?\n\n✅ Click OK to update existing workout\n❌ Click Cancel to create a new separate entry`)) {
+                    
+                    // UPDATE existing workout
+                    const target = workoutHistory[existingWorkoutIndex];
+                    target.date = workoutDate.toISOString(); // Update timestamp
+                    target.heartRate = workoutData.heartRate || target.heartRate;
+                    target.calories = workoutData.calories || target.calories;
+                    target.distance = workoutData.distance || target.distance;
+                    target.distanceUnit = workoutData.distanceUnit || target.distanceUnit;
+                    
+                    localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+                    
+                    // UI Cleanup
+                    document.getElementById('imageProcessingStatus').innerHTML = `<div class="status-success">✅ Workout updated successfully!</div>`;
+                    setTimeout(() => {
+                        document.getElementById('imageProcessingStatus').style.display = 'none';
+                        document.getElementById('appleWorkoutImage').value = '';
+                    }, 3000);
+                    
+                    loadHistory();
+                    renderCalendar();
+                    return; // Stop here, do not create new entry
+                }
+            }
+
+            // ==================== CREATE NEW WORKOUT ====================
+            // Logic reaches here only if no duplicate found OR user clicked Cancel on duplicate prompt
+            
+            const workoutEntry = {
+                id: Date.now(),
+                date: workoutDate.toISOString(),
+                duration: Math.round((workoutData.duration || 0) * 60),
+                totalVolume: 0,
+                exercises: [],
+                workoutName: workoutData.workoutName,
+                type: workoutData.workoutName,
+                heartRate: workoutData.heartRate || null,
+                calories: workoutData.calories || null,
+                distance: workoutData.distance || null,
+                distanceUnit: workoutData.distanceUnit || null,
+                source: 'Fitness Tracker Import'
+            };
+
+            // Add exercises if available (Strength) or generic entry (Cardio)
             if (workoutData.exercises && workoutData.exercises.length > 0) {
                 workoutData.exercises.forEach(ex => {
-                    const exerciseData = exerciseDatabase[ex.name] || {};
-                    const isCardio = exerciseData.exerciseType === "cardio";
-                    
+                    // Check DB to see if exercise is typically cardio
+                    const dbEx = exerciseDatabase[ex.name] || {};
+                    const isCardio = dbEx.exerciseType === 'cardio';
+
                     if (isCardio) {
-                        // Cardio exercise
-                        workoutEntry.exercises.push({
+                         workoutEntry.exercises.push({
                             name: ex.name,
                             duration: ex.duration || workoutData.duration || 0,
                             distance: ex.distance || workoutData.distance || 0,
-                            distanceUnit: ex.distanceUnit || workoutData.distanceUnit || 'miles'
+                            distanceUnit: ex.distanceUnit || workoutData.distanceUnit || 'km'
                         });
                     } else {
-                        // Strength exercise
                         workoutEntry.exercises.push({
                             name: ex.name,
                             sets: ex.sets || 3,
@@ -4816,16 +5039,16 @@ If this is just a summary screen (showing duration/calories only), leave exercis
                     }
                 });
             } else {
-                // If no detailed exercises, create a generic cardio entry
+                // If no detailed exercises, create a generic entry matching the workout name
                 workoutEntry.exercises.push({
                     name: workoutData.workoutName,
                     duration: workoutData.duration || 0,
                     distance: workoutData.distance || 0,
-                    distanceUnit: workoutData.distanceUnit || 'miles'
+                    distanceUnit: workoutData.distanceUnit || 'km'
                 });
             }
 
-            // Add to workout history
+            // Save to history
             workoutHistory.push(workoutEntry);
             localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
             
@@ -4845,9 +5068,10 @@ If this is just a summary screen (showing duration/calories only), leave exercis
 
             loadHistory();
             renderCalendar();
-
-            alert(`✅ ${workoutData.workoutName} imported successfully!\n\nDuration: ${workoutData.duration} min\nCalories: ${workoutData.calories || 'N/A'}\nDistance: ${workoutData.distance ? workoutData.distance + ' ' + workoutData.distanceUnit : 'N/A'}\n\nCheck your History and Calendar tabs!`);
-        } 
+            
+            // Alert with details
+            alert(`✅ ${workoutData.workoutName} imported successfully!\n\nDuration: ${workoutData.duration.toFixed(1)} min\nCalories: ${workoutData.calories || 'N/A'}\nDistance: ${workoutData.distance ? workoutData.distance + ' ' + workoutData.distanceUnit : 'N/A'}`);
+        }
         
         // ==================== RETRY LOGIC FOR API RATE LIMITS ====================
         async function apiCallWithRetry(url, options, retryCount = 0) {
@@ -5924,26 +6148,9 @@ User's request: ${msg}`;
         // ==================== WORKOUT HISTORY ====================
         function loadHistory() {
             const container = document.getElementById('historyContainer');
-            let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]'); // Changed to let
-        
-            // ---- START: New Data Update Code ----
-            // This block will check for old workouts and give them a unique ID.
-            let needsUpdate = false;
-            history.forEach((workout, index) => {
-                if (!workout.id) {
-                    // Create a unique ID from the timestamp and index for old entries
-                    workout.id = new Date(workout.date).getTime() + index;
-                    needsUpdate = true;
-                }
-            });
-        
-            // If we updated any old workouts, save the changes back to local storage.
-            if (needsUpdate) {
-                localStorage.setItem('workoutHistory', JSON.stringify(history));
-                console.log('Updated old workout entries with unique IDs.');
-            }
-            // ---- END: New Data Update Code ----
-            
+            let history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+
+            // 1. Enforce Sorting: Newest Date First
             history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (history.length === 0) {
@@ -5956,14 +6163,16 @@ User's request: ${msg}`;
             let html = '';
             history.forEach((workout, index) => {
                 const date = new Date(workout.date);
-                const duration = workout.duration;
+                const duration = workout.duration || 0;
+                
+                // FIX: Round seconds down to remove .2000000045 artifacts
                 const minutes = Math.floor(duration / 60);
-                const seconds = duration % 60;
+                const seconds = Math.floor(duration % 60); 
 
                 let exercisesSummary = '';
                 if (workout.type === 'HIIT') {
                     exercisesSummary = `${workout.exercises.length} exercises × ${workout.hiitParams?.rounds || 'N/A'} rounds`;
-                } else {
+                } else if (Array.isArray(workout.exercises)) {
                     exercisesSummary = workout.exercises.map(e => e.name).join(', ');
                 }
 
@@ -5971,7 +6180,7 @@ User's request: ${msg}`;
                     <div class="history-item">
                         <div class="history-header">
                             <div>
-                                <div class="history-date">${date.toLocaleDateString()} - ${date.toLocaleTimeString()}</div>
+                                <div class="history-date">${date.toLocaleDateString()} - ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                                 <div class="history-type">${workout.workoutName || 'Custom'} (${workout.type})</div>
                             </div>
                             <div class="history-duration">${minutes}:${String(seconds).padStart(2, '0')}</div>
@@ -5980,7 +6189,7 @@ User's request: ${msg}`;
                             <div class="history-stats-box">
                                 ${workout.heartRate ? `💓 Avg HR: <strong>${workout.heartRate} BPM</strong> &nbsp;|&nbsp; ` : ''}
                                 ${workout.calories ? `🔥 Calories: <strong>${workout.calories}</strong> &nbsp;|&nbsp; ` : ''}
-                                ${workout.distance ? `📏 Distance: <strong>${workout.distance} ${workout.distanceUnit}</strong>` : ''}
+                                ${workout.distance ? `📏 Distance: <strong>${workout.distance} ${workout.distanceUnit || 'mi'}</strong>` : ''}
                             </div>
                         ` : ''}
                         <div class="history-exercises">
@@ -5990,15 +6199,12 @@ User's request: ${msg}`;
                         <div class="history-details-body">
                 `;
 
-                // Check if exercises exist and determine type
+                // (Rest of the exercise rendering logic remains the same...)
                if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
-                    // Check if the first exercise item is an object (strength or single cardio log)
                     if (typeof workout.exercises[0] === 'object' && workout.exercises[0] !== null && workout.exercises[0].name) {
                         workout.exercises.forEach(exercise => {
                             const isPR = isPersonalRecord(exercise.name, exercise.weight) && exercise.weight > 0;
-                            
-                            // NEW CHECK: Use property existence to determine cardio vs. strength
-                            const isCardioLog = exercise.duration !== undefined; // If it has a duration property, treat it as a logged cardio exercise.
+                            const isCardioLog = exercise.duration !== undefined; 
 
                             html += `
                                 <div class="history-exercise-detail">
@@ -6008,29 +6214,21 @@ User's request: ${msg}`;
                                     </span>
                                     <span class="history-exercise-stats">
                                         ${isCardioLog ? 
-                                            // FIX: Prioritize exercise.distanceUnit, then the workout's top-level unit, then 'mi'
                                             `${exercise.duration || 0} min${exercise.distance ? ` | ${exercise.distance} ${exercise.distanceUnit || workout.distanceUnit || 'mi'}` : ''}` :
-                                            // Displays strength stats
                                             `${exercise.sets || 0}x${exercise.reps || 0} @ ${exercise.weight || 0}lbs`
                                         }
                                     </span>
                                 </div>
                             `;
                         });
-                    }  
-                    // Case 2: HIIT workout - exercises are just strings (exercise names)
-                    else {
+                    } else {
                         html += `
                             <div class="history-exercise-detail">
                                 <strong>Exercises:</strong> ${workout.exercises.join(', ')}
                             </div>
                         `;
-                        if (workout.rounds) {
-                            html += `
-                                <div class="history-exercise-detail">
-                                    <strong>Rounds Completed:</strong> ${workout.rounds}
-                                </div>
-                            `;
+                         if (workout.rounds) {
+                            html += `<div class="history-exercise-detail"><strong>Rounds:</strong> ${workout.rounds}</div>`;
                         }
                     }
                 } else {
@@ -6056,22 +6254,32 @@ User's request: ${msg}`;
         // ==================== EDIT WORKOUT STATS ====================
         let currentEditingWorkoutIndex = null;
 
-        function editWorkoutStats(id) {
+       function editWorkoutStats(id) {
     const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
     const workoutIndex = history.findIndex(w => w.id === id);
     if (workoutIndex === -1) {
         alert('Workout not found!');
         return;
     }
-    currentEditingWorkoutIndex = workoutIndex; // Keep using index for saving
+    currentEditingWorkoutIndex = workoutIndex; 
     const workout = history[workoutIndex];
     
-    // ... the rest of the function remains exactly the same
-    const isoString = workout.date;
-    const datePart = isoString.substring(0, 10);
-    const timePart = isoString.substring(11, 16);
-    document.getElementById('editWorkoutDate').value = datePart;
-    document.getElementById('editWorkoutTime').value = timePart; 
+    // --- FIX: Use Date object to get correct local time from ISO string ---
+    const dateObj = new Date(workout.date);
+    
+    // Format to YYYY-MM-DD for the date input
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    
+    // Format to HH:MM for the time input
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    
+    document.getElementById('editWorkoutDate').value = `${year}-${month}-${day}`;
+    document.getElementById('editWorkoutTime').value = `${hours}:${minutes}`; 
+    // --- END FIX ---
+
     document.getElementById('editWorkoutName').value = workout.workoutName || '';
     const durationInMinutes = Math.round((workout.duration || 0) / 60);
     document.getElementById('editDurationMinutes').value = durationInMinutes || '';
@@ -6083,73 +6291,83 @@ User's request: ${msg}`;
 
     showModalById('editStatsModal');
 }
+       function saveWorkoutStats() {
+    if (currentEditingWorkoutIndex === null) return;
 
-        function saveWorkoutStats() {
-            if (currentEditingWorkoutIndex === null) return;
+    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
+    const workout = history[currentEditingWorkoutIndex];
 
-            const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-            const workout = history[currentEditingWorkoutIndex];
+    const newDate = document.getElementById('editWorkoutDate').value;
+    const newTime = document.getElementById('editWorkoutTime').value;
 
-            const newDate = document.getElementById('editWorkoutDate').value;
-            const newTime = document.getElementById('editWorkoutTime').value;
-
-            if (newDate && newTime) {
-                 const oldIsoString = workout.date;
-                 const oldSeconds = oldIsoString.substring(17, 23);
-                 workout.date = `${newDate}T${newTime}${oldSeconds}`;
-            }
-            workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
-            
-            const durationMinutes = parseInt(document.getElementById('editDurationMinutes').value);
-            if (!isNaN(durationMinutes) && durationMinutes > 0) {
-                workout.duration = durationMinutes * 60;
-            } else {
-                workout.duration = 0;
-            }
-            workout.heartRate = parseInt(document.getElementById('editHeartRate').value) || null;
-            workout.calories = parseInt(document.getElementById('editCalories').value) || null;
-            
-            const distance = parseFloat(document.getElementById('editDistance').value);
-            const distanceUnit = document.getElementById('editDistanceUnit').value;
-            
-            if (distance && distanceUnit) {
-                workout.distance = distance;
-                workout.distanceUnit = distanceUnit;
-                
-                if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
-                    workout.exercises.forEach(exercise => {
-                        if (exercise.distance !== undefined) {
-                            exercise.distance = distance;
-                            exercise.distanceUnit = distanceUnit;
-                        }
-                    });
-                }
-            } else {
-                workout.distance = null;
-                workout.distanceUnit = null;
-                
-                if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
-                    workout.exercises.forEach(exercise => {
-                        if (exercise.distance !== undefined) {
-                            exercise.distance = null;
-                            exercise.distanceUnit = null;
-                        }
-                    });
-                }
-            }
-            
-            workout.notes = document.getElementById('editWorkoutNotes').value.trim() || '';
-
-            localStorage.setItem('workoutHistory', JSON.stringify(history));
-            workoutHistory = history;
-
-            loadHistory();
-            renderCalendar();
-
-            closeModal(document.getElementById('editStatsModal'));
-            currentEditingWorkoutIndex = null;
-            alert('✅ Workout stats updated successfully!');
+    // --- FIX: Properly construct a new Date object and save as ISO ---
+    if (newDate && newTime) {
+        // Create a date object from the local inputs (e.g., "2023-11-19" and "14:30")
+        // The Date constructor automatically handles local timezone conversion
+        const newDateTime = new Date(`${newDate}T${newTime}`);
+        
+        // Check if date is valid before saving
+        if (!isNaN(newDateTime.getTime())) {
+            workout.date = newDateTime.toISOString();
+        } else {
+            alert("Invalid Date/Time format.");
+            return;
         }
+    }
+    // --- END FIX ---
+
+    workout.workoutName = document.getElementById('editWorkoutName').value.trim() || workout.workoutName;
+    
+    const durationMinutes = parseInt(document.getElementById('editDurationMinutes').value);
+    if (!isNaN(durationMinutes) && durationMinutes > 0) {
+        workout.duration = durationMinutes * 60;
+    } else {
+        workout.duration = 0;
+    }
+    workout.heartRate = parseInt(document.getElementById('editHeartRate').value) || null;
+    workout.calories = parseInt(document.getElementById('editCalories').value) || null;
+    
+    const distance = parseFloat(document.getElementById('editDistance').value);
+    const distanceUnit = document.getElementById('editDistanceUnit').value;
+    
+    if (distance && distanceUnit) {
+        workout.distance = distance;
+        workout.distanceUnit = distanceUnit;
+        
+        if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+            workout.exercises.forEach(exercise => {
+                if (exercise.distance !== undefined) {
+                    exercise.distance = distance;
+                    exercise.distanceUnit = distanceUnit;
+                }
+            });
+        }
+    } else {
+        workout.distance = null;
+        workout.distanceUnit = null;
+        
+        if (Array.isArray(workout.exercises) && workout.exercises.length > 0) {
+            workout.exercises.forEach(exercise => {
+                if (exercise.distance !== undefined) {
+                    exercise.distance = null;
+                    exercise.distanceUnit = null;
+                }
+            });
+        }
+    }
+    
+    workout.notes = document.getElementById('editWorkoutNotes').value.trim() || '';
+
+    localStorage.setItem('workoutHistory', JSON.stringify(history));
+    workoutHistory = history;
+
+    loadHistory();
+    renderCalendar();
+
+    closeModal(document.getElementById('editStatsModal'));
+    currentEditingWorkoutIndex = null;
+    alert('✅ Workout stats updated successfully!');
+}
 
         // ==================== ADD MANUAL WORKOUT ====================
         function openAddManualWorkoutModal() {
@@ -7190,6 +7408,39 @@ User's request: ${msg}`;
                 .calendar-day.today {
                     border: 2px solid ${colors.accent};
                     box-shadow: 0 0 5px ${colors.accent};
+                }
+
+                /* Calendar month/year header */
+                #calendarMonthYear {
+                    color: ${textColor} !important;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                    font-weight: 700 !important;
+                    background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.9);
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    border: 2px solid ${colors.accent};
+                }
+
+                /* Calendar view buttons */
+                .view-btn {
+                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 0.85);
+                    color: ${cardTextColor};
+                    border: 2px solid ${colors.accent};
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    transition: all 0.3s ease;
+                }
+                .view-btn:hover {
+                    background: rgba(${cardRgb.r}, ${cardRgb.g}, ${cardRgb.b}, 1);
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                }
+                .view-btn.active {
+                    background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
+                    color: ${colors.accent};
+                    border-color: ${colors.accent};
+                    font-weight: 700;
+                    box-shadow: 0 0 10px ${colors.accent};
                 }
                 
                 .info-box p, .info-box strong { color: ${cardTextColor} !important; }
