@@ -3896,21 +3896,6 @@ function cancelQuickCardio() {
         audioCtx.resume();
     }
 
-    // Initialize rest time displays for active workout
-    document.getElementById('activeRestBetweenSetsDisplay').textContent = workoutRestParams.restBetweenSets;
-    document.getElementById('activeRestBetweenExercisesDisplay').textContent = workoutRestParams.restBetweenExercises;
-    document.getElementById('activeCircuitRestBetweenExercisesDisplay').textContent = workoutRestParams.circuitRestBetweenExercises;
-    document.getElementById('activeCircuitRestBetweenRoundsDisplay').textContent = workoutRestParams.circuitRestBetweenRounds;
-
-    // Show/hide circuit controls based on workout mode
-    const circuitControls = document.getElementById('activeCircuitRestControls');
-    if (mode === 'circuit') {
-        circuitControls.style.display = 'flex';
-        circuitControls.style.gap = '12px';
-    } else {
-        circuitControls.style.display = 'none';
-    }
-
     document.getElementById('workoutSetup').style.display = 'none';
     document.getElementById('guidedWorkoutMode').style.display = 'block';
 
