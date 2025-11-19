@@ -3903,21 +3903,23 @@ function cancelQuickCardio() {
                 }
             } else if (workoutMode === 'circuit') {
                 if (currentExerciseIndex < currentWorkout.length - 1) {
+                    // Use current (just completed) exercise's rest time, or fall back to global circuit rest
+                    const currentExercise = currentWorkout[currentExerciseIndex];
+                    const restTime = currentExercise.restTime !== undefined ? currentExercise.restTime : workoutRestParams.circuitRestBetweenExercises;
+
                     currentExerciseIndex++;
-                    const nextExercise = currentWorkout[currentExerciseIndex];
                     displayCurrentExercise();
-                    // Use next exercise's rest time, or fall back to global circuit rest
-                    const restTime = nextExercise.restTime !== undefined ? nextExercise.restTime : workoutRestParams.circuitRestBetweenExercises;
                     startRestTimer(restTime);
                 } else {
                     const totalSets = currentWorkout[0].sets;
                     if (currentSet < totalSets) {
+                        // Use the last exercise's rest time (just completed), or fall back to global circuit rest between rounds
+                        const lastExercise = currentWorkout[currentExerciseIndex];
+                        const restTime = lastExercise.restTime !== undefined ? lastExercise.restTime : workoutRestParams.circuitRestBetweenRounds;
+
                         currentSet++;
                         currentExerciseIndex = 0;
-                        const firstExercise = currentWorkout[0];
                         displayCurrentExercise();
-                        // Use first exercise's rest time, or fall back to global circuit rest between rounds
-                        const restTime = firstExercise.restTime !== undefined ? firstExercise.restTime : workoutRestParams.circuitRestBetweenRounds;
                         startRestTimer(restTime);
                     } else {
                         finishWorkout();
@@ -3928,12 +3930,13 @@ function cancelQuickCardio() {
 
         function moveToNextExercise() {
             if (currentExerciseIndex < currentWorkout.length - 1) {
+                // Use the CURRENT (just completed) exercise's rest time
+                const currentExercise = currentWorkout[currentExerciseIndex];
+                const restTime = currentExercise.restTime !== undefined ? currentExercise.restTime : workoutRestParams.restBetweenExercises;
+
                 currentExerciseIndex++;
                 currentSet = 1;
-                const nextExercise = currentWorkout[currentExerciseIndex];
                 displayCurrentExercise();
-                // Use next exercise's rest time, or fall back to global rest between exercises
-                const restTime = nextExercise.restTime !== undefined ? nextExercise.restTime : workoutRestParams.restBetweenExercises;
                 startRestTimer(restTime);
             } else {
                 finishWorkout();
