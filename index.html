@@ -2780,6 +2780,47 @@
         let touchStartY = 0;
         let touchCurrentY = 0;
 
+        // Auto-scroll configuration
+        let autoScrollInterval = null;
+        const AUTO_SCROLL_THRESHOLD = 100; // pixels from top/bottom to trigger scroll
+        const AUTO_SCROLL_SPEED = 10; // pixels per interval
+
+        // Auto-scroll function - checks if drag is near viewport edges and scrolls accordingly
+        function handleAutoScroll(clientY) {
+            // Clear any existing interval
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+
+            const viewportHeight = window.innerHeight;
+            const distanceFromTop = clientY;
+            const distanceFromBottom = viewportHeight - clientY;
+
+            // Check if we should scroll up
+            if (distanceFromTop < AUTO_SCROLL_THRESHOLD && distanceFromTop > 0) {
+                const scrollSpeed = Math.max(5, AUTO_SCROLL_SPEED * (1 - distanceFromTop / AUTO_SCROLL_THRESHOLD));
+                autoScrollInterval = setInterval(() => {
+                    window.scrollBy(0, -scrollSpeed);
+                }, 16); // ~60fps
+            }
+            // Check if we should scroll down
+            else if (distanceFromBottom < AUTO_SCROLL_THRESHOLD && distanceFromBottom > 0) {
+                const scrollSpeed = Math.max(5, AUTO_SCROLL_SPEED * (1 - distanceFromBottom / AUTO_SCROLL_THRESHOLD));
+                autoScrollInterval = setInterval(() => {
+                    window.scrollBy(0, scrollSpeed);
+                }, 16); // ~60fps
+            }
+        }
+
+        // Stop auto-scroll
+        function stopAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        }
+
         function handleDragStart(event) {
             draggedIndex = parseInt(event.target.dataset.index);
             event.target.classList.add('dragging');
@@ -2792,11 +2833,16 @@
             document.querySelectorAll('.exercise-card').forEach(card => {
                 card.classList.remove('drag-over');
             });
+            // Stop auto-scrolling
+            stopAutoScroll();
         }
 
         function handleDragOver(event) {
             event.preventDefault();
             event.dataTransfer.dropEffect = 'move';
+
+            // Trigger auto-scroll based on cursor position
+            handleAutoScroll(event.clientY);
 
             const target = event.target.closest('.exercise-card');
             if (target && !target.classList.contains('dragging')) {
@@ -2881,6 +2927,9 @@
             const touch = event.touches[0];
             touchCurrentY = touch.clientY;
 
+            // Trigger auto-scroll based on touch position
+            handleAutoScroll(touch.clientY);
+
             // Move the clone with the touch
             const deltaY = touchCurrentY - touchStartY;
             const originalTop = touchDraggedElement.getBoundingClientRect().top;
@@ -2909,6 +2958,9 @@
 
         function handleTouchEnd(event) {
             if (!touchDraggedElement) return;
+
+            // Stop auto-scrolling
+            stopAutoScroll();
 
             // Find the element at the touch end position
             const touch = event.changedTouches[0];
