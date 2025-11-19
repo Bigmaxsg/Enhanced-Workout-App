@@ -2694,7 +2694,7 @@
 
         function displayWorkout(isHiit = false) {
     const container = document.getElementById('workoutContainer');
-    let html = '<h3 style="margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #333;">Today\'s Workout</h3>';
+    let html = '<h3 class="workout-title">Today\'s Workout</h3>';
 
     if (isHiit) {
         // This part for HIIT workouts remains mostly the same
@@ -7426,6 +7426,17 @@ User's request: ${msg}`;
                      border-radius: 5px;
                      display: inline-block;
                 }
+                .workout-title {
+                     font-weight: 800 !important;
+                     font-size: 16px !important;
+                     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+                     padding: 5px 8px;
+                     background: rgba(${backgroundRgb.r}, ${backgroundRgb.g}, ${backgroundRgb.b}, 0.85);
+                     border-radius: 5px;
+                     display: inline-block;
+                     margin-bottom: 15px;
+                     color: ${textColor} !important;
+                }
 
                 /* ==================== FIX STARTS HERE ==================== */
                 /* This single rule now applies a uniform accent border to ALL card types */
@@ -7501,6 +7512,7 @@ User's request: ${msg}`;
                 .exercise-name, .history-date, .history-exercise-name, .measurement-label, .chart-title { color: ${cardTextColor}; }
                 .exercise-equipment, .history-exercises, .history-exercise-stats, .day-workout-count, .rest-indicator { color: ${fadedCardTextColor}; }
                 .exercise-not-found { color: ${textColor}; }
+                .drag-handle { color: ${colors.primary}; }
                 
                 .btn {
                     background: linear-gradient(135deg, ${colors.primary} 0%, ${adjustBrightness(colors.primary, 20)} 100%);
