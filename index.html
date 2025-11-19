@@ -244,8 +244,15 @@
             cursor: grab;
             font-size: 18px;
             color: #003d5c;
-            padding: 0 8px;
+            padding: 8px 12px;
             user-select: none;
+            touch-action: none; /* Prevent default touch behaviors */
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+            min-width: 40px; /* Larger touch target */
+            min-height: 40px; /* Larger touch target */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .drag-handle:active {
@@ -2704,7 +2711,8 @@
                 <div class="exercise-card" draggable="true" data-index="${index}"
                      ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
                      ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
-                     ondragleave="handleDragLeave(event)">
+                     ondragleave="handleDragLeave(event)"
+                     ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
                     <div class="exercise-header">
                         <span class="drag-handle">☰</span>
                         <div class="exercise-name">${exercise.name}</div>
@@ -2720,7 +2728,8 @@
                 <div class="exercise-card" draggable="true" data-index="${index}"
                      ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
                      ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
-                     ondragleave="handleDragLeave(event)">
+                     ondragleave="handleDragLeave(event)"
+                     ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
                     <div class="exercise-header">
                         <span class="drag-handle">☰</span>
                         <div class="exercise-name">${exercise.name}</div>
@@ -2766,6 +2775,10 @@
 
         // Drag and drop functions for exercise reordering
         let draggedIndex = null;
+        let touchDraggedElement = null;
+        let touchClone = null;
+        let touchStartY = 0;
+        let touchCurrentY = 0;
 
         function handleDragStart(event) {
             draggedIndex = parseInt(event.target.dataset.index);
@@ -2829,6 +2842,119 @@
 
             draggedIndex = null;
             return false;
+        }
+
+        // Touch event handlers for mobile drag and drop
+        function handleTouchStart(event) {
+            const dragHandle = event.target.closest('.drag-handle');
+            if (!dragHandle) return;
+
+            const card = event.target.closest('.exercise-card');
+            if (!card) return;
+
+            touchDraggedElement = card;
+            draggedIndex = parseInt(card.dataset.index);
+
+            const touch = event.touches[0];
+            touchStartY = touch.clientY;
+
+            // Create a visual clone for dragging
+            touchClone = card.cloneNode(true);
+            touchClone.style.position = 'fixed';
+            touchClone.style.left = card.getBoundingClientRect().left + 'px';
+            touchClone.style.top = card.getBoundingClientRect().top + 'px';
+            touchClone.style.width = card.offsetWidth + 'px';
+            touchClone.style.opacity = '0.8';
+            touchClone.style.zIndex = '1000';
+            touchClone.style.pointerEvents = 'none';
+            touchClone.classList.add('dragging');
+            document.body.appendChild(touchClone);
+
+            card.style.opacity = '0.3';
+
+            event.preventDefault();
+        }
+
+        function handleTouchMove(event) {
+            if (!touchDraggedElement || !touchClone) return;
+
+            const touch = event.touches[0];
+            touchCurrentY = touch.clientY;
+
+            // Move the clone with the touch
+            const deltaY = touchCurrentY - touchStartY;
+            const originalTop = touchDraggedElement.getBoundingClientRect().top;
+            touchClone.style.top = (originalTop + deltaY) + 'px';
+
+            // Find the element under the touch point
+            touchClone.style.pointerEvents = 'none';
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            touchClone.style.pointerEvents = 'none';
+
+            // Clear all drag-over states
+            document.querySelectorAll('.exercise-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+
+            // Add drag-over to the card we're hovering over
+            if (elementBelow) {
+                const targetCard = elementBelow.closest('.exercise-card');
+                if (targetCard && targetCard !== touchDraggedElement) {
+                    targetCard.classList.add('drag-over');
+                }
+            }
+
+            event.preventDefault();
+        }
+
+        function handleTouchEnd(event) {
+            if (!touchDraggedElement) return;
+
+            // Find the element at the touch end position
+            const touch = event.changedTouches[0];
+            touchClone.style.pointerEvents = 'none';
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+
+            if (elementBelow) {
+                const targetCard = elementBelow.closest('.exercise-card');
+                if (targetCard) {
+                    const dropIndex = parseInt(targetCard.dataset.index);
+
+                    if (draggedIndex !== null && draggedIndex !== dropIndex) {
+                        // Reorder the currentWorkout array
+                        const draggedExercise = currentWorkout[draggedIndex];
+                        currentWorkout.splice(draggedIndex, 1);
+                        currentWorkout.splice(dropIndex, 0, draggedExercise);
+
+                        // Mark workout as modified
+                        isWorkoutModified = true;
+
+                        // Re-render the workout
+                        if (document.getElementById('customExerciseList')) {
+                            updateCustomExerciseList();
+                        } else {
+                            displayWorkout(workoutStyle === 'hiit');
+                        }
+                    }
+                }
+            }
+
+            // Clean up
+            if (touchClone && touchClone.parentNode) {
+                touchClone.parentNode.removeChild(touchClone);
+            }
+            if (touchDraggedElement) {
+                touchDraggedElement.style.opacity = '';
+            }
+            document.querySelectorAll('.exercise-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+
+            touchDraggedElement = null;
+            touchClone = null;
+            draggedIndex = null;
+
+            event.preventDefault();
         }
 
         function removeExerciseFromCurrentWorkout(index) {
@@ -3152,7 +3278,8 @@ function promptToSaveModifiedWorkout(onSaveCallback) {
                     <div class="exercise-card" draggable="true" data-index="${index}"
                          ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
                          ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
-                         ondragleave="handleDragLeave(event)">
+                         ondragleave="handleDragLeave(event)"
+                         ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd(event)">
                         <div class="exercise-header">
                             <span class="drag-handle">☰</span>
                             <div class="exercise-name">${exercise.name}</div>
