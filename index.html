@@ -2276,6 +2276,7 @@
 
 // HIIT State
         let hiitTimerInterval = null;
+        let countdownInterval = null;
         let hiitTimeRemaining = 0;
         let hiitCurrentMode = 'work';
         let hiitCurrentRound = 1;
@@ -4026,6 +4027,9 @@ function cancelQuickCardio() {
 
         function finishWorkout() {
             pauseTimer();
+            clearInterval(restInterval);
+            clearInterval(hiitTimerInterval);
+            clearInterval(countdownInterval);
             const workoutDuration = timerSeconds;
 
             const workoutData = {
@@ -4181,7 +4185,7 @@ function cancelQuickCardio() {
 
             console.log("=== HIIT Countdown Starting ===");
 
-            let countdownInterval = setInterval(() => {
+            countdownInterval = setInterval(() => {
                 hiitCountdown--;
                 console.log("Countdown:", hiitCountdown);
                 document.getElementById('hiitCountdownDisplay').textContent = hiitCountdown;
@@ -4495,6 +4499,9 @@ function cancelQuickCardio() {
                 
                 // Reset timers and update other sections
                 resetTimer();
+                clearInterval(restInterval);
+                clearInterval(hiitTimerInterval);
+                clearInterval(countdownInterval);
                 loadRecommendation();
                 updateProgress();
                 loadHistory();
